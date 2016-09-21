@@ -1,10 +1,11 @@
+import os
 import qiime
 import pandas as pd
 from typing import Callable
 from skbio.stats.composition import ancom as _ancom_
 from skbio.stats.composition import clr
 
-from bokeh.plotting import figure, output_file, show, ColumnDataSource
+from bokeh.plotting import figure, output_file, show, ColumnDataSource, save
 from bokeh.models import HoverTool
 
 
@@ -12,8 +13,8 @@ def ancom(table: pd.DataFrame,
           metadata: qiime.MetadataCategory,
           significance_test: Callable[[pd.Series],
                                       pd.Series]=None) -> pd.DataFrame:
-    metadata = metadata.to_series()
-    ancom_results, _ = _ancom_(table, metadata,
+    _metadata = metadata.to_series()
+    ancom_results, _ = _ancom_(table, _metadata,
                                significance_test=significance_test)
 
     # pack together these objects to minimize bookkeeping
@@ -40,17 +41,17 @@ def volcanoplot(output_dir : str,
     metadata = metadata.to_series()
     cats = list(set(metadata))
 
-    transformed_table = table.apply(transform_function, axis=0)
+    transformed_table = table.apply(transform_function, axis=1)
 
-    # set default for significance_test
-    if significance_test is None:
-        if len(categories) == 2:
-            significance_test = \
-                lambda x: x[metadata==[cats[0]]] - x[metadata==[cats[1]]]
+    # set default for difference_function
+    if difference_function is None:
+        if len(cats) == 2:
+            difference_function = \
+                lambda x: x[metadata==cats[0]].mean() - x[metadata==cats[1]].mean()
         else:  # len(categories) > 2
-            significance_test = f_oneway(*[x[metadata==c] for c in cats])
+            difference_function = f_oneway(*[x[metadata==c] for c in cats])
 
-    fold_change = transformed_table.apply(significance_test, axis=1)
+    fold_change = transformed_table.apply(difference_function, axis=0)
     transform_function_name = transform_function.__name__
     volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                     'W' : ancom_results.W})
@@ -58,16 +59,19 @@ def volcanoplot(output_dir : str,
 
     hover = HoverTool(
             tooltips=[
-                ("index", "$index"),
-                ("(%s, W)", "($%s, $W)" % (transform_function_name,
-                                           transform_function_name))
+                ("index", "@index"),
+                ("(%s fold change, W)" % transform_function_name,
+                 "(@" + transform_function_name + ", @W)")
             ]
         )
+
+    colors =
 
     p = figure(plot_width=600, plot_height=600, tools=[hover],
            title="ANCOM Volcano Plot")
 
     p.circle(transform_function_name, 'W',
              size=10, source=source)
-
+    p.xaxis.axis_label = transform_function_name
+    p.yaxis.axis_label = 'W'
     save(p)
