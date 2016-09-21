@@ -24,7 +24,7 @@ class AncomTests(unittest.TestCase):
                           index=['S1', 'S2', 'S3',
                                  'S4', 'S5', 'S6']))
         it = impute(t)
-        res = ancom(it, c)
+        res = ancom(it, c)[2]
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 2, 2, 2, 2, 2]),
              'Reject null hypothesis': np.array([True, True, False, False,
