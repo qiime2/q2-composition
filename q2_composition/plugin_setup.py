@@ -6,7 +6,9 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime.plugin import SemanticType, FileFormat, DataLayout, Plugin
+from qiime.plugin import (SemanticType, FileFormat, DataLayout, Plugin,
+                          Str, Int, Properties, Choices, MetadataCategory)
+import qiime
 import q2_composition
 import q2_composition._ancom as ancom
 
@@ -44,7 +46,7 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_composition.ancom,
-    inputs={'table': FeatureTable[Frequency], 'metadata': qiime.Metadata},
+    inputs={'table': FeatureTable[Frequency]},
     parameters={'metadata' : MetadataCategory,
                 'statistical_test' : Str % Choices(ancom.statistical_tests())},
     outputs=[('ancom_results',
@@ -56,15 +58,15 @@ plugin.methods.register_function(
     description="Reruns the ANCOM test on all features."
 )
 
-plugin.methods.register_function(
+plugin.visualizers.register_function(
     function=q2_composition.volcanoplot,
     inputs={'ancom_results': SampleData[AlphaDiversity]},
     # Difference between parameters and input?
     parameters={
         'table' : FeatureTable[Composition],
         'metadata' : MetadataCategory,
-        'volcano_transform_function' : Str % Choices(ancom.transform_functions()),
-        'volcano_difference_function' : Str % Choices(ancom.difference_functions())},
-    name='Plots a Volcano plot of the ANCOM results',
-    description="Replaces all of the zeros in the table with a pseudocount"
+        'transform_function' : Str % Choices(ancom.transform_functions()),
+        'difference_function' : Str % Choices(ancom.difference_functions())},
+    name='Volcano plot',
+    description="Plots a Volcano plot of the ANCOM results"
 )

@@ -1,7 +1,6 @@
 import os
 import qiime
 import pandas as pd
-from typing import Callable
 from skbio.stats.composition import ancom as _ancom_
 from skbio.stats.composition import clr
 
