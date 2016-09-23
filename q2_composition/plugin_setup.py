@@ -53,7 +53,7 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_composition.ancom,
-    inputs={'table': FeatureTable[Frequency]},
+    inputs={'table': FeatureTable[Composition]},
     parameters={'metadata' : MetadataCategory,
                 'statistical_test' : Str % Choices(ancom.statistical_tests())},
     outputs=[('ancom_results',
