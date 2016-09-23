@@ -43,7 +43,7 @@ plugin.register_semantic_type_to_format(
 plugin.methods.register_function(
     function=q2_composition.add_pseudocount,
     # TODO use more restrictive primitive type for `depth`
-    inputs={'table': FeatureTable[Frequency]},
+    inputs={'table': FeatureTable[Frequency] % Properties('uniform-sampling')},
     parameters={'pseudocount': Int},
     outputs=[('composition_table',
               FeatureTable[Composition] % Properties('imputed-table'))],
@@ -53,7 +53,7 @@ plugin.methods.register_function(
 
 plugin.methods.register_function(
     function=q2_composition.ancom,
-    inputs={'table': FeatureTable[Composition]},
+    inputs={'table': FeatureTable[Composition] % Properties('uniform-sampling')},
     parameters={'metadata' : MetadataCategory,
                 'statistical_test' : Str % Choices(ancom.statistical_tests())},
     outputs=[('ancom_results',
