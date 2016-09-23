@@ -11,11 +11,9 @@ import pandas as pd
 from typing import Callable
 
 
-def impute(table: biom.Table,
-           imputation_method: Callable[[pd.Series],
-                                       pd.Series]=None) -> pd.DataFrame:
-    if imputation_method is None:
-        imputation_method = lambda x: x + 1
+def add_pseudocount(table: biom.Table,
+                    pseudocount: int=1) -> pd.DataFrame:
+    imputation_method = lambda x: x + pseudocount
 
     df = pd.DataFrame(np.array(table.matrix_data.todense()).T,
                       index=table.ids(axis='sample'),

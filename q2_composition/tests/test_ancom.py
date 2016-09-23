@@ -1,5 +1,5 @@
 import qiime
-from q2_composition import impute, ancom
+from q2_composition import add_pseudocount, ancom
 import unittest
 import pandas.util.testing as pdt
 from biom import Table
@@ -23,8 +23,8 @@ class AncomTests(unittest.TestCase):
                 pd.Series([0, 0, 0, 1, 1, 1],
                           index=['S1', 'S2', 'S3',
                                  'S4', 'S5', 'S6']))
-        it = impute(t)
-        res = ancom(it, c)[2]
+        it = add_pseudocount(t)
+        res = ancom(it, c)
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 2, 2, 2, 2, 2]),
              'Reject null hypothesis': np.array([True, True, False, False,

@@ -10,17 +10,17 @@ import unittest
 import numpy as np
 import pandas as pd
 import pandas.util.testing as pdt
-from q2_composition import impute
+from q2_composition import add_pseudocount
 from biom import Table
 
 
-class TestImpute(unittest.TestCase):
+class TestAdd_Pseudocount(unittest.TestCase):
 
-    def test_impute(self):
+    def test_add_pseudocount(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        res = impute(t)
+        res = add_pseudocount(t)
         exp = pd.DataFrame(np.array([[0, 1, 3], [1, 1, 2]]).T,
                            columns=['O1', 'O2'],
                            index=['S1', 'S2', 'S3']) + 1.
