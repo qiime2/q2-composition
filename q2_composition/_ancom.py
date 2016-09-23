@@ -59,7 +59,7 @@ def volcanoplot(output_dir : str,
                 metadata : qiime.MetadataCategory,
                 ancom_results : pd.DataFrame,
                 transform_function : str = 'clr',
-                difference_function: str = None):
+                difference_function: str = None) -> None:
 
 
     output_file(os.path.join(output_dir, 'index.html'))

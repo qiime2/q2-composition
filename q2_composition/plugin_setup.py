@@ -6,14 +6,17 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime.plugin import (SemanticType, FileFormat, DataLayout, Plugin,
-                          Str, Int, Properties, Choices, MetadataCategory)
+from qiime.plugin import (SemanticType, Str, Int, Properties, Choices,
+                          MetadataCategory, Plugin)
 import qiime
 import q2_composition
 import q2_composition._ancom as ancom
 
 from q2_types import (FeatureTable, Frequency, AlphaDiversity,
                       SampleData)
+
+from q2_types.feature_table import BIOMV100DirFmt, BIOMV210DirFmt
+
 
 Composition = SemanticType('Composition',
                            variant_of=FeatureTable.field['content'])
@@ -27,11 +30,15 @@ plugin = Plugin(
 
 plugin.register_semantic_type(Composition)
 
-plugin.register_semantic_type(Frequency)
-plugin.register_type_to_data_layout(
+plugin.register_semantic_type_to_format(
     FeatureTable[Composition],
-    'feature-table', 1)
+    artifact_format=BIOMV210DirFmt
+)
 
+plugin.register_semantic_type_to_format(
+    FeatureTable[Composition],
+    artifact_format=BIOMV100DirFmt
+)
 
 plugin.methods.register_function(
     function=q2_composition.add_pseudocount,
