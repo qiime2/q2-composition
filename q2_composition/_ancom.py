@@ -24,8 +24,8 @@ _sig_tests = {'f_oneway': f_oneway,
               'chisquare': chisquare,
               'friedmanchisquare': friedmanchisquare}
 
-_difference_functions = {'mean_difference': lambda x, y: x.mean() - y.mean(),
-                         'f_statistic': f_oneway}
+_difference_functions = {'subtract': lambda x, y: x.mean() - y.mean(),
+                         'f_statistic': lambda x: f_oneway(x)[0]}
 
 _transform_functions = {'sqrt': sqrt,
                         'log': log,
@@ -131,7 +131,6 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
 
     volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                     'W': ancom_results.W})
-    print(fold_change)
     source = ColumnDataSource(volcano_results)
 
     hover = HoverTool(
