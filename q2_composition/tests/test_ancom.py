@@ -57,7 +57,6 @@ class AncomTests(unittest.TestCase):
             self.assertIn('<th>Group</th>', html)
             self.assertIn('<th>O1</th>', html)
 
-
     def test_ancom_3class_anova(self):
         t = pd.DataFrame([[9, 9, 19, 19, 29, 29],
                           [10, 11, 20, 20, 29, 28],

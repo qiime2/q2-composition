@@ -4,7 +4,7 @@ import pandas as pd
 from skbio.stats.composition import ancom as skbio_ancom
 from skbio.stats.composition import clr
 
-from bokeh.plotting import figure, output_file, ColumnDataSource, save
+from bokeh.plotting import figure, ColumnDataSource
 from bokeh.embed import file_html
 from bokeh.models import HoverTool
 from bokeh.resources import CDN
@@ -100,6 +100,7 @@ def ancom(output_dir: str,
                           .loc[significant_features.index].to_html())
         index_f.write('</body></html>\n')
 
+
 def _volcanoplot(output_dir, table, metadata, ancom_results,
                  transform_function, difference_function) -> None:
 
@@ -152,5 +153,3 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
     p.yaxis.axis_label = 'W'
 
     return file_html(p, CDN, 'volcano plot')
-
-
