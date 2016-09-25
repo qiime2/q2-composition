@@ -1,0 +1,7 @@
+pip
+nose
+flake8
+notebook
+scikit-bio
+scipy
+bokeh

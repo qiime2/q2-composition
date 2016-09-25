@@ -6,12 +6,10 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import qiime
-from qiime.plugin import (SemanticType, Str, Int, Properties, Choices,
+from qiime.plugin import (SemanticType, Str, Int, Choices,
                           MetadataCategory, Plugin)
 from q2_types.feature_table import (
     FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
-from q2_types.feature_data import FeatureData
 
 import q2_composition
 
@@ -62,11 +60,11 @@ plugin.visualizers.register_function(
     function=q2_composition.ancom,
     inputs={'table': FeatureTable[Composition]},
     parameters={
-        'metadata' : MetadataCategory,
-        'statistical_test' : Str % Choices(_ancom_statistical_tests),
-        'transform_function' : Str % Choices(_transform_functions),
+        'metadata': MetadataCategory,
+        'statistical_test': Str % Choices(_ancom_statistical_tests),
+        'transform_function': Str % Choices(_transform_functions),
         # difference_function is unavailable, pending qiime2/qiime2#144
-        #'difference_function' : Str % Choices(_difference_functions)
+        # 'difference_function' : Str % Choices(_difference_functions)
     },
     name='Apply ANCOM to identify features that differ in abundance.',
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
