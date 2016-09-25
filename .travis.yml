@@ -21,7 +21,7 @@ install:
   - source activate test_env
   - pip install -e .
 script:
-  - WITH_COVERAGE=TRUE make all
+  - WITH_COVERAGE=TRUE flake8 q2_composition setup.py
 notifications:
   webhooks:
     on_success: change

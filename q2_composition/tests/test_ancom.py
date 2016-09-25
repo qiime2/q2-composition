@@ -5,9 +5,16 @@ import pandas.util.testing as pdt
 from biom import Table
 import numpy as np
 import pandas as pd
+import os
 
 
 class AncomTests(unittest.TestCase):
+
+    def setUp(self):
+        self.results = "results"
+
+    def tearDown(self):
+        os.rmdir(self.results)
 
     def test_ancom(self):
         t = Table(np.array([[9, 9, 9, 19, 19, 19],
@@ -24,7 +31,10 @@ class AncomTests(unittest.TestCase):
                           index=['S1', 'S2', 'S3',
                                  'S4', 'S5', 'S6']))
         it = add_pseudocount(t)
-        res = ancom(it, c)
+        ancom(self.results, it, c)
+
+        res = pd.read_table(os.path.join(self.results, 'ancom.csv'),
+                            index_col=0)
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 2, 2, 2, 2, 2]),
              'Reject null hypothesis': np.array([True, True, False, False,
