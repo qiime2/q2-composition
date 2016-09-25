@@ -24,8 +24,7 @@ class TestAdd_Pseudocount(unittest.TestCase):
                     ['S1', 'S2', 'S3'])
         self.assertEqual(obs, exp)
 
-
-    def test_add_pseudocount(self):
+    def test_add_pseudocount2(self):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])

@@ -24,8 +24,8 @@ _sig_tests = {'f_oneway': f_oneway,
               'chisquare': chisquare,
               'friedmanchisquare': friedmanchisquare}
 
-_difference_functions = {'subtract': lambda x, y: x.mean() - y.mean(),
-                         'f_statistic': lambda x: f_oneway(x)[0]}
+_difference_functions = {'mean_difference': lambda x, y: x.mean() - y.mean(),
+                         'f_statistic': f_oneway}
 
 _transform_functions = {'sqrt': sqrt,
                         'log': log,
