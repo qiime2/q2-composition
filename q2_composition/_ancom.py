@@ -5,7 +5,9 @@ from skbio.stats.composition import ancom as skbio_ancom
 from skbio.stats.composition import clr
 
 from bokeh.plotting import figure, output_file, ColumnDataSource, save
+from bokeh.embed import file_html
 from bokeh.models import HoverTool
+from bokeh.resources import CDN
 
 from numpy import log, sqrt
 from scipy.stats import (f_oneway, kruskal, mannwhitneyu,
@@ -22,8 +24,8 @@ _sig_tests = {'f_oneway': f_oneway,
               'chisquare': chisquare,
               'friedmanchisquare': friedmanchisquare}
 
-_difference_functions = {'subtract': lambda x, y: x.mean() - y.mean(),
-                         'f_statistic': lambda x: f_oneway(x)[0]}
+_difference_functions = {'mean_difference': lambda x, y: x.mean() - y.mean(),
+                         'f_statistic': f_oneway}
 
 _transform_functions = {'sqrt': sqrt,
                         'log': log,
@@ -71,16 +73,18 @@ def ancom(output_dir: str,
     ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.csv'),
                             header=True, index=True)
 
-    _volcanoplot(output_dir, table, metadata, ancom_results[0],
-                 transform_function, difference_function)
+    html = _volcanoplot(output_dir, table, metadata,
+                        ancom_results[0],
+                        transform_function, difference_function)
 
     significant_features = ancom_results[0][
         ancom_results[0]['Reject null hypothesis']]
 
     with open(index_fp, 'w') as index_f:
         index_f.write('<html><body>\n')
-        index_f.write('<a target="_blank" href="volcano-plot.html">'
-                      'Volcano plot</a>\n')
+        index_f.write('<h1>ANCOM Summary</h1>\n')
+        index_f.write('')
+        index_f.write(html)
         index_f.write('<h1>ANCOM statistical results</h1>\n')
         index_f.write('<a href="ancom.csv">Download as CSV</a><br>\n')
         index_f.write(significant_features['W'].to_frame().to_html())
@@ -96,10 +100,8 @@ def ancom(output_dir: str,
                           .loc[significant_features.index].to_html())
         index_f.write('</body></html>\n')
 
-
 def _volcanoplot(output_dir, table, metadata, ancom_results,
                  transform_function, difference_function) -> None:
-    output_file(os.path.join(output_dir, 'volcano-plot.html'))
 
     metadata = metadata.to_series()
     cats = list(set(metadata))
@@ -110,26 +112,32 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
     # set default for difference_function
     if difference_function is None:
         if len(cats) == 2:
-            difference_function = 'subtract'
+            difference_function = 'mean_difference'
         else:  # len(categories) > 2
             difference_function = 'f_statistic'
 
     _d_func = _difference_functions[difference_function]
 
     def diff_func(x):
-        return _d_func(*[x[metadata == c] for c in cats])
+        args = _d_func(*[x[metadata == c] for c in cats])
+        if isinstance(args, tuple):
+            return args[0]
+        else:
+            return args
 
     # effectively doing a groupby operation wrt to the metadata
     fold_change = transformed_table.apply(diff_func, axis=0)
 
     volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                     'W': ancom_results.W})
+    print(fold_change)
     source = ColumnDataSource(volcano_results)
 
     hover = HoverTool(
             tooltips=[
                 ("Feature ID", "@index"),
-                ("(%s fold change, W)" % transform_function_name,
+                ("(%s %s, W)" % (transform_function_name,
+                                 difference_function),
                  "(@" + transform_function_name + ", @W)")
             ]
         )
@@ -139,6 +147,10 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
 
     p.circle(transform_function_name, 'W',
              size=10, source=source)
-    p.xaxis.axis_label = transform_function_name
+    p.xaxis.axis_label = "%s %s" % (transform_function_name,
+                                    difference_function)
     p.yaxis.axis_label = 'W'
-    save(p)
+
+    return file_html(p, CDN, 'volcano plot')
+
+
