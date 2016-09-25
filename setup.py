@@ -23,7 +23,7 @@ setup(
     version=version,
     packages=find_packages(),
     install_requires=['biom-format >= 2.1.5, < 2.2.0', 'scipy',
-                      'qiime >= 2.0.0', 'q2-types', 'seaborn',
+                      'qiime >= 2.0.0', 'q2-types', 'bokeh',
                       'scikit-bio'],
     package_data={'q2_composition': ['workflows/*md']},
     author="Jamie Morton",
