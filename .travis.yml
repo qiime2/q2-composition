@@ -17,7 +17,7 @@ before_install:
   - conda info -a
 install:
   - conda create --yes -n test_env python=$PYVERSION --file ci/conda_requirements.txt -c biocore
-  - conda install --yes -n test_env cython qiime -c qiime2
+  - conda install --yes -n test_env cython qiime q2-types -c qiime2
   - source activate test_env
   - pip install -e .
 script:
