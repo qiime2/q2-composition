@@ -25,5 +25,16 @@ class TestAdd_Pseudocount(unittest.TestCase):
         self.assertEqual(obs, exp)
 
 
+    def test_add_pseudocount(self):
+        t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
+                  ['O1', 'O2'],
+                  ['S1', 'S2', 'S3'])
+        obs = add_pseudocount(t, 2)
+        exp = Table(np.array([[2, 3, 5], [3, 3, 4]]),
+                    ['O1', 'O2'],
+                    ['S1', 'S2', 'S3'])
+        self.assertEqual(obs, exp)
+
+
 if __name__ == '__main__':
     unittest.main()
