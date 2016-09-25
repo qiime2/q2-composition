@@ -1,7 +1,7 @@
 import os
 import qiime
 import pandas as pd
-from skbio.stats.composition import ancom as _ancom_
+from skbio.stats.composition import ancom as skbio_ancom
 from skbio.stats.composition import clr
 
 from bokeh.plotting import figure, output_file, show, ColumnDataSource, save
@@ -30,39 +30,67 @@ _transform_functions = {'sqrt' : sqrt,
                         'clr' : clr}
 
 def statistical_tests():
-    return _sig_tests.keys()
+    return list(_sig_tests.keys())
 
 def difference_functions():
-    return _difference_functions.keys()
+    return list(_difference_functions.keys())
 
 def transform_functions():
-    return _transform_functions.keys()
+    return list(_transform_functions.keys())
 
-def ancom(table: pd.DataFrame,
+def ancom(output_dir: str,
+          table: pd.DataFrame,
           metadata: qiime.MetadataCategory,
-          statistical_test: str = 'f_oneway') -> pd.DataFrame:
+          statistical_test: str = 'f_oneway',
+          transform_function : str = 'clr',
+          difference_function: str = None) -> None:
+
+    index_fp = os.path.join(output_dir, 'index.html')
 
     if statistical_test not in statistical_tests():
         raise ValueError("Unknown statistical test: %s" % statistical_test)
 
     statistical_test = _sig_tests[statistical_test]
-    _metadata = metadata.to_series()
-    ancom_results, _ = _ancom_(table, _metadata,
-                               significance_test=statistical_test)
+    ancom_results = skbio_ancom(table,
+                                metadata.to_series(),
+                                significance_test=statistical_test)
+    # scikit-bio 0.4.2 returns a single tuple from ancom, and scikit-bio 0.5.0
+    # returns two tuples. We want to support both scikit-bio versions, so we
+    # tuplize ancom_result to support both. Similarly, the "reject" column
+    # was renamed in scikit-bio 0.5.0, so we apply a rename here (which does
+    # nothing if a column called "reject" isn't found).
+    ancom_results = qiime.core.util.tuplize(ancom_results)
+    ancom_results[0].sort_values(by='W', ascending=False)
+    ancom_results[0].rename(columns={'reject': 'Reject null hypothesis'},
+                            inplace=True)
 
-    return ancom_results
+    ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.csv'),
+                            header=True, index=True)
 
+    _volcanoplot(output_dir, table, metadata, ancom_results[0],
+                 transform_function, difference_function)
 
-# dictionary to callables
-def volcanoplot(output_dir : str,
-                table : pd.DataFrame,
-                metadata : qiime.MetadataCategory,
-                ancom_results : pd.DataFrame,
-                transform_function : str = 'clr',
-                difference_function: str = None) -> None:
+    significant_features = ancom_results[0][
+        ancom_results[0]['Reject null hypothesis']]
 
+    with open(index_fp, 'w') as index_f:
+        index_f.write('<html><body>\n')
+        index_f.write('<a target="_blank" href="volcano-plot.html">'
+                      'Volcano plot</a>\n')
+        index_f.write('<h1>ANCOM statistical results</h1>\n')
+        index_f.write('<a href="ancom.csv">Download as CSV</a><br>\n')
+        index_f.write(significant_features['W'].to_frame().to_html())
+        if len(ancom_results) == 2:
+            ancom_results[1].to_csv(os.path.join(output_dir, 'percent-abundances.csv'),
+                                    header=True, index=True)
+            index_f.write('<h1>Percentile abundances of features by group</h1>\n')
+            index_f.write('<a href="percent-abundances.csv">Download as CSV</a><br>\n')
+            index_f.write(ancom_results[1].loc[significant_features.index].to_html())
+        index_f.write('</body></html>\n')
 
-    output_file(os.path.join(output_dir, 'index.html'))
+def _volcanoplot(output_dir, table, metadata, ancom_results,
+                 transform_function, difference_function) -> None:
+    output_file(os.path.join(output_dir, 'volcano-plot.html'))
 
     metadata = metadata.to_series()
     cats = list(set(metadata))
@@ -75,7 +103,7 @@ def volcanoplot(output_dir : str,
         if len(cats) == 2:
             difference_function = 'subtract'
         else:  # len(categories) > 2
-            difference_function = 'fstatistic'
+            difference_function = 'f_statistic'
 
     _d_func = _difference_functions[difference_function]
     difference_function = lambda x: _d_func(*[x[metadata==c] for c in cats])

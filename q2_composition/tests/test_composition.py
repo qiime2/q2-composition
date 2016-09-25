@@ -20,11 +20,11 @@ class TestAdd_Pseudocount(unittest.TestCase):
         t = Table(np.array([[0, 1, 3], [1, 1, 2]]),
                   ['O1', 'O2'],
                   ['S1', 'S2', 'S3'])
-        res = add_pseudocount(t)
-        exp = pd.DataFrame(np.array([[0, 1, 3], [1, 1, 2]]).T,
-                           columns=['O1', 'O2'],
-                           index=['S1', 'S2', 'S3']) + 1.
-        pdt.assert_frame_equal(res, exp)
+        obs = add_pseudocount(t)
+        exp = Table(np.array([[1, 2, 4], [2, 2, 3]]),
+                    ['O1', 'O2'],
+                    ['S1', 'S2', 'S3'])
+        self.assertEqual(obs, exp)
 
 
 if __name__ == '__main__':

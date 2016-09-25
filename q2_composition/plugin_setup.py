@@ -6,27 +6,32 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import qiime
 from qiime.plugin import (SemanticType, Str, Int, Properties, Choices,
                           MetadataCategory, Plugin)
-import qiime
+from q2_types.feature_table import (
+    FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
+from q2_types.feature_data import FeatureData
+
 import q2_composition
-import q2_composition._ancom as ancom
-
-from q2_types import (FeatureTable, Frequency, AlphaDiversity,
-                      SampleData)
-
-from q2_types.feature_table import BIOMV100DirFmt, BIOMV210DirFmt
 
 
-Composition = SemanticType('Composition',
-                           variant_of=FeatureTable.field['content'])
+_citation_text = ("Analysis of composition of microbiomes: a novel method for "
+                  "studying microbial composition.\nMandal S, Van Treuren W, "
+                  "White RA, Eggesbø M, Knight R, Peddada SD.\n"
+                  "Microb Ecol Health Dis. 2015 May 29;26:27663. doi: "
+                  "10.3402/mehd.v26.27663.")
 
 plugin = Plugin(
     name='composition',
     version="0.0.1",
     website='https://github.com/mortonjt/q2-composition',
+    citation_text=_citation_text,
     package='q2_composition'
 )
+
+Composition = SemanticType('Composition',
+                           variant_of=FeatureTable.field['content'])
 
 plugin.register_semantic_type(Composition)
 
@@ -42,38 +47,29 @@ plugin.register_semantic_type_to_format(
 
 plugin.methods.register_function(
     function=q2_composition.add_pseudocount,
-    # TODO use more restrictive primitive type for `depth`
-    inputs={'table': FeatureTable[Frequency] % Properties('uniform-sampling')},
+    inputs={'table': FeatureTable[Frequency]},
     parameters={'pseudocount': Int},
-    outputs=[('composition_table',
-              FeatureTable[Composition] % Properties('imputed-table'))],
+    outputs=[('composition_table', FeatureTable[Composition])],
     name='Add pseudocount to table',
-    description="Replaces all of the zeros in the table with a pseudocount"
+    description="Increment all counts in table by pseudocount."
 )
 
-plugin.methods.register_function(
-    function=q2_composition.ancom,
-    inputs={'table': FeatureTable[Composition] % Properties('uniform-sampling')},
-    parameters={'metadata' : MetadataCategory,
-                'statistical_test' : Str % Choices(ancom.statistical_tests())},
-    outputs=[('ancom_results',
-              # Not sure what should replace `AlphaDiversity` ...
-              # we just want to have a data frame that stores the main
-              # ANCOM results.
-              SampleData[AlphaDiversity] % Properties('ANCOM statistics'))],
-    name='ANCOM',
-    description="Reruns the ANCOM test on all features."
-)
+_ancom_statistical_tests = q2_composition._ancom.statistical_tests()
+_transform_functions = q2_composition._ancom.transform_functions()
+_difference_functions = q2_composition._ancom.difference_functions()
 
 plugin.visualizers.register_function(
-    function=q2_composition.volcanoplot,
-    inputs={'ancom_results': SampleData[AlphaDiversity]},
-    # Difference between parameters and input?
+    function=q2_composition.ancom,
+    inputs={'table': FeatureTable[Composition]},
     parameters={
-        'table' : FeatureTable[Composition],
         'metadata' : MetadataCategory,
-        'transform_function' : Str % Choices(ancom.transform_functions()),
-        'difference_function' : Str % Choices(ancom.difference_functions())},
-    name='Volcano plot',
-    description="Plots a Volcano plot of the ANCOM results"
+        'statistical_test' : Str % Choices(_ancom_statistical_tests),
+        'transform_function' : Str % Choices(_transform_functions),
+        # difference_function is unavailable, pending qiime2/qiime2#144
+        #'difference_function' : Str % Choices(_difference_functions)
+    },
+    name='Apply ANCOM to identify features that differ in abundance.',
+    description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
+                 "identify features that are differentially abundant across "
+                 "groups.")
 )
