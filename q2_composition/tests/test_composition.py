@@ -8,8 +8,6 @@
 
 import unittest
 import numpy as np
-import pandas as pd
-import pandas.util.testing as pdt
 from q2_composition import add_pseudocount
 from biom import Table
 
