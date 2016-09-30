@@ -82,9 +82,6 @@ def ancom(output_dir: str,
 
     with open(index_fp, 'w') as index_f:
         index_f.write('<html><body>\n')
-        index_f.write('<h1>ANCOM Summary</h1>\n')
-        index_f.write('')
-        index_f.write(html)
         index_f.write('<h1>ANCOM statistical results</h1>\n')
         index_f.write('<a href="ancom.csv">Download as CSV</a><br>\n')
         index_f.write(significant_features['W'].to_frame().to_html())
@@ -98,6 +95,7 @@ def ancom(output_dir: str,
                            'Download as CSV</a><br>\n'))
             index_f.write(ancom_results[1]
                           .loc[significant_features.index].to_html())
+        index_f.write(html)
         index_f.write('</body></html>\n')
 
 

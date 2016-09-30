@@ -31,7 +31,7 @@ plugin = Plugin(
 Composition = SemanticType('Composition',
                            variant_of=FeatureTable.field['content'])
 
-plugin.register_semantic_type(Composition)
+plugin.register_semantic_types(Composition)
 
 plugin.register_semantic_type_to_format(
     FeatureTable[Composition],
