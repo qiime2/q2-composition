@@ -56,9 +56,11 @@ def ancom(output_dir: str,
     if statistical_test not in statistical_tests():
         raise ValueError("Unknown statistical test: %s" % statistical_test)
 
+    metadata_series = metadata.to_series()[table.index]
+
     statistical_test = _sig_tests[statistical_test]
     ancom_results = skbio_ancom(table,
-                                metadata.to_series(),
+                                metadata_series,
                                 significance_test=statistical_test)
     # scikit-bio 0.4.2 returns a single tuple from ancom, and scikit-bio 0.5.0
     # returns two tuples. We want to support both scikit-bio versions, so we
