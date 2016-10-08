@@ -17,8 +17,9 @@ before_install:
   - conda info -a
 install:
   - conda create --yes -n test_env python=$PYVERSION --file ci/conda_requirements.txt -c biocore
-  - conda install --yes -n test_env cython qiime q2-types -c qiime2
+  - conda install --yes -n test_env cython
   - source activate test_env
+  - pip install https://github.com/qiime2/qiime2/archive/master.zip https://github.com/qiime2/q2-types/archive/master.zip
   - pip install -e .
 script:
   - WITH_COVERAGE=TRUE flake8 q2_composition setup.py
