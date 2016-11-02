@@ -22,7 +22,7 @@ setup(
     name="q2-composition",
     version=version,
     packages=find_packages(),
-    install_requires=['qiime >= 2.0.5', 'q2-types >= 0.0.5', 'bokeh',
+    install_requires=['qiime >= 2.0.6', 'q2-types >= 0.0.6', 'bokeh',
                       'biom-format >= 2.1.5, < 2.2.0', 'scipy',
                       'scikit-bio'],
     package_data={'q2_composition': ['workflows/*md']},
