@@ -22,7 +22,7 @@ _citation_text = ("Analysis of composition of microbiomes: a novel method for "
 
 plugin = Plugin(
     name='composition',
-    version="0.0.1",
+    version=q2_composition.__version__,
     website='https://github.com/mortonjt/q2-composition',
     citation_text=_citation_text,
     package='q2_composition'
