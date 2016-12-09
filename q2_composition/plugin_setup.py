@@ -63,8 +63,7 @@ plugin.visualizers.register_function(
         'metadata': MetadataCategory,
         'statistical_test': Str % Choices(_ancom_statistical_tests),
         'transform_function': Str % Choices(_transform_functions),
-        # difference_function is unavailable, pending qiime2/qiime2#144
-        # 'difference_function' : Str % Choices(_difference_functions)
+        'difference_function': Str % Choices(_difference_functions)
     },
     name='Apply ANCOM to identify features that differ in abundance.',
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
