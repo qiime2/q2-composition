@@ -1,4 +1,12 @@
-import qiime
+# ----------------------------------------------------------------------------
+# Copyright (c) 2016-2017, QIIME 2 development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+# ----------------------------------------------------------------------------
+
+import qiime2
 from q2_composition import ancom
 import unittest
 import pandas.util.testing as pdt
@@ -27,7 +35,7 @@ class AncomTests(unittest.TestCase):
                           [9, 12, 9, 9, 9, 11]],
                          index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
                          columns=['S1', 'S2', 'S3', 'S4', 'S5', 'S6']).T
-        c = qiime.MetadataCategory(
+        c = qiime2.MetadataCategory(
                 pd.Series([0, 0, 0, 1, 1, 1],
                           index=['S1', 'S2', 'S3',
                                  'S4', 'S5', 'S6']))
@@ -67,7 +75,7 @@ class AncomTests(unittest.TestCase):
                           [9, 12, 9, 9, 9, 11]],
                          index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
                          columns=['S1', 'S2', 'S3', 'S4', 'S5', 'S6']).T
-        c = qiime.MetadataCategory(
+        c = qiime2.MetadataCategory(
                 pd.Series([0, 0, 1, 1, 2, 2],
                           index=['S1', 'S2', 'S3',
                                  'S4', 'S5', 'S6']))
@@ -82,6 +90,7 @@ class AncomTests(unittest.TestCase):
                                                 dtype=bool)},
             index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],)
         pdt.assert_frame_equal(res, exp)
+
 
 if __name__ == "__main__":
     unittest.main()
