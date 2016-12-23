@@ -1,5 +1,13 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2016-2017, QIIME 2 development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+# ----------------------------------------------------------------------------
+
 import os
-import qiime
+import qiime2
 import pandas as pd
 from skbio.stats.composition import ancom as skbio_ancom
 from skbio.stats.composition import clr
@@ -46,7 +54,7 @@ def transform_functions():
 
 def ancom(output_dir: str,
           table: pd.DataFrame,
-          metadata: qiime.MetadataCategory,
+          metadata: qiime2.MetadataCategory,
           statistical_test: str = 'f_oneway',
           transform_function: str = 'clr',
           difference_function: str = None) -> None:
@@ -67,7 +75,7 @@ def ancom(output_dir: str,
     # tuplize ancom_result to support both. Similarly, the "reject" column
     # was renamed in scikit-bio 0.5.0, so we apply a rename here (which does
     # nothing if a column called "reject" isn't found).
-    ancom_results = qiime.core.util.tuplize(ancom_results)
+    ancom_results = qiime2.core.util.tuplize(ancom_results)
     ancom_results[0].sort_values(by='W', ascending=False)
     ancom_results[0].rename(columns={'reject': 'Reject null hypothesis'},
                             inplace=True)
