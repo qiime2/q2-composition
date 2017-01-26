@@ -84,9 +84,9 @@ plugin.visualizers.register_function(
                                  'differential abundance across groups.'),
             'transform_function': ('The method applied to transform feature '
                                    'values before generating volcano plots.'),
-            'difference_function': 'The method applied to compute differences '
-                                   'in feature abundances across groups '
-                                   'before generating volcano plots.'},
+            'difference_function': 'The method applied to visualize fold '
+                                   'difference in feature abundances across '
+                                   'groups for volcano plots.'},
     name='Apply ANCOM to identify features that differ in abundance.',
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
                  "identify features that are differentially abundant across "
