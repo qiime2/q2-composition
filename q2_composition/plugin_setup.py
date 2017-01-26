@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (SemanticType, Str, Int, Choices,
+from qiime2.plugin import (Str, Int, Choices,
                            MetadataCategory, Plugin)
 from q2_types.feature_table import (
     FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
