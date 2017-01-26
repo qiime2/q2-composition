@@ -15,7 +15,6 @@ setup(
     packages=find_packages(),
     install_requires=['qiime2 == 2017.2.*', 'q2-types == 2017.2.*', 'bokeh',
                       'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'scikit-bio'],
-    package_data={'q2_composition': ['workflows/*md']},
     author="Jamie Morton",
     author_email="jamietmorton@gmail.com",
     description="Compositional statistics plugin for QIIME2.",
