@@ -1,4 +1,4 @@
-from qiime.plugin import SemanticType
+from qiime2.plugin import SemanticType
 from q2_types.feature_table import FeatureTable
 
 
