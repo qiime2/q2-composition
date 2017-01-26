@@ -1,18 +1,18 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016--, QIIME development team.
+# Copyright (c) 2016-2017, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime.plugin import (SemanticType, Str, Int, Choices,
-                          MetadataCategory, Plugin)
+from qiime2.plugin import (SemanticType, Str, Int, Choices,
+                           MetadataCategory, Plugin)
 from q2_types.feature_table import (
     FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
 
 import q2_composition
-
+from q2_composition import Composition
 
 _citation_text = ("Analysis of composition of microbiomes: a novel method for "
                   "studying microbial composition.\nMandal S, Van Treuren W, "
@@ -23,13 +23,10 @@ _citation_text = ("Analysis of composition of microbiomes: a novel method for "
 plugin = Plugin(
     name='composition',
     version=q2_composition.__version__,
-    website='https://github.com/mortonjt/q2-composition',
+    website='https://github.com/qiime2/q2-composition',
     citation_text=_citation_text,
     package='q2_composition'
 )
-
-Composition = SemanticType('Composition',
-                           variant_of=FeatureTable.field['content'])
 
 plugin.register_semantic_types(Composition)
 
@@ -63,8 +60,7 @@ plugin.visualizers.register_function(
         'metadata': MetadataCategory,
         'statistical_test': Str % Choices(_ancom_statistical_tests),
         'transform_function': Str % Choices(_transform_functions),
-        # difference_function is unavailable, pending qiime2/qiime2#144
-        # 'difference_function' : Str % Choices(_difference_functions)
+        'difference_function': Str % Choices(_difference_functions)
     },
     name='Apply ANCOM to identify features that differ in abundance.',
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
