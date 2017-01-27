@@ -6,13 +6,13 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (SemanticType, Str, Int, Choices,
+from qiime2.plugin import (Str, Int, Choices,
                            MetadataCategory, Plugin)
 from q2_types.feature_table import (
     FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
 
 import q2_composition
-
+from q2_composition import Composition
 
 _citation_text = ("Analysis of composition of microbiomes: a novel method for "
                   "studying microbial composition.\nMandal S, Van Treuren W, "
@@ -27,9 +27,6 @@ plugin = Plugin(
     citation_text=_citation_text,
     package='q2_composition'
 )
-
-Composition = SemanticType('Composition',
-                           variant_of=FeatureTable.field['content'])
 
 plugin.register_semantic_types(Composition)
 

@@ -6,13 +6,9 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import pkg_resources
-
-from ._impute import add_pseudocount
-from ._ancom import ancom
-from ._type import Composition
+from qiime2.plugin import SemanticType
+from q2_types.feature_table import FeatureTable
 
 
-__version__ = pkg_resources.get_distribution('q2-composition').version
-
-__all__ = ['add_pseudocount', 'ancom', 'Composition']
+Composition = SemanticType('Composition',
+                           variant_of=FeatureTable.field['content'])
