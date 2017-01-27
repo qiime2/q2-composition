@@ -48,6 +48,15 @@ plugin.methods.register_function(
     inputs={'table': FeatureTable[Frequency]},
     parameters={'pseudocount': Int},
     outputs=[('composition_table', FeatureTable[Composition])],
+    input_descriptions={
+        'table': 'The feature table to which pseudocounts should be added.'
+    },
+    parameter_descriptions={
+        'pseudocount': 'The value to add to all counts in the feature table.'
+    },
+    output_descriptions={
+        'composition_table': 'The resulting feature table.'
+    },
     name='Add pseudocount to table',
     description="Increment all counts in table by pseudocount."
 )
@@ -65,6 +74,19 @@ plugin.visualizers.register_function(
         'transform_function': Str % Choices(_transform_functions),
         'difference_function': Str % Choices(_difference_functions)
     },
+    input_descriptions={
+        'table': 'The feature table to be used for ANCOM computation.'
+    },
+    parameter_descriptions={
+            'metadata': ('The sample metadata category to test for '
+                         'differential abundance across.'),
+            'statistical_test': ('The test to be applied to detect '
+                                 'differential abundance across groups.'),
+            'transform_function': ('The method applied to transform feature '
+                                   'values before generating volcano plots.'),
+            'difference_function': 'The method applied to visualize fold '
+                                   'difference in feature abundances across '
+                                   'groups for volcano plots.'},
     name='Apply ANCOM to identify features that differ in abundance.',
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
                  "identify features that are differentially abundant across "
