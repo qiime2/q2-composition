@@ -65,6 +65,13 @@ def ancom(output_dir: str,
         raise ValueError("Unknown statistical test: %s" % statistical_test)
 
     metadata_series = metadata.to_series()[table.index]
+    if pd.isnull(metadata_series).any():
+        missing_data_sids = metadata_series[pd.isnull(metadata_series)].index
+        missing_data_sids = ', '.join(missing_data_sids)
+        raise ValueError('Metadata category is missing values for the '
+                         'following samples. Values need to be added for '
+                         'these samples, or the samples need to be removed '
+                         'from the table. %s' % missing_data_sids)
 
     statistical_test = _sig_tests[statistical_test]
     ancom_results = skbio_ancom(table,
