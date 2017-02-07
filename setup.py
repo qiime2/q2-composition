@@ -11,7 +11,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="q2-composition",
-    version="2017.2.0.dev0",
+    version="2017.2.0",
     packages=find_packages(),
     install_requires=['qiime2 == 2017.2.*', 'q2-types == 2017.2.*', 'bokeh',
                       'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'scikit-bio'],
