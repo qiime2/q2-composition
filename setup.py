@@ -8,10 +8,13 @@
 
 from setuptools import setup, find_packages
 
+import versioneer
+
 
 setup(
     name="q2-composition",
-    version="2017.3.0.dev",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
     install_requires=['qiime2 == 2017.3.*', 'q2-types == 2017.3.*', 'bokeh',
                       'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'scikit-bio'],
@@ -23,5 +26,6 @@ setup(
     entry_points={
         'qiime2.plugins':
         ['q2-composition=q2_composition.plugin_setup:plugin']
-    }
+    },
+    zip_safe=False,
 )
