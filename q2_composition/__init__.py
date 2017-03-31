@@ -10,9 +10,9 @@ import pkg_resources
 
 from ._impute import add_pseudocount
 from ._ancom import ancom
-from ._type import Composition
+from ._type import Composition, Balance
 
 
 __version__ = pkg_resources.get_distribution('q2-composition').version
 
-__all__ = ['add_pseudocount', 'ancom', 'Composition']
+__all__ = ['add_pseudocount', 'ancom', 'Composition', 'Balance']
