@@ -16,8 +16,6 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    install_requires=['qiime2 == 2017.3.*', 'q2-types == 2017.3.*', 'bokeh',
-                      'biom-format >= 2.1.5, < 2.2.0', 'scipy', 'scikit-bio'],
     author="Jamie Morton",
     author_email="jamietmorton@gmail.com",
     description="Compositional statistics plugin for QIIME2.",

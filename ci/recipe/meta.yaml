@@ -1,8 +1,10 @@
 {% set data = load_setup_py_data() %}
+{% set version = data.get('version') %}
+{% set release = '.'.join(version.split('.')[:2]) %}
 
 package:
   name: q2-composition
-  version: {{ data.get('version') }}
+  version: {{ version }}
 
 source:
   path: ../..
@@ -14,12 +16,6 @@ requirements:
   build:
     - python 3.5*
     - setuptools
-    - scikit-bio
-    - bokeh
-    - biom-format >=2.1.5,<2.2.0
-    - scipy
-    - qiime2 2017.3.*
-    - q2-types 2017.3.*
 
   run:
     - python 3.5*
@@ -28,8 +24,8 @@ requirements:
     - bokeh
     - biom-format >=2.1.5,<2.2.0
     - scipy
-    - qiime2 2017.3.*
-    - q2-types 2017.3.*
+    - qiime2 {{ release }}.*
+    - q2-types {{ release }}.*
 
 test:
   imports:
