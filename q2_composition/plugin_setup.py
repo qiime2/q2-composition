@@ -9,7 +9,7 @@
 from qiime2.plugin import (Str, Int, Choices,
                            MetadataCategory, Plugin)
 from q2_types.feature_table import (
-    FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
+    FeatureTable, Frequency, BIOMV210DirFmt)
 
 import q2_composition
 from q2_composition import Composition, Balance
