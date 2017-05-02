@@ -9,10 +9,10 @@
 from qiime2.plugin import (Str, Int, Choices,
                            MetadataCategory, Plugin)
 from q2_types.feature_table import (
-    FeatureTable, Frequency, BIOMV100DirFmt, BIOMV210DirFmt)
+    FeatureTable, Frequency, BIOMV210DirFmt)
 
 import q2_composition
-from q2_composition import Composition
+from q2_composition import Composition, Balance
 
 _citation_text = ("Analysis of composition of microbiomes: a novel method for "
                   "studying microbial composition.\nMandal S, Van Treuren W, "
@@ -35,9 +35,11 @@ plugin.register_semantic_type_to_format(
     artifact_format=BIOMV210DirFmt
 )
 
+plugin.register_semantic_types(Balance)
+
 plugin.register_semantic_type_to_format(
-    FeatureTable[Composition],
-    artifact_format=BIOMV100DirFmt
+    FeatureTable[Balance],
+    artifact_format=BIOMV210DirFmt
 )
 
 plugin.methods.register_function(
