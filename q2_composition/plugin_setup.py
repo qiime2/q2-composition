@@ -35,21 +35,11 @@ plugin.register_semantic_type_to_format(
     artifact_format=BIOMV210DirFmt
 )
 
-plugin.register_semantic_type_to_format(
-    FeatureTable[Composition],
-    artifact_format=BIOMV100DirFmt
-)
-
 plugin.register_semantic_types(Balance)
 
 plugin.register_semantic_type_to_format(
     FeatureTable[Balance],
     artifact_format=BIOMV210DirFmt
-)
-
-plugin.register_semantic_type_to_format(
-    FeatureTable[Balance],
-    artifact_format=BIOMV100DirFmt
 )
 
 plugin.methods.register_function(
