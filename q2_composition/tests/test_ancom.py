@@ -91,6 +91,30 @@ class AncomTests(unittest.TestCase):
             index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],)
         pdt.assert_frame_equal(res, exp)
 
+    def test_ancom_integer_indices(self):
+        # The idea behind this test is to use integer indices to confirm
+        # that the metadata category mapping is joining on labels, not on
+        # indices. If it was joining on the index, the metadata would map in
+        # the opposite direction, resulting in no significant results being
+        # rendered to the output HTML table.
+        t = pd.DataFrame([[9, 9, 9, 19, 19, 19],
+                          [10, 11, 10, 20, 20, 20],
+                          [9, 10, 9, 9, 10, 9],
+                          [9, 10, 9, 9, 9, 8],
+                          [9, 10, 9, 9, 9, 9],
+                          [9, 10, 9, 9, 9, 10],
+                          [9, 12, 9, 9, 9, 11]],
+                         index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
+                         columns=[1, 2, 3, 4, 5, 6]).T
+        c = qiime2.MetadataCategory(pd.Series([1, 0, 0, 0, 1, 0],
+                                    index=[6, 5, 4, 3, 2, 1]))
+        ancom(self.results, t+1, c)
+
+        index_fp = os.path.join(self.results, 'index.html')
+        with open(index_fp, 'r') as fh:
+            html = fh.read()
+            self.assertIn('<th>O7</th>', html)
+
 
 if __name__ == "__main__":
     unittest.main()
