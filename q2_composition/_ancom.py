@@ -64,7 +64,8 @@ def ancom(output_dir: str,
     if statistical_test not in statistical_tests():
         raise ValueError("Unknown statistical test: %s" % statistical_test)
 
-    metadata_series = metadata.to_series()[table.index]
+    metadata_series = metadata.to_series()
+    metadata_series = metadata_series.loc[table.index]
     if pd.isnull(metadata_series).any():
         missing_data_sids = metadata_series[pd.isnull(metadata_series)].index
         missing_data_sids = ', '.join(missing_data_sids)
