@@ -25,7 +25,10 @@ plugin = Plugin(
     version=q2_composition.__version__,
     website='https://github.com/qiime2/q2-composition',
     citation_text=_citation_text,
-    package='q2_composition'
+    package='q2_composition',
+    description=('This QIIME 2 plugin supports methods for '
+                 'compositional data analysis.'),
+    short_description='Plugin for compositional data analysis.'
 )
 
 plugin.register_semantic_types(Composition)
