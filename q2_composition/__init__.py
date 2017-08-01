@@ -8,11 +8,10 @@
 
 from ._impute import add_pseudocount
 from ._ancom import ancom
-from ._type import Composition, Balance
 from ._version import get_versions
 
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['add_pseudocount', 'ancom', 'Composition', 'Balance']
+__all__ = ['add_pseudocount', 'ancom']
