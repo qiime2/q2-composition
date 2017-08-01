@@ -6,12 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import SemanticType
-from q2_types.feature_table import FeatureTable
+import unittest
+
+from q2_composition.plugin_setup import plugin as composition_plugin
 
 
-Composition = SemanticType('Composition',
-                           variant_of=FeatureTable.field['content'])
+class PluginSetupTests(unittest.TestCase):
 
-Balance = SemanticType('Balance',
-                       variant_of=FeatureTable.field['content'])
+    def test_plugin_setup(self):
+        self.assertEqual(composition_plugin.name, 'composition')
