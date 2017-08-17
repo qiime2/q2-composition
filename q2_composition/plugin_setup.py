@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (Str, Int, Choices,
+from qiime2.plugin import (Str, Float, Choices, Bool,
                            MetadataCategory, Plugin)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 
@@ -32,7 +32,8 @@ plugin = Plugin(
 plugin.methods.register_function(
     function=q2_composition.add_pseudocount,
     inputs={'table': FeatureTable[Frequency]},
-    parameters={'pseudocount': Int},
+    parameters={'pseudocount': Float,
+                'multiplicative': Bool},
     outputs=[('composition_table', FeatureTable[Composition])],
     input_descriptions={
         'table': 'The feature table to which pseudocounts should be added.'
