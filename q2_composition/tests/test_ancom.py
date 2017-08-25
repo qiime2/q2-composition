@@ -105,9 +105,9 @@ class AncomTests(unittest.TestCase):
                           [9, 10, 9, 9, 9, 10],
                           [9, 12, 9, 9, 9, 11]],
                          index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
-                         columns=[1, 2, 3, 4, 5, 6]).T
+                         columns=['1', '2', '3', '4', '5', '6']).T
         c = qiime2.MetadataCategory(pd.Series([1, 0, 0, 0, 1, 0],
-                                    index=[6, 5, 4, 3, 2, 1]))
+                                    index=['6', '5', '4', '3', '2', '1']))
         ancom(self.results, t+1, c)
 
         index_fp = os.path.join(self.results, 'index.html')
