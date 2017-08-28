@@ -8,6 +8,7 @@
 
 import os
 import qiime2
+import q2templates
 import pandas as pd
 from skbio.stats.composition import ancom as skbio_ancom
 from skbio.stats.composition import clr
@@ -102,7 +103,8 @@ def ancom(output_dir: str,
         index_f.write('<html><body>\n')
         index_f.write('<h1>ANCOM statistical results</h1>\n')
         index_f.write('<a href="ancom.csv">Download as CSV</a><br>\n')
-        index_f.write(significant_features['W'].to_frame().to_html())
+        index_f.write(q2templates.df_to_html(
+            significant_features['W'].to_frame(), border=None, classes=None))
         if len(ancom_results) == 2:
             ancom_results[1].to_csv(os.path.join(output_dir,
                                                  'percent-abundances.csv'),
@@ -111,8 +113,9 @@ def ancom(output_dir: str,
                            'by group</h1>\n'))
             index_f.write(('<a href="percent-abundances.csv">'
                            'Download as CSV</a><br>\n'))
-            index_f.write(ancom_results[1]
-                          .loc[significant_features.index].to_html())
+            index_f.write(q2templates.df_to_html(
+                ancom_results[1].loc[significant_features.index],
+                border=None, classes=None))
         index_f.write(html)
         index_f.write('</body></html>\n')
 
