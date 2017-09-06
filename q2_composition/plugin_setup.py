@@ -47,7 +47,6 @@ plugin.methods.register_function(
     description="Increment all counts in table by pseudocount."
 )
 
-_ancom_statistical_tests = q2_composition._ancom.statistical_tests()
 _transform_functions = q2_composition._ancom.transform_functions()
 _difference_functions = q2_composition._ancom.difference_functions()
 
@@ -56,7 +55,6 @@ plugin.visualizers.register_function(
     inputs={'table': FeatureTable[Composition]},
     parameters={
         'metadata': MetadataCategory,
-        'statistical_test': Str % Choices(_ancom_statistical_tests),
         'transform_function': Str % Choices(_transform_functions),
         'difference_function': Str % Choices(_difference_functions)
     },
@@ -66,8 +64,6 @@ plugin.visualizers.register_function(
     parameter_descriptions={
             'metadata': ('The sample metadata category to test for '
                          'differential abundance across.'),
-            'statistical_test': ('The test to be applied to detect '
-                                 'differential abundance across groups.'),
             'transform_function': ('The method applied to transform feature '
                                    'values before generating volcano plots.'),
             'difference_function': 'The method applied to visualize fold '

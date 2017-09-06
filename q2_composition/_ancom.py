@@ -19,19 +19,7 @@ from bokeh.models import HoverTool
 from bokeh.resources import CDN
 
 from numpy import log, sqrt
-from scipy.stats import (f_oneway, kruskal, mannwhitneyu,
-                         wilcoxon, ttest_ind, ttest_rel, kstest, chisquare,
-                         friedmanchisquare)
-
-_sig_tests = {'f_oneway': f_oneway,
-              'kruskal': kruskal,
-              'mannwhitneyu': mannwhitneyu,
-              'wilcoxon': wilcoxon,
-              'ttest_ind': ttest_ind,
-              'ttest_rel': ttest_rel,
-              'kstest': kstest,
-              'chisquare': chisquare,
-              'friedmanchisquare': friedmanchisquare}
+from scipy.stats import f_oneway
 
 _difference_functions = {'mean_difference': lambda x, y: x.mean() - y.mean(),
                          'f_statistic': f_oneway}
@@ -39,10 +27,6 @@ _difference_functions = {'mean_difference': lambda x, y: x.mean() - y.mean(),
 _transform_functions = {'sqrt': sqrt,
                         'log': log,
                         'clr': clr}
-
-
-def statistical_tests():
-    return list(_sig_tests.keys())
 
 
 def difference_functions():
@@ -56,14 +40,10 @@ def transform_functions():
 def ancom(output_dir: str,
           table: pd.DataFrame,
           metadata: qiime2.MetadataCategory,
-          statistical_test: str = 'f_oneway',
           transform_function: str = 'clr',
           difference_function: str = None) -> None:
 
     index_fp = os.path.join(output_dir, 'index.html')
-
-    if statistical_test not in statistical_tests():
-        raise ValueError("Unknown statistical test: %s" % statistical_test)
 
     metadata_series = metadata.to_series()
     metadata_series = metadata_series.loc[table.index]
@@ -75,10 +55,9 @@ def ancom(output_dir: str,
                          'these samples, or the samples need to be removed '
                          'from the table. %s' % missing_data_sids)
 
-    statistical_test = _sig_tests[statistical_test]
     ancom_results = skbio_ancom(table,
                                 metadata_series,
-                                significance_test=statistical_test)
+                                significance_test=f_oneway)
     # scikit-bio 0.4.2 returns a single tuple from ancom, and scikit-bio 0.5.0
     # returns two tuples. We want to support both scikit-bio versions, so we
     # tuplize ancom_result to support both. Similarly, the "reject" column
