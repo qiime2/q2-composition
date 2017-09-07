@@ -115,6 +115,34 @@ class AncomTests(unittest.TestCase):
             html = fh.read()
             self.assertIn('<th>O7</th>', html)
 
+    def test_ancom_no_volcano_plot(self):
+        t = pd.DataFrame([[1, 1], [1, 1], [1, 1], [1, 1]],
+                         index=['S1', 'S2', 'S3', 'S4'], columns=['O1', 'O2'])
+        c = qiime2.MetadataCategory(
+                pd.Series([0, 0, 1, 2], index=['S1', 'S2', 'S3', 'S4']))
+        ancom(self.results, t, c)
+
+        index_fp = os.path.join(self.results, 'index.html')
+        self.assertTrue(os.path.exists(index_fp))
+        self.assertTrue(os.path.getsize(index_fp) > 0)
+        with open(index_fp) as fh:
+            f = fh.read()
+            self.assertTrue('Unable to generate volcano plot' in f)
+
+    def test_ancom_no_tables(self):
+        t = pd.DataFrame([[2, 1, 2], [2, 2, 2], [2, 2, 2]],
+                         index=['S1', 'S2', 'S3'], columns=['O1', 'O2', 'O3'])
+        c = qiime2.MetadataCategory(
+                pd.Series([0, 0, 1], index=['S1', 'S2', 'S3']))
+        ancom(self.results, t, c)
+
+        index_fp = os.path.join(self.results, 'index.html')
+        self.assertTrue(os.path.exists(index_fp))
+        self.assertTrue(os.path.getsize(index_fp) > 0)
+        with open(index_fp) as fh:
+            f = fh.read()
+            self.assertTrue('No significant features identified!' in f)
+
 
 if __name__ == "__main__":
     unittest.main()

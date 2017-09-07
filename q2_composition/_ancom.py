@@ -14,9 +14,9 @@ from skbio.stats.composition import ancom as skbio_ancom
 from skbio.stats.composition import clr
 
 from bokeh.plotting import figure, ColumnDataSource
-from bokeh.embed import file_html
+from bokeh.embed import components
 from bokeh.models import HoverTool
-from bokeh.resources import CDN
+from bokeh.resources import INLINE
 
 from numpy import log, sqrt
 from scipy.stats import (f_oneway, kruskal, mannwhitneyu,
@@ -98,13 +98,27 @@ def ancom(output_dir: str,
 
     significant_features = ancom_results[0][
         ancom_results[0]['Reject null hypothesis']]
+    significant_features_present = not significant_features.empty
+    insignificant_table = ('<table><tr><th></th><th>W</th></tr><tr>'
+                           '<td>No significant features identified!</td>'
+                           '<td>NA</td></tr></table>')
 
     with open(index_fp, 'w') as index_f:
-        index_f.write('<html><body>\n')
+        index_f.write('<html>\n')
+        if html is not None:
+            index_f.write('<head>\n')
+            index_f.write(INLINE.render())
+            index_f.write('</head>\n')
+        index_f.write('<body>\n')
         index_f.write('<h1>ANCOM statistical results</h1>\n')
-        index_f.write('<a href="ancom.csv">Download as CSV</a><br>\n')
-        index_f.write(q2templates.df_to_html(
-            significant_features['W'].to_frame(), border=None, classes=None))
+        index_f.write('<a href="ancom.csv">Download complete table as CSV</a>'
+                      '<br>\n')
+        if significant_features_present:
+            index_f.write(q2templates.df_to_html(
+                significant_features['W'].to_frame(), border=None,
+                classes=None))
+        else:
+            index_f.write(insignificant_table)
         if len(ancom_results) == 2:
             ancom_results[1].to_csv(os.path.join(output_dir,
                                                  'percent-abundances.csv'),
@@ -112,11 +126,19 @@ def ancom(output_dir: str,
             index_f.write(('<h1>Percentile abundances of features '
                            'by group</h1>\n'))
             index_f.write(('<a href="percent-abundances.csv">'
-                           'Download as CSV</a><br>\n'))
-            index_f.write(q2templates.df_to_html(
-                ancom_results[1].loc[significant_features.index],
-                border=None, classes=None))
-        index_f.write(html)
+                           'Download complete table as CSV</a><br>\n'))
+            if significant_features_present:
+                index_f.write(q2templates.df_to_html(
+                    ancom_results[1].loc[significant_features.index],
+                    border=None, classes=None))
+            else:
+                index_f.write(insignificant_table)
+        if html is not None:
+            index_f.write(html[1])
+            index_f.write(html[0])
+        else:
+            index_f.write('<p>Unable to generate volcano plot, please check '
+                          'the ANCOM statistical results (above).</p>\n')
         index_f.write('</body></html>\n')
 
 
@@ -148,26 +170,27 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
     # effectively doing a groupby operation wrt to the metadata
     fold_change = transformed_table.apply(diff_func, axis=0)
 
-    volcano_results = pd.DataFrame({transform_function_name: fold_change,
-                                    'W': ancom_results.W})
-    source = ColumnDataSource(volcano_results)
+    comps = None
+    if not pd.isnull(fold_change).all():
+        volcano_results = pd.DataFrame({transform_function_name: fold_change,
+                                        'W': ancom_results.W})
+        source = ColumnDataSource(volcano_results)
 
-    hover = HoverTool(
-            tooltips=[
-                ("Feature ID", "@index"),
-                ("(%s %s, W)" % (transform_function_name,
-                                 difference_function),
-                 "(@" + transform_function_name + ", @W)")
-            ]
-        )
+        hover = HoverTool(
+                tooltips=[
+                    ("Feature ID", "@index"),
+                    ("(%s %s, W)" % (transform_function_name,
+                                     difference_function),
+                     "(@" + transform_function_name + ", @W)")
+                ]
+            )
 
-    p = figure(plot_width=600, plot_height=600, tools=[hover],
-               title="ANCOM Volcano Plot")
-
-    p.circle(transform_function_name, 'W',
-             size=10, source=source)
-    p.xaxis.axis_label = "%s %s" % (transform_function_name,
-                                    difference_function)
-    p.yaxis.axis_label = 'W'
-
-    return file_html(p, CDN, 'volcano plot')
+        p = figure(plot_width=600, plot_height=600, tools=[hover],
+                   title="ANCOM Volcano Plot")
+        p.circle(transform_function_name, 'W',
+                 size=10, source=source)
+        p.xaxis.axis_label = "%s %s" % (transform_function_name,
+                                        difference_function)
+        p.yaxis.axis_label = 'W'
+        comps = components(p, INLINE)
+    return comps
