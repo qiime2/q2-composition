@@ -99,9 +99,7 @@ def ancom(output_dir: str,
     significant_features = ancom_results[0][
         ancom_results[0]['Reject null hypothesis']]
     significant_features_present = not significant_features.empty
-    insignificant_table = ('<table><tr><th></th><th>W</th></tr><tr>'
-                           '<td>No significant features identified!</td>'
-                           '<td>NA</td></tr></table>')
+    insignificant_div = ('<div>No significant features identified!</div>')
 
     with open(index_fp, 'w') as index_f:
         index_f.write('<html>\n')
@@ -118,7 +116,7 @@ def ancom(output_dir: str,
                 significant_features['W'].to_frame(), border=None,
                 classes=None))
         else:
-            index_f.write(insignificant_table)
+            index_f.write(insignificant_div)
         if len(ancom_results) == 2:
             ancom_results[1].to_csv(os.path.join(output_dir,
                                                  'percent-abundances.csv'),
@@ -132,7 +130,7 @@ def ancom(output_dir: str,
                     ancom_results[1].loc[significant_features.index],
                     border=None, classes=None))
             else:
-                index_f.write(insignificant_table)
+                index_f.write(insignificant_div)
         if html is not None:
             index_f.write(html[1])
             index_f.write(html[0])
