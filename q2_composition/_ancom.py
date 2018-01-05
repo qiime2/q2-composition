@@ -39,7 +39,7 @@ def transform_functions():
 
 def ancom(output_dir: str,
           table: pd.DataFrame,
-          metadata: qiime2.MetadataCategory,
+          metadata: qiime2.CategoricalMetadataColumn,
           transform_function: str = 'clr',
           difference_function: str = None) -> None:
 
@@ -50,7 +50,7 @@ def ancom(output_dir: str,
     if pd.isnull(metadata_series).any():
         missing_data_sids = metadata_series[pd.isnull(metadata_series)].index
         missing_data_sids = ', '.join(missing_data_sids)
-        raise ValueError('Metadata category is missing values for the '
+        raise ValueError('Metadata column is missing values for the '
                          'following samples. Values need to be added for '
                          'these samples, or the samples need to be removed '
                          'from the table. %s' % missing_data_sids)
