@@ -39,24 +39,23 @@ def transform_functions():
 
 def ancom(output_dir: str,
           table: pd.DataFrame,
-          metadata: qiime2.MetadataCategory,
+          metadata: qiime2.CategoricalMetadataColumn,
           transform_function: str = 'clr',
           difference_function: str = None) -> None:
 
     index_fp = os.path.join(output_dir, 'index.html')
 
-    metadata_series = metadata.to_series()
-    metadata_series = metadata_series.loc[table.index]
-    if pd.isnull(metadata_series).any():
-        missing_data_sids = metadata_series[pd.isnull(metadata_series)].index
-        missing_data_sids = ', '.join(missing_data_sids)
-        raise ValueError('Metadata category is missing values for the '
+    metadata = metadata.filter_ids(table.index)
+    if metadata.has_missing_values():
+        missing_data_sids = metadata.get_ids(where_values_missing=True)
+        missing_data_sids = ', '.join(sorted(missing_data_sids))
+        raise ValueError('Metadata column is missing values for the '
                          'following samples. Values need to be added for '
                          'these samples, or the samples need to be removed '
-                         'from the table. %s' % missing_data_sids)
+                         'from the table: %s' % missing_data_sids)
 
     ancom_results = skbio_ancom(table,
-                                metadata_series,
+                                metadata.to_series(),
                                 significance_test=f_oneway)
     # scikit-bio 0.4.2 returns a single tuple from ancom, and scikit-bio 0.5.0
     # returns two tuples. We want to support both scikit-bio versions, so we

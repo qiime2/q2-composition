@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Str, Int, Choices,
-                           MetadataCategory, Plugin)
+                           MetadataColumn, Categorical, Plugin)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 
 import q2_composition
@@ -54,7 +54,7 @@ plugin.visualizers.register_function(
     function=q2_composition.ancom,
     inputs={'table': FeatureTable[Composition]},
     parameters={
-        'metadata': MetadataCategory,
+        'metadata': MetadataColumn[Categorical],
         'transform_function': Str % Choices(_transform_functions),
         'difference_function': Str % Choices(_difference_functions)
     },
@@ -62,7 +62,7 @@ plugin.visualizers.register_function(
         'table': 'The feature table to be used for ANCOM computation.'
     },
     parameter_descriptions={
-            'metadata': ('The sample metadata category to test for '
+            'metadata': ('The categorical sample metadata column to test for '
                          'differential abundance across.'),
             'transform_function': ('The method applied to transform feature '
                                    'values before generating volcano plots.'),

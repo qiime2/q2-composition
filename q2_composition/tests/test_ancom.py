@@ -35,10 +35,11 @@ class AncomTests(unittest.TestCase):
                           [9, 12, 9, 9, 9, 11]],
                          index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
                          columns=['S1', 'S2', 'S3', 'S4', 'S5', 'S6']).T
-        c = qiime2.MetadataCategory(
-                pd.Series([0, 0, 0, 1, 1, 1],
-                          index=['S1', 'S2', 'S3',
-                                 'S4', 'S5', 'S6']))
+        c = qiime2.CategoricalMetadataColumn(
+                pd.Series(['a', 'a', 'a', '1', '1', '1'], name='n',
+                          index=pd.Index(['S1', 'S2', 'S3',
+                                          'S4', 'S5', 'S6'], name='id'))
+        )
         ancom(self.results, t+1, c)
 
         res = pd.read_csv(os.path.join(self.results, 'ancom.csv'),
@@ -75,10 +76,11 @@ class AncomTests(unittest.TestCase):
                           [9, 12, 9, 9, 9, 11]],
                          index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
                          columns=['S1', 'S2', 'S3', 'S4', 'S5', 'S6']).T
-        c = qiime2.MetadataCategory(
-                pd.Series([0, 0, 1, 1, 2, 2],
-                          index=['S1', 'S2', 'S3',
-                                 'S4', 'S5', 'S6']))
+        c = qiime2.CategoricalMetadataColumn(
+                pd.Series(['0', '0', '1', '1', '2', '2'], name='n',
+                          index=pd.Index(['S1', 'S2', 'S3',
+                                          'S4', 'S5', 'S6'], name='id'))
+        )
         ancom(self.results, t+1, c)
 
         res = pd.read_csv(os.path.join(self.results, 'ancom.csv'),
@@ -93,7 +95,7 @@ class AncomTests(unittest.TestCase):
 
     def test_ancom_integer_indices(self):
         # The idea behind this test is to use integer indices to confirm
-        # that the metadata category mapping is joining on labels, not on
+        # that the metadata column mapping is joining on labels, not on
         # indices. If it was joining on the index, the metadata would map in
         # the opposite direction, resulting in no significant results being
         # rendered to the output HTML table.
@@ -106,8 +108,11 @@ class AncomTests(unittest.TestCase):
                           [9, 12, 9, 9, 9, 11]],
                          index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
                          columns=['1', '2', '3', '4', '5', '6']).T
-        c = qiime2.MetadataCategory(pd.Series([1, 0, 0, 0, 1, 0],
-                                    index=['6', '5', '4', '3', '2', '1']))
+        c = qiime2.CategoricalMetadataColumn(
+            pd.Series(['1', '0', '0', '0', '1', '0'], name='n',
+                      index=pd.Index(['6', '5', '4', '3', '2', '1'],
+                                     name='id'))
+        )
         ancom(self.results, t+1, c)
 
         index_fp = os.path.join(self.results, 'index.html')
@@ -118,8 +123,10 @@ class AncomTests(unittest.TestCase):
     def test_ancom_no_volcano_plot(self):
         t = pd.DataFrame([[1, 1], [1, 1], [1, 1], [1, 1]],
                          index=['S1', 'S2', 'S3', 'S4'], columns=['O1', 'O2'])
-        c = qiime2.MetadataCategory(
-                pd.Series([0, 0, 1, 2], index=['S1', 'S2', 'S3', 'S4']))
+        c = qiime2.CategoricalMetadataColumn(
+            pd.Series(['0', '0', '1', '2'], name='n',
+                      index=pd.Index(['S1', 'S2', 'S3', 'S4'], name='id'))
+        )
         ancom(self.results, t, c)
 
         index_fp = os.path.join(self.results, 'index.html')
@@ -132,8 +139,10 @@ class AncomTests(unittest.TestCase):
     def test_ancom_no_tables(self):
         t = pd.DataFrame([[2, 1, 2], [2, 2, 2], [2, 2, 2]],
                          index=['S1', 'S2', 'S3'], columns=['O1', 'O2', 'O3'])
-        c = qiime2.MetadataCategory(
-                pd.Series([0, 0, 1], index=['S1', 'S2', 'S3']))
+        c = qiime2.CategoricalMetadataColumn(
+            pd.Series(['0', '0', '1'], name='n',
+                      index=pd.Index(['S1', 'S2', 'S3'], name='id'))
+        )
         ancom(self.results, t, c)
 
         index_fp = os.path.join(self.results, 'index.html')
