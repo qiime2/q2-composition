@@ -47,7 +47,7 @@ def ancom(output_dir: str,
 
     metadata = metadata.filter_ids(table.index)
     if metadata.has_missing_values():
-        missing_data_sids = metadata.get_ids(with_missing_value=True)
+        missing_data_sids = metadata.get_ids(where_values_missing=True)
         missing_data_sids = ', '.join(sorted(missing_data_sids))
         raise ValueError('Metadata column is missing values for the '
                          'following samples. Values need to be added for '
