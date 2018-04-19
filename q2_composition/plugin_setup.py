@@ -6,27 +6,22 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (Str, Int, Choices,
+from qiime2.plugin import (Str, Int, Choices, Citations,
                            MetadataColumn, Categorical, Plugin)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 
 import q2_composition
 
-_citation_text = ("Analysis of composition of microbiomes: a novel method for "
-                  "studying microbial composition.\nMandal S, Van Treuren W, "
-                  "White RA, Eggesbø M, Knight R, Peddada SD.\n"
-                  "Microb Ecol Health Dis. 2015 May 29;26:27663. doi: "
-                  "10.3402/mehd.v26.27663.")
 
 plugin = Plugin(
     name='composition',
     version=q2_composition.__version__,
     website='https://github.com/qiime2/q2-composition',
-    citation_text=_citation_text,
     package='q2_composition',
     description=('This QIIME 2 plugin supports methods for '
                  'compositional data analysis.'),
-    short_description='Plugin for compositional data analysis.'
+    short_description='Plugin for compositional data analysis.',
+    citations=Citations.load('citations.bib', package='q2_composition')
 )
 
 plugin.methods.register_function(
