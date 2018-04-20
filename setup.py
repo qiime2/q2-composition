@@ -25,5 +25,8 @@ setup(
         'qiime2.plugins':
         ['q2-composition=q2_composition.plugin_setup:plugin']
     },
+    package_data={
+        'q2_composition': ['citations.bib']
+    },
     zip_safe=False,
 )
