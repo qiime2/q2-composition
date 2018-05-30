@@ -125,7 +125,8 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
-    transformed_table = table.apply(transform_function, axis=1)
+    transformed_table = table.apply(
+        transform_function, axis=1, reduce=False, result_type='expand')
 
     # set default for difference_function
     if difference_function is None:
@@ -144,7 +145,7 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
             return args
 
     # effectively doing a groupby operation wrt to the metadata
-    fold_change = transformed_table.apply(diff_func)
+    fold_change = transformed_table.apply(diff_func, axis=0)
 
     comps = None
     if not pd.isnull(fold_change).all():
