@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import json
 import os
 import pkg_resources
 from distutils.dir_util import copy_tree
@@ -81,7 +82,8 @@ def vega_ancom(output_dir: str,
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
-    transformed_table = table.apply(transform_function, axis=1)
+    transformed_table = table.apply(transform_function, axis=1,
+                                    result_type='broadcast')
 
     if difference_function is None:
         if len(cats) == 2:
@@ -102,10 +104,46 @@ def vega_ancom(output_dir: str,
     if not pd.isnull(fold_change).all():
         volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                         'W': ancom_results[0].W})
+        volcano_results = volcano_results.reset_index(drop=False)
 
-        # TODO: Add Vega spec!
-        print(volcano_results)
-        context['vega_spec'] = volcano_results.to_dict(orient='records')
+        spec = {
+            '$schema': 'https://vega.github.io/schema/vega/v3.json',
+            'width': 300,
+            'height': 300,
+            'data': [
+                {'name': 'values',
+                 'values': volcano_results.to_dict(orient='records')}],
+            'scales': [
+                {'name': 'xScale',
+                 'domain': {'data': 'values',
+                            'field': transform_function_name},
+                 'range': 'width'},
+                {'name': 'yScale',
+                 'domain': {'data': 'values', 'field': 'W'},
+                 'range': 'height'}],
+            'axes': [
+                {'scale': 'xScale', 'orient': 'bottom',
+                 'title': transform_function_name},
+                {'scale': 'yScale', 'orient': 'left', 'title': 'W'}],
+            'marks': [
+              {'type': 'symbol',
+               'from': {'data': 'values'},
+               'encode': {
+                   'hover': {
+                       'fill': {'value': '#FF0000'},
+                       'opacity': {'value': 1}},
+                   'enter': {
+                       'x': {'scale': 'xScale',
+                             'field': transform_function_name},
+                       'y': {'scale': 'yScale', 'field': 'W'}},
+                   'update': {
+                       'fill': {'value': 'black'},
+                       'opacity': {'value': 0.3},
+                       'tooltip': {
+                           'signal': "{{'title': datum['index'], '{0}': "
+                                     "datum['{0}'], 'W': datum['W']}}".format(
+                                         transform_function_name)}}}}]}
+        context['vega_spec'] = json.dumps(spec)
 
     copy_tree(os.path.join(TEMPLATES, 'ancom'), output_dir)
     ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.tsv'),
@@ -228,15 +266,13 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
             return args
 
     # effectively doing a groupby operation wrt to the metadata
-    print(transformed_table.index)
     fold_change = transformed_table.apply(diff_func, axis=0)
-    print(fold_change.index)
-    print(ancom_results.index)
 
     comps = None
     if not pd.isnull(fold_change).all():
         volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                         'W': ancom_results.W})
+        print(volcano_results)
         source = ColumnDataSource(volcano_results)
 
         hover = HoverTool(
