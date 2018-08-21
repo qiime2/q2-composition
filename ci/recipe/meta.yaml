@@ -24,7 +24,7 @@ requirements:
     - bokeh
     - biom-format >=2.1.5,<2.2.0
     - scipy
-    - pandas >=0.23.0
+    - pandas <0.23.0
     - qiime2 {{ release }}.*
     - q2templates {{ release }}.*
     - q2-types {{ release }}.*
