@@ -125,8 +125,11 @@ def _volcanoplot(output_dir, table, metadata, ancom_results,
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
+
+    # broadcast is deprecated in pandas>=0.23 and should be replaced for
+    # result_type='expand'
     transformed_table = table.apply(
-        transform_function, axis=1, reduce=False, result_type='expand')
+        transform_function, axis=1, reduce=False, broadcast=False)
 
     # set default for difference_function
     if difference_function is None:
