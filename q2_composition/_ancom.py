@@ -82,8 +82,10 @@ def vega_ancom(output_dir: str,
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
-    transformed_table = table.apply(transform_function, axis=1,
-                                    result_type='broadcast')
+    # broadcast is deprecated in pandas>=0.23 and should be replaced for
+    # result_type='broadcast'
+    transformed_table = table.apply(
+        transform_function, axis=1, broadcast=True)
 
     if difference_function is None:
         if len(cats) == 2:
