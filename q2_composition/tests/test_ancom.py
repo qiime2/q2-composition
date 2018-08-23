@@ -6,24 +6,20 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import qiime2
-from q2_composition import ancom
 import unittest
+import os
+
 import pandas.util.testing as pdt
 import numpy as np
 import pandas as pd
-import os
-import shutil
+
+import qiime2
+from qiime2.plugin.testing import TestPluginBase
+from q2_composition import vega_ancom
 
 
-class AncomTests(unittest.TestCase):
-
-    def setUp(self):
-        self.results = "results"
-        os.mkdir(self.results)
-
-    def tearDown(self):
-        shutil.rmtree(self.results)
+class AncomTests(TestPluginBase):
+    package = 'q2_composition.tests'
 
     def test_ancom(self):
         t = pd.DataFrame([[9, 9, 9, 19, 19, 19],
@@ -40,10 +36,10 @@ class AncomTests(unittest.TestCase):
                           index=pd.Index(['S1', 'S2', 'S3',
                                           'S4', 'S5', 'S6'], name='id'))
         )
-        ancom(self.results, t+1, c)
+        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
-        res = pd.read_csv(os.path.join(self.results, 'ancom.csv'),
-                          index_col=0)
+        res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
+                          index_col=0, sep='\t')
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 2, 2, 2, 2, 2]),
              'Reject null hypothesis': np.array([True, True, False, False,
@@ -52,13 +48,13 @@ class AncomTests(unittest.TestCase):
             index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],)
         pdt.assert_frame_equal(res, exp)
 
-        index_fp = os.path.join(self.results, 'index.html')
+        index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
         self.assertTrue(os.path.getsize(index_fp) > 0)
 
-        csv_fp = os.path.join(self.results, 'percent-abundances.csv')
-        self.assertTrue(os.path.exists(csv_fp))
-        self.assertTrue(os.path.getsize(csv_fp) > 0)
+        tsv_fp = os.path.join(self.temp_dir.name, 'percent-abundances.tsv')
+        self.assertTrue(os.path.exists(tsv_fp))
+        self.assertTrue(os.path.getsize(tsv_fp) > 0)
 
         with open(index_fp, 'r') as fh:
             html = fh.read()
@@ -81,10 +77,10 @@ class AncomTests(unittest.TestCase):
                           index=pd.Index(['S1', 'S2', 'S3',
                                           'S4', 'S5', 'S6'], name='id'))
         )
-        ancom(self.results, t+1, c)
+        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
-        res = pd.read_csv(os.path.join(self.results, 'ancom.csv'),
-                          index_col=0)
+        res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
+                          index_col=0, sep='\t')
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 3, 3, 2, 2, 2]),
              'Reject null hypothesis': np.array([True, True, False, False,
@@ -113,9 +109,9 @@ class AncomTests(unittest.TestCase):
                       index=pd.Index(['6', '5', '4', '3', '2', '1'],
                                      name='id'))
         )
-        ancom(self.results, t+1, c)
+        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
-        index_fp = os.path.join(self.results, 'index.html')
+        index_fp = os.path.join(self.temp_dir.name, 'index.html')
         with open(index_fp, 'r') as fh:
             html = fh.read()
             self.assertIn('<th>O7</th>', html)
@@ -127,9 +123,9 @@ class AncomTests(unittest.TestCase):
             pd.Series(['0', '0', '1', '2'], name='n',
                       index=pd.Index(['S1', 'S2', 'S3', 'S4'], name='id'))
         )
-        ancom(self.results, t, c)
+        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
-        index_fp = os.path.join(self.results, 'index.html')
+        index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
         self.assertTrue(os.path.getsize(index_fp) > 0)
         with open(index_fp) as fh:
@@ -143,14 +139,14 @@ class AncomTests(unittest.TestCase):
             pd.Series(['0', '0', '1'], name='n',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         )
-        ancom(self.results, t, c)
+        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
-        index_fp = os.path.join(self.results, 'index.html')
+        index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
         self.assertTrue(os.path.getsize(index_fp) > 0)
         with open(index_fp) as fh:
             f = fh.read()
-            self.assertTrue('No significant features identified!' in f)
+            self.assertTrue('No significant features found' in f)
 
 
 if __name__ == "__main__":

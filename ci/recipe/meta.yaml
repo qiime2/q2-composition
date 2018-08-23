@@ -21,7 +21,6 @@ requirements:
     - python 3.5*
     - setuptools
     - scikit-bio
-    - bokeh
     - biom-format >=2.1.5,<2.2.0
     - scipy
     - pandas <0.23.0

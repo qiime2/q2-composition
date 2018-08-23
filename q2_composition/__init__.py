@@ -7,11 +7,11 @@
 # ----------------------------------------------------------------------------
 
 from ._impute import add_pseudocount
-from ._ancom import vega_ancom, ancom
+from ._ancom import vega_ancom
 from ._version import get_versions
 
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['add_pseudocount', 'vega_ancom', 'ancom']
+__all__ = ['add_pseudocount', 'vega_ancom']

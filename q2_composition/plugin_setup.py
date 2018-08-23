@@ -69,28 +69,3 @@ plugin.visualizers.register_function(
                  "identify features that are differentially abundant across "
                  "groups.")
 )
-
-plugin.visualizers.register_function(
-    function=q2_composition.ancom,
-    inputs={'table': FeatureTable[Composition]},
-    parameters={
-        'metadata': MetadataColumn[Categorical],
-        'transform_function': Str % Choices(_transform_functions),
-        'difference_function': Str % Choices(_difference_functions)
-    },
-    input_descriptions={
-        'table': 'The feature table to be used for ANCOM computation.'
-    },
-    parameter_descriptions={
-            'metadata': ('The categorical sample metadata column to test for '
-                         'differential abundance across.'),
-            'transform_function': ('The method applied to transform feature '
-                                   'values before generating volcano plots.'),
-            'difference_function': 'The method applied to visualize fold '
-                                   'difference in feature abundances across '
-                                   'groups for volcano plots.'},
-    name='Apply ANCOM to identify features that differ in abundance.',
-    description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
-                 "identify features that are differentially abundant across "
-                 "groups.")
-)
