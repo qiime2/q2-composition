@@ -104,7 +104,7 @@ def ancom(output_dir: str,
         volcano_results = volcano_results.reset_index(drop=False)
 
         spec = {
-            '$schema': 'https://vega.github.io/schema/vega/v3.json',
+            '$schema': 'https://vega.github.io/schema/vega/v4.json',
             'width': 300,
             'height': 300,
             'data': [
