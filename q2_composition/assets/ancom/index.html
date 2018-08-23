@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block head %}
- {# TODO: Update vega to 4.1.0 #}
   <script src="js/vega.min.js"></script>
   <script src="js/vega-embed.min.js"></script>
   <link rel="stylesheet" type="text/css" href="css/spinkit.css">
@@ -111,10 +110,6 @@
         e.children(form_el).addClass('form-control');
       }
     }
-
-    // Configuring Vega-generated bound HTML elements is less than ideal, so we
-    // do some manual cleanup here, dynamically. Order matters here.
-    // cleanupEl('#group-column', 'Group column', 'select');
   });
 </script>
 {% endif %}
