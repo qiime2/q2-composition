@@ -15,7 +15,7 @@ import pandas as pd
 
 import qiime2
 from qiime2.plugin.testing import TestPluginBase
-from q2_composition import vega_ancom
+from q2_composition import ancom
 
 
 class AncomTests(TestPluginBase):
@@ -36,7 +36,7 @@ class AncomTests(TestPluginBase):
                           index=pd.Index(['S1', 'S2', 'S3',
                                           'S4', 'S5', 'S6'], name='id'))
         )
-        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
                           index_col=0, sep='\t')
@@ -77,7 +77,7 @@ class AncomTests(TestPluginBase):
                           index=pd.Index(['S1', 'S2', 'S3',
                                           'S4', 'S5', 'S6'], name='id'))
         )
-        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
                           index_col=0, sep='\t')
@@ -109,7 +109,7 @@ class AncomTests(TestPluginBase):
                       index=pd.Index(['6', '5', '4', '3', '2', '1'],
                                      name='id'))
         )
-        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         index_fp = os.path.join(self.temp_dir.name, 'index.html')
         with open(index_fp, 'r') as fh:
@@ -123,7 +123,7 @@ class AncomTests(TestPluginBase):
             pd.Series(['0', '0', '1', '2'], name='n',
                       index=pd.Index(['S1', 'S2', 'S3', 'S4'], name='id'))
         )
-        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
@@ -139,7 +139,7 @@ class AncomTests(TestPluginBase):
             pd.Series(['0', '0', '1'], name='n',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         )
-        vega_ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))

@@ -46,7 +46,7 @@ _transform_functions = q2_composition._ancom.transform_functions()
 _difference_functions = q2_composition._ancom.difference_functions()
 
 plugin.visualizers.register_function(
-    function=q2_composition.vega_ancom,
+    function=q2_composition.ancom,
     inputs={'table': FeatureTable[Composition]},
     parameters={
         'metadata': MetadataColumn[Categorical],

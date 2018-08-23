@@ -38,11 +38,11 @@ def transform_functions():
     return list(_transform_functions.keys())
 
 
-def vega_ancom(output_dir: str,
-               table: pd.DataFrame,
-               metadata: qiime2.CategoricalMetadataColumn,
-               transform_function: str = 'clr',
-               difference_function: str = None) -> None:
+def ancom(output_dir: str,
+          table: pd.DataFrame,
+          metadata: qiime2.CategoricalMetadataColumn,
+          transform_function: str = 'clr',
+          difference_function: str = None) -> None:
     metadata = metadata.filter_ids(table.index)
     if metadata.has_missing_values():
         missing_data_sids = metadata.get_ids(where_values_missing=True)
