@@ -26,7 +26,13 @@ setup(
         ['q2-composition=q2_composition.plugin_setup:plugin']
     },
     package_data={
-        'q2_composition': ['citations.bib']
+        'q2_composition': [
+            'citations.bib',
+            'assets/ancom/index.html',
+            'assets/ancom/css/*',
+            'assets/ancom/js/*',
+            'assets/ancom/licenses/*',
+        ]
     },
     zip_safe=False,
 )
