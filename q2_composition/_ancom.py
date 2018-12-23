@@ -10,6 +10,8 @@ import json
 import os
 import pkg_resources
 from distutils.dir_util import copy_tree
+import subprocess
+import tempfile
 
 import qiime2
 import q2templates
@@ -38,7 +40,78 @@ def transform_functions():
     return list(_transform_functions.keys())
 
 
+def run_commands(cmds, verbose=True):
+    if verbose:
+        print("Running external command line application(s). This may print "
+              "messages to stdout and/or stderr.")
+        print("The command(s) being run are below. These commands cannot "
+              "be manually re-run as they will depend on temporary files that "
+              "no longer exist.")
+    for cmd in cmds:
+        if verbose:
+            print("\nCommand:", end=' ')
+            print(" ".join(cmd), end='\n\n')
+        subprocess.run(cmd, check=True)
+
+
 def ancom(output_dir: str,
+          table: pd.DataFrame,
+          metadata: qiime2.Metadata,
+          main_variable: str,
+          adjusted_formula: str='None',
+          state: str='None',
+          random_formula: str=None,
+          multiple_test_correction: str='conservative',
+          alpha: float=0.05,
+          max_sparsity: float=0.9) -> None:
+    # TODO: validate metadata:
+    # main_variable, adjusted_formula, state, random_formula
+
+    with tempfile.TemporaryDirectory() as temp_dir_name:
+        zeroes_dist_fp = os.path.join(temp_dir_name, 'zeroes_dist.tsv')
+        w_frame_fp = os.path.join(temp_dir_name, 'w_frame.tsv')
+        feature_table_fp = os.path.join(temp_dir_name, 'table.tsv')
+        table.to_csv(feature_table_fp, sep='\t')
+
+        if adjusted_formula is not None:
+            adjusted = 'True'
+        else:
+            adjusted = 'False'
+
+        if state is not None:
+            longitudinal = 'True'
+        else:
+            longitudinal = 'False'
+
+        if multiple_test_correction == 'max':
+            multiple_test_correction = '1'
+        elif multiple_test_correction == 'mod':
+            multiple_test_correction = '2'
+        else: # otherwise uncorrected
+            multiple_test_correction = '3'
+
+        cmd = ['ancom.r',
+               feature_table_fp,
+               Vardat,
+               adjusted,
+               longitudinal,
+               main_variable,
+               adjusted_formula,
+               state,
+               longitudinal,
+               random_formula,
+               multiple_test_correction,
+               alpha,
+               max_sparsity,
+               zeroes_dist_fp,
+               w_frame_fp]
+        run_commands([cmd])
+
+        zeroes_dist = pd.read_csv(zeroes_dist_fp, sep='\t')
+        w_frame = pd.read_csv(w_frame_fp, sep='\t')
+
+
+def old_ancom(output_dir: str,
           table: pd.DataFrame,
           metadata: qiime2.CategoricalMetadataColumn,
           transform_function: str = 'clr',

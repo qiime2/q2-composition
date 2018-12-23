@@ -28,6 +28,7 @@ setup(
     package_data={
         'q2_composition': [
             'citations.bib',
+            'assets/ancom/ancom.r',
             'assets/ancom/index.html',
             'assets/ancom/css/*',
             'assets/ancom/js/*',
