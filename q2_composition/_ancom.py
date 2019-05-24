@@ -133,10 +133,10 @@ def ancom(output_dir: str,
                                      "datum['{0}'], 'W': datum['W']}}".format(
                                          transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
-
+        volcano_results.to_csv(os.path.join(output_dir, 'data.tsv'),
+                               header=True, index=True, sep='\t')
     copy_tree(os.path.join(TEMPLATES, 'ancom'), output_dir)
-    volcano_results.to_csv(os.path.join(output_dir, 'data.tsv'),
-                           header=True, index=True, sep='\t')
+
     ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.tsv'),
                             header=True, index=True, sep='\t')
     ancom_results[1].to_csv(os.path.join(output_dir,
