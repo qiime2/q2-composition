@@ -52,6 +52,10 @@ class AncomTests(TestPluginBase):
         self.assertTrue(os.path.exists(index_fp))
         self.assertTrue(os.path.getsize(index_fp) > 0)
 
+        data_fp = os.path.join(self.temp_dir.name, 'data.tsv')
+        self.assertTrue(os.path.exists(data_fp))
+        self.assertTrue(os.path.getsize(data_fp) > 0)
+
         tsv_fp = os.path.join(self.temp_dir.name, 'percent-abundances.tsv')
         self.assertTrue(os.path.exists(tsv_fp))
         self.assertTrue(os.path.getsize(tsv_fp) > 0)
@@ -131,6 +135,9 @@ class AncomTests(TestPluginBase):
         with open(index_fp) as fh:
             f = fh.read()
             self.assertTrue('Unable to generate volcano plot' in f)
+
+        data_fp = os.path.join(self.temp_dir.name, 'data.tsv')
+        self.assertFalse(os.path.exists(data_fp))
 
     def test_ancom_no_tables(self):
         t = pd.DataFrame([[2, 1, 2], [2, 2, 2], [2, 2, 2]],

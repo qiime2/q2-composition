@@ -93,6 +93,9 @@ def ancom(output_dir: str,
     if not pd.isnull(fold_change).all():
         volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                         'W': ancom_results[0].W})
+        volcano_results.index.name = 'id'
+        volcano_results.to_csv(os.path.join(output_dir, 'data.tsv'),
+                               header=True, index=True, sep='\t')
         volcano_results = volcano_results.reset_index(drop=False)
 
         spec = {
@@ -133,10 +136,8 @@ def ancom(output_dir: str,
                                      "datum['{0}'], 'W': datum['W']}}".format(
                                          transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
-        volcano_results.to_csv(os.path.join(output_dir, 'data.tsv'),
-                               header=True, index=True, sep='\t')
-    copy_tree(os.path.join(TEMPLATES, 'ancom'), output_dir)
 
+    copy_tree(os.path.join(TEMPLATES, 'ancom'), output_dir)
     ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.tsv'),
                             header=True, index=True, sep='\t')
     ancom_results[1].to_csv(os.path.join(output_dir,
