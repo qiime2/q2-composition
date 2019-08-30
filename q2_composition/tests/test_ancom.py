@@ -15,13 +15,13 @@ import pandas as pd
 
 import qiime2
 from qiime2.plugin.testing import TestPluginBase
-from q2_composition import ancom
+from q2_composition import ancom1
 
 
-class AncomTests(TestPluginBase):
+class Ancom1Tests(TestPluginBase):
     package = 'q2_composition.tests'
 
-    def test_ancom(self):
+    def test_ancom1(self):
         t = pd.DataFrame([[9, 9, 9, 19, 19, 19],
                           [10, 11, 10, 20, 20, 20],
                           [9, 10, 9, 9, 10, 9],
@@ -36,7 +36,7 @@ class AncomTests(TestPluginBase):
                           index=pd.Index(['S1', 'S2', 'S3',
                                           'S4', 'S5', 'S6'], name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom1(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
                           index_col=0, sep='\t')
@@ -66,7 +66,7 @@ class AncomTests(TestPluginBase):
             self.assertIn('<th>Group</th>', html)
             self.assertIn('<th>O1</th>', html)
 
-    def test_ancom_3class_anova(self):
+    def test_ancom1_3class_anova(self):
         t = pd.DataFrame([[9, 9, 19, 19, 29, 29],
                           [10, 11, 20, 20, 29, 28],
                           [9, 10, 9, 9, 10, 9],
@@ -81,7 +81,7 @@ class AncomTests(TestPluginBase):
                           index=pd.Index(['S1', 'S2', 'S3',
                                           'S4', 'S5', 'S6'], name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom1(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
                           index_col=0, sep='\t')
@@ -93,7 +93,7 @@ class AncomTests(TestPluginBase):
             index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],)
         pdt.assert_frame_equal(res, exp)
 
-    def test_ancom_integer_indices(self):
+    def test_ancom1_integer_indices(self):
         # The idea behind this test is to use integer indices to confirm
         # that the metadata column mapping is joining on labels, not on
         # indices. If it was joining on the index, the metadata would map in
@@ -113,21 +113,21 @@ class AncomTests(TestPluginBase):
                       index=pd.Index(['6', '5', '4', '3', '2', '1'],
                                      name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom1(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         index_fp = os.path.join(self.temp_dir.name, 'index.html')
         with open(index_fp, 'r') as fh:
             html = fh.read()
             self.assertIn('<th>O7</th>', html)
 
-    def test_ancom_no_volcano_plot(self):
+    def test_ancom1_no_volcano_plot(self):
         t = pd.DataFrame([[1, 1], [1, 1], [1, 1], [1, 1]],
                          index=['S1', 'S2', 'S3', 'S4'], columns=['O1', 'O2'])
         c = qiime2.CategoricalMetadataColumn(
             pd.Series(['0', '0', '1', '2'], name='n',
                       index=pd.Index(['S1', 'S2', 'S3', 'S4'], name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom1(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
@@ -139,14 +139,14 @@ class AncomTests(TestPluginBase):
         data_fp = os.path.join(self.temp_dir.name, 'data.tsv')
         self.assertFalse(os.path.exists(data_fp))
 
-    def test_ancom_no_tables(self):
+    def test_ancom1_no_tables(self):
         t = pd.DataFrame([[2, 1, 2], [2, 2, 2], [2, 2, 2]],
                          index=['S1', 'S2', 'S3'], columns=['O1', 'O2', 'O3'])
         c = qiime2.CategoricalMetadataColumn(
             pd.Series(['0', '0', '1'], name='n',
                       index=pd.Index(['S1', 'S2', 'S3'], name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+        ancom1(output_dir=self.temp_dir.name, table=t+1, metadata=c)
 
         index_fp = os.path.join(self.temp_dir.name, 'index.html')
         self.assertTrue(os.path.exists(index_fp))
