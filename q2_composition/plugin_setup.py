@@ -6,7 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (Str, Int, Choices, Citations,
+from qiime2.plugin import (Str, Int, Choices, Citations, Metadata, Range,
                            MetadataColumn, Categorical, Plugin)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 
@@ -45,8 +45,71 @@ plugin.methods.register_function(
 _transform_functions = q2_composition._ancom.transform_functions()
 _difference_functions = q2_composition._ancom.difference_functions()
 
+          main_variable: str,
+          adjusted_formula: str = 'NULL',
+          random_formula: str = None,
+          alpha: float = 0.05,
+          max_sparsity: float = 0.9,
+          p_adjust_method: str = 'BH') -> None:
+
 plugin.visualizers.register_function(
     function=q2_composition.ancom,
+    inputs={'table': FeatureTable[Composition]},
+    parameters={
+        'metadata': Metadata,
+        'main_variable': Str,
+        'adjusted_formula': Str,
+        'random_formula': Str,
+        'alpha': Float % Range(0.0, 1.0),
+        'max_sparsity': Float % Range(0.0, 1.0),
+        'p_adjust_method': Str % Choices(["holm", "hochberg", "hommel",
+                                          "bonferroni", "BH", "BY", "fdr",
+                                          "none"])
+    },
+    input_descriptions={
+        'table': 'The feature table to be used for ANCOM computation.'
+    },
+    parameter_descriptions={
+        'metadata': ('The categorical sample metadata column to test for '
+                     'differential abundance across.'),
+        'main_variable': 'Main variable of interest for differential '
+                         'abundance testing.',
+        'adjusted_formula': 'Covariate formula used to adjust ANCOM test. If '
+                            'the metadata contains cross-sectional data, '
+                            'an ANOVA test will be used as the distance '
+                            'function. If the metadata contain repeated '
+                            'measurements for individual sites/subjects, as '
+                            'specified by the "random_formula" parameter, a '
+                            'linear mixed effects model will be used as the '
+                            'distance function.',
+        'random_formula': 'Mixed effects model random effects formula. See '
+                          'R package nlme for more details. Examples:\n'
+                          'Set a random intercept for each subject according '
+                          'to metadata column "studyid": "~ 1 | studyid"\n'
+                          'nSet a random intercept and slope for each subject '
+                          'according to metadata columns "studyid" and '
+                          '"month": "~ month | studyid"',
+        'alpha': 'Level of significance.',
+        'max_sparsity': 'Features with a proportion of zero values greater '
+                        'than max_sparsity will be filtered prior to running '
+                        'the ANCOM test.',
+        'p_adjust_method': 'Method to use for adjusing p-values for multiple '
+                           'comparisons. See p.adjust for more details.'},
+    name='Apply ANCOM 2.0 to identify features that differ in abundance.',
+    description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
+                 "identify features that are differentially abundant across "
+                 "groups distinguished by 'main_variable'. Four different "
+                 "difference functions may be used by this test, depending "
+                 "on the nature of the input data and parameters used:\n"
+                 "adjusted_formula  random_formula   Test\n"
+                 "      False           False        Wilcoxon\n"
+                 "      True            False        ANOVA\n"
+                 "      False           True         Mixed-Effects model\n"
+                 "      True            True         Mixed-Effects + ANOVA")
+)
+
+plugin.visualizers.register_function(
+    function=q2_composition.ancom1,
     inputs={'table': FeatureTable[Composition]},
     parameters={
         'metadata': MetadataColumn[Categorical],

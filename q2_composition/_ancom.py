@@ -58,64 +58,42 @@ def ancom(output_dir: str,
           table: pd.DataFrame,
           metadata: qiime2.Metadata,
           main_variable: str,
-          adjusted_formula: str='None',
-          state: str='None',
-          random_formula: str=None,
-          multiple_test_correction: str='conservative',
-          alpha: float=0.05,
-          max_sparsity: float=0.9) -> None:
+          adjusted_formula: str = None,
+          random_formula: str = None,
+          alpha: float = 0.05,
+          max_sparsity: float = 0.9,
+          p_adjust_method: str = 'BH') -> None:
     # TODO: validate metadata:
     # main_variable, adjusted_formula, state, random_formula
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
-        zeroes_dist_fp = os.path.join(temp_dir_name, 'zeroes_dist.tsv')
-        w_frame_fp = os.path.join(temp_dir_name, 'w_frame.tsv')
+        w_frame_fp = os.path.join(temp_dir_name, 'ancom_w_scores.tsv')
         feature_table_fp = os.path.join(temp_dir_name, 'table.tsv')
+        table.index.name = 'feature-id'
         table.to_csv(feature_table_fp, sep='\t')
+        metadata_fp = os.path.join(temp_dir_name, 'metadata.tsv')
+        metadata.save(metadata_fp)
 
-        if adjusted_formula is not None:
-            adjusted = 'True'
-        else:
-            adjusted = 'False'
-
-        if state is not None:
-            longitudinal = 'True'
-        else:
-            longitudinal = 'False'
-
-        if multiple_test_correction == 'max':
-            multiple_test_correction = '1'
-        elif multiple_test_correction == 'mod':
-            multiple_test_correction = '2'
-        else: # otherwise uncorrected
-            multiple_test_correction = '3'
-
-        cmd = ['ancom.r',
+        cmd = ['ancom.R',
                feature_table_fp,
-               Vardat,
-               adjusted,
-               longitudinal,
+               metadata_fp,
                main_variable,
-               adjusted_formula,
-               state,
-               longitudinal,
-               random_formula,
-               multiple_test_correction,
+               str(max_sparsity),
+               p_adjust_method,
                alpha,
-               max_sparsity,
-               zeroes_dist_fp,
+               str(adjusted_formula),
+               str(random_formula),
                w_frame_fp]
         run_commands([cmd])
 
-        zeroes_dist = pd.read_csv(zeroes_dist_fp, sep='\t')
         w_frame = pd.read_csv(w_frame_fp, sep='\t')
 
 
-def old_ancom(output_dir: str,
-          table: pd.DataFrame,
-          metadata: qiime2.CategoricalMetadataColumn,
-          transform_function: str = 'clr',
-          difference_function: str = None) -> None:
+def ancom1(output_dir: str,
+           table: pd.DataFrame,
+           metadata: qiime2.CategoricalMetadataColumn,
+           transform_function: str = 'clr',
+           difference_function: str = None) -> None:
     metadata = metadata.filter_ids(table.index)
     if metadata.has_missing_values():
         missing_data_sids = metadata.get_ids(where_values_missing=True)
