@@ -13,17 +13,16 @@ build:
   script: make install
 
 requirements:
-  build:
-    - python 3.5*
+  host:
+    - python {{ python }}
     - setuptools
 
   run:
-    - python 3.5*
-    - setuptools
+    - python {{ python }}
     - scikit-bio
     - biom-format >=2.1.5,<2.2.0
     - scipy
-    - pandas <0.23.0
+    - pandas >=0.23.0
     - qiime2 {{ release }}.*
     - q2templates {{ release }}.*
     - q2-types {{ release }}.*

@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2018, QIIME 2 development team.
+# Copyright (c) 2016-2019, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -10,7 +10,7 @@ import biom
 
 
 def add_pseudocount(table: biom.Table,
-                    pseudocount: int=1) -> biom.Table:
+                    pseudocount: int = 1) -> biom.Table:
     # This is ugly, and it requires a sparse and dense representation to
     # be in memory at the same time, but biom.Table.transform only operates
     # on non-zero values, so it isn't useful here (as we need to operate on

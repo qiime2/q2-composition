@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2018, QIIME 2 development team.
+# Copyright (c) 2016-2019, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -105,13 +105,7 @@ def ancom1(output_dir: str,
     ancom_results = skbio_ancom(table,
                                 metadata.to_series(),
                                 significance_test=f_oneway)
-    # scikit-bio 0.4.2 returns a single tuple from ancom, and scikit-bio 0.5.0
-    # returns two tuples. We want to support both scikit-bio versions, so we
-    # tuplize ancom_result to support both. Similarly, the "reject" column
-    # was renamed in scikit-bio 0.5.0, so we apply a rename here (which does
-    # nothing if a column called "reject" isn't found).
-    ancom_results = qiime2.core.util.tuplize(ancom_results)
-    ancom_results[0].sort_values(by='W', ascending=False)
+    ancom_results[0].sort_values(by='W', ascending=False, inplace=True)
     ancom_results[0].rename(columns={'reject': 'Reject null hypothesis'},
                             inplace=True)
     significant_features = ancom_results[0][
@@ -128,10 +122,8 @@ def ancom1(output_dir: str,
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
-    # broadcast is deprecated in pandas>=0.23 and should be replaced for
-    # result_type='broadcast'
     transformed_table = table.apply(
-        transform_function, axis=1, broadcast=True)
+        transform_function, axis=1, result_type='broadcast')
 
     if difference_function is None:
         if len(cats) == 2:
@@ -152,6 +144,9 @@ def ancom1(output_dir: str,
     if not pd.isnull(fold_change).all():
         volcano_results = pd.DataFrame({transform_function_name: fold_change,
                                         'W': ancom_results[0].W})
+        volcano_results.index.name = 'id'
+        volcano_results.to_csv(os.path.join(output_dir, 'data.tsv'),
+                               header=True, index=True, sep='\t')
         volcano_results = volcano_results.reset_index(drop=False)
 
         spec = {
