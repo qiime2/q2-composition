@@ -132,7 +132,7 @@ def ancom(output_dir: str,
                        'fill': {'value': 'black'},
                        'opacity': {'value': 0.3},
                        'tooltip': {
-                           'signal': "{{'title': datum['index'], '{0}': "
+                           'signal': "{{'title': datum['id'], '{0}': "
                                      "datum['{0}'], 'W': datum['W']}}".format(
                                          transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
