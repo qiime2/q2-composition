@@ -155,6 +155,26 @@ class AncomTests(TestPluginBase):
             f = fh.read()
             self.assertTrue('No significant features found' in f)
 
+    def test_ancom_zero_division(self):
+        t = pd.DataFrame([[10, 0], [11, 0], [12, 0], [13, 0],
+                          [1000, 10], [1000, 10]],
+                         index=['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
+                         columns=['O1', 'O2'])
+        c = qiime2.CategoricalMetadataColumn(
+            pd.Series(['0', '0', '1', '1', '2', '2'], name='n',
+                      index=pd.Index(['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
+                                     name='id'))
+        )
+
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c,
+              transform_function='log')
+
+        with open(os.path.join(self.temp_dir.name, 'index.html')) as fh:
+            f = fh.read()
+            self.assertFalse('Infinity' in f)
+            self.assertTrue(
+                'non-numeric results:\n    <strong>O2</strong>' in f)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -91,8 +91,14 @@ def ancom(output_dir: str,
     # effectively doing a groupby operation wrt to the metadata
     fold_change = transformed_table.apply(diff_func, axis=0)
     if not pd.isnull(fold_change).all():
+        pre_filtered_ids = set(fold_change.index)
+        with pd.option_context('mode.use_inf_as_na', True):
+            fold_change = fold_change.dropna(axis=0)
+        filtered_ids = pre_filtered_ids - set(fold_change.index)
+        filtered_ancom_results = ancom_results[0].drop(labels=filtered_ids)
+
         volcano_results = pd.DataFrame({transform_function_name: fold_change,
-                                        'W': ancom_results[0].W})
+                                        'W': filtered_ancom_results.W})
         volcano_results.index.name = 'id'
         volcano_results.to_csv(os.path.join(output_dir, 'data.tsv'),
                                header=True, index=True, sep='\t')
@@ -136,6 +142,7 @@ def ancom(output_dir: str,
                                      "datum['{0}'], 'W': datum['W']}}".format(
                                          transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
+        context['filtered_ids'] = ', '.join(sorted(filtered_ids))
 
     copy_tree(os.path.join(TEMPLATES, 'ancom'), output_dir)
     ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.tsv'),
