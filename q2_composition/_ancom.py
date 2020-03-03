@@ -142,7 +142,8 @@ def ancom(output_dir: str,
                                      "datum['{0}'], 'W': datum['W']}}".format(
                                          transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
-        context['filtered_ids'] = ', '.join(sorted(filtered_ids))
+        if filtered_ids:
+            context['filtered_ids'] = ', '.join(sorted(filtered_ids))
 
     copy_tree(os.path.join(TEMPLATES, 'ancom'), output_dir)
     ancom_results[0].to_csv(os.path.join(output_dir, 'ancom.tsv'),
