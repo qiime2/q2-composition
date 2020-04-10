@@ -7,6 +7,14 @@
 {% endblock %}
 
 {% block content %}
+{% if filtered_ids is defined %}
+<div class="row">
+  <p class="alert alert-warning col-md-12">
+    The following features have been omitted because they contained non-numeric results:
+    <strong>{{ filtered_ids }}</strong>
+  </p>
+</div>
+{% endif %}
 <div class="row">
   <div class="col-lg-8">
     <h3>ANCOM Volcano Plot</h3>
