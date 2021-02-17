@@ -1,6 +1,5 @@
-# q2_composition
+# q2-composition
 
-[![Build Status](https://travis-ci.org/qiime2/q2-composition.svg?branch=master)](https://travis-ci.org/qiime2/q2-composition)
-[![Coverage Status](https://coveralls.io/repos/github/qiime2/q2-composition/badge.svg?branch=master)](https://coveralls.io/github/qiime2/q2-composition?branch=master)
+![](https://github.com/qiime2/q2-composition/workflows/ci/badge.svg)
 
 This is a QIIME 2 plugin. For details on QIIME 2, see https://qiime2.org.
