@@ -47,4 +47,4 @@ jobs:
       with:
         package-name: q2-composition
         build-target: staging
-        additional-tests: py.test --pyargs q2_composition
+        additional-tests: py.test --pyargs q2_composition --capture=tee-sys
