@@ -52,3 +52,4 @@ jobs:
         package-name: q2-composition
         build-target: staging
         additional-tests: py.test --pyargs q2_composition
+        library-token: ${{ secrets.LIBRARY_TOKEN }}
