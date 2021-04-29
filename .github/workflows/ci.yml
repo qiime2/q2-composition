@@ -51,5 +51,5 @@ jobs:
       with:
         package-name: q2-composition
         build-target: tested
-        additional-tests: py.test --pyargs q2_composition
+        # additional-tests: py.test --pyargs q2_composition
         library-token: ${{ secrets.LIBRARY_TOKEN }}
