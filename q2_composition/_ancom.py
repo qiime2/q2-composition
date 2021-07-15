@@ -153,3 +153,7 @@ def ancom(output_dir: str,
                             header=True, index=True, sep='\t')
     index = os.path.join(TEMPLATES, 'ancom', 'index.html')
     q2templates.render(index, output_dir, context=context)
+
+
+def ancom_w(table: pd.DataFrame, metadata: qiime2.CategoricalMetadataColumn) -> pd.DataFrame:
+    pass

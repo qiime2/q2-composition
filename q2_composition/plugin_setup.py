@@ -9,6 +9,7 @@
 from qiime2.plugin import (Str, Int, Choices, Citations,
                            MetadataColumn, Categorical, Plugin)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
+from q2_types.feature_data import FeatureData, Differential
 
 import q2_composition
 
@@ -68,4 +69,23 @@ plugin.visualizers.register_function(
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
                  "identify features that are differentially abundant across "
                  "groups.")
+)
+
+plugin.methods.register_function(
+    function=q2_composition.ancom_w,
+    inputs={'table': FeatureTable[Composition]},
+    parameters={
+        'metadata': MetadataColumn[Categorical],
+    },
+    outputs=[('w_scores', FeatureData[Differential])],
+    input_descriptions={
+        'table': 'The feature table to be used for ANCOM computation to derive w-scores.'
+    },  
+    parameter_descriptions={
+            'metadata': ('The categorical sample metadata column to test for '
+                         'differential abundance across samples.')},
+    name="Apply ANCOM to derive feature w-scores from the sample groups.",
+    description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
+                 "identify features that are differentially abundant across "
+                 "groups and specifically return w-scores.")
 )
