@@ -156,4 +156,18 @@ def ancom(output_dir: str,
 
 
 def ancom_w(table: pd.DataFrame, metadata: qiime2.CategoricalMetadataColumn) -> pd.DataFrame:
-    pass
+    metadata = metadata.filter_ids(table.index)
+    if metadata.has_missing_values():
+        missing_data_sids = metadata.get_ids(where_values_missing=True)
+        missing_data_sids = ', '.join(sorted(missing_data_sids))
+        raise ValueError('Metadata column is missing values for the '
+                         'following samples. Values need to be added for '
+                         'these samples, or the samples need to be removed '
+                         'from the table: %s' % missing_data_sids)
+    ancom_results = skbio_ancom(table,
+                                metadata.to_series(),
+                                significance_test=f_oneway)
+    ancom_results = ancom_results[0]
+    ancom_results.index.name="id"
+    ancom_results = ancom_results.drop(columns=["Reject null hypothesis"])
+    return ancom_results
