@@ -79,8 +79,9 @@ plugin.methods.register_function(
     },
     outputs=[('w_scores', FeatureData[Differential])],
     input_descriptions={
-        'table': 'The feature table to be used for ANCOM computation to derive w-scores.'
-    },  
+        'table': 'The feature table to be used for ANCOM computation to'
+                 ' derive w-scores.'
+    },
     parameter_descriptions={
             'metadata': ('The categorical sample metadata column to test for '
                          'differential abundance across samples.')},

@@ -155,7 +155,8 @@ def ancom(output_dir: str,
     q2templates.render(index, output_dir, context=context)
 
 
-def ancom_w(table: pd.DataFrame, metadata: qiime2.CategoricalMetadataColumn) -> pd.DataFrame:
+def ancom_w(table: pd.DataFrame,
+            metadata: qiime2.CategoricalMetadataColumn) -> pd.DataFrame:
     metadata = metadata.filter_ids(table.index)
     if metadata.has_missing_values():
         missing_data_sids = metadata.get_ids(where_values_missing=True)
@@ -168,6 +169,6 @@ def ancom_w(table: pd.DataFrame, metadata: qiime2.CategoricalMetadataColumn) -> 
                                 metadata.to_series(),
                                 significance_test=f_oneway)
     ancom_results = ancom_results[0]
-    ancom_results.index.name="id"
+    ancom_results.index.name = "id"
     ancom_results = ancom_results.drop(columns=["Reject null hypothesis"])
     return ancom_results
