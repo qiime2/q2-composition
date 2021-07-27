@@ -174,48 +174,48 @@ class AncomTests(TestPluginBase):
             self.assertTrue(
                     'non-numeric results:\n    <strong>O2</strong>' in f)
 
+
 class AncomWTests(TestPluginBase):
     package = 'q2_composition.tests'
 
     def test_wscores(self):
         t = pd.DataFrame([[9, 9, 9, 19, 19, 19],
-                            [10, 11, 10, 20, 20, 20],
-                            [9, 10, 9, 9, 10, 9],
-                            [9, 10, 9, 9, 9, 8],
-                            [9, 10, 9, 9, 9, 9],
-                            [9, 10, 9, 9, 9, 10],
-                            [9, 12, 9, 9, 9, 11]],
-                            index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
-                            columns=['S1', 'S2', 'S3', 'S4', 'S5', 'S6']).T
+                          [10, 11, 10, 20, 20, 20],
+                          [9, 10, 9, 9, 10, 9],
+                          [9, 10, 9, 9, 9, 8],
+                          [9, 10, 9, 9, 9, 9],
+                          [9, 10, 9, 9, 9, 10],
+                          [9, 12, 9, 9, 9, 11]],
+                         index=['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
+                         columns=['S1', 'S2', 'S3', 'S4', 'S5', 'S6']).T
         c = qiime2.CategoricalMetadataColumn(
             pd.Series(['a', 'a', 'a', '1', '1', '1'], name='n',
-                        index=pd.Index(['S1', 'S2', 'S3',
-                                        'S4', 'S5', 'S6'], name='id'))
-        )
+                      index=pd.Index(['S1', 'S2', 'S3',
+                                      'S4', 'S5', 'S6'], name='id')))
         res = ancom_w(table=t+1, metadata=c)
 
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 2, 2, 2, 2, 2])},
             index=pd.Index(['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7'],
-                            name='id'),)
+                           name='id'),)
         pdt.assert_frame_equal(res, exp)
 
         def test_wscores_rnd2(self):
             t = pd.DataFrame([[0, 0, 10, 10, 10, 10],
-                                [0, 0, 10, 10, 10, 10],
-                                [10, 10, 0, 0, 10, 10],
-                                [10, 10, 0, 0, 10, 10],
-                                [10, 10, 10, 10, 0, 0],
-                                [10, 10, 10, 10, 0, 0]],
-                                columns=['O1', 'O2', 'O3', 'O4', 'O5', 'O6'],
-                                index=['S1', 'S2', 'S3', 'S4', 'S5', 'S6'])
+                              [0, 0, 10, 10, 10, 10],
+                              [10, 10, 0, 0, 10, 10],
+                              [10, 10, 0, 0, 10, 10],
+                              [10, 10, 10, 10, 0, 0],
+                              [10, 10, 10, 10, 0, 0]],
+                             columns=['O1', 'O2', 'O3', 'O4', 'O5', 'O6'],
+                             index=['S1', 'S2', 'S3', 'S4', 'S5', 'S6'])
             c = qiime2.CategoricalMetadataColumn(
                 pd.Series(['a', 'a', 'b', 'b', 'c', 'c'], name='n',
-                            index=pd.Index(['S1', 'S2', 'S3',
-                                            'S4', 'S5', 'S6'], name='id')))
+                          index=pd.Index(['S1', 'S2', 'S3',
+                                          'S4', 'S5', 'S6'], name='id')))
             res = ancom_w(t+1, metadata=c)
             exp = pd.DataFrame({'W': np.array([4]*6)},
-                                index=pd.Index(
+                               index=pd.Index(
                                     ['O1', 'O2', 'O3', 'O4', 'O5', 'O6'],
                                     name='id'),)
             pdt.assert_frame_equal(res, exp)
