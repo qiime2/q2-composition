@@ -1,6 +1,5 @@
 {% set data = load_setup_py_data() %}
 {% set version = data.get('version') or 'placehold' %}
-{% set release = '.'.join(version.split('.')[:2]) %}
 
 package:
   name: q2-composition
@@ -23,12 +22,15 @@ requirements:
     - biom-format >=2.1.5,<2.2.0
     - scipy
     - pandas >=1
-    - qiime2 {{ qiime2 }}
-    - q2templates {{ q2templates }}
-    - q2-types {{ q2_types }}
+    - qiime2 {{ qiime2_epoch }}.*
+    - q2templates {{ qiime2_epoch }}.*
+    - q2-types {{ qiime2_epoch }}.*
 
 test:
   requires:
+    - qiime2 >={{ qiime2 }}
+    - q2templates >={{ q2templates }}
+    - q2-types >={{ q2_types }}
     - pytest
 
   imports:
