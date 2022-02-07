@@ -179,7 +179,7 @@ class AncomTests(TestPluginBase):
         # Testing if test produces an output and info when 
         # metadata contains empty values
         t = pd.DataFrame([[10, 2], [11, 2], [12, 4], [13, 5],
-                          [1000, 10], [1000, 10]],
+                          [1000, 12], [1000, 14]],
                          index=['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
                          columns=['O1', 'O2'])
         c = qiime2.CategoricalMetadataColumn(
