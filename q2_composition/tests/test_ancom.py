@@ -178,7 +178,7 @@ class AncomTests(TestPluginBase):
     def test_ancom_nan_values_metadata(self):
         # Testing if test produces an output and info when 
         # metadata contains empty values
-        t = pd.DataFrame([[10, 0], [11, 0], [12, 0], [13, 0],
+        t = pd.DataFrame([[10, 2], [11, 2], [12, 4], [13, 5],
                           [1000, 10], [1000, 10]],
                          index=['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
                          columns=['O1', 'O2'])
