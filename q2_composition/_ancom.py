@@ -58,6 +58,9 @@ def ancom(output_dir: str,
         #                  'following samples. Values need to be added for '
         #                  'these samples, or the samples need to be removed '
         #                  'from the table: %s' % missing_data_sids)
+    else: 
+        metadata = metadata.to_series()
+        
     ancom_results = skbio_ancom(table,
                                 metadata,
                                 significance_test=f_oneway)
