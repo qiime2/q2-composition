@@ -175,6 +175,25 @@ class AncomTests(TestPluginBase):
             self.assertTrue(
                 'non-numeric results:\n    <strong>O2</strong>' in f)
 
+    def test_ancom_nan_values_metadata(self):
+        # Testing if test produces an output and info when 
+        # metadata contains empty values
+        t = pd.DataFrame([[10, 0], [11, 0], [12, 0], [13, 0],
+                          [1000, 10], [1000, 10]],
+                         index=['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
+                         columns=['O1', 'O2'])
+        c = qiime2.CategoricalMetadataColumn(
+            pd.Series(['0', '0', '1', '1', np.nan, np.nan], name='n',
+                      index=pd.Index(['S1', 'S2', 'S3', 'S4', 'S5', 'S6'],
+                                     name='id'))
+        )
+
+        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c)
+
+        index_fp = os.path.join(self.temp_dir.name, 'index.html')
+        self.assertTrue(os.path.exists(index_fp))
+        self.assertTrue(os.path.getsize(index_fp) > 0)
+
 
 if __name__ == "__main__":
     unittest.main()
