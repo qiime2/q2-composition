@@ -60,7 +60,7 @@ def ancom(output_dir: str,
         #                  'from the table: %s' % missing_data_sids)
     else: 
         metadata = metadata.to_series()
-        
+
     ancom_results = skbio_ancom(table,
                                 metadata,
                                 significance_test=f_oneway)
@@ -77,7 +77,6 @@ def ancom(output_dir: str,
         context['percent_abundances'] = q2templates.df_to_html(
             ancom_results[1].loc[significant_features.index])
 
-    metadata = metadata.to_series()
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
