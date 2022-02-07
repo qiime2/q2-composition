@@ -51,8 +51,6 @@ def ancom(output_dir: str,
         logging.info('Metadata column is missing values for the '
                      'following samples. Values %s are excluded from ' 
                      'analysis.' % missing_data_sids)
-        # Removing empty values from analysis 
-        table = table.drop(index=missing_data_sids)
         metadata = metadata.to_series().drop(missing_data_sids)
         # raise ValueError('Metadata column is missing values for the '
         #                  'following samples. Values need to be added for '
