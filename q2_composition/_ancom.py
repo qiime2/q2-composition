@@ -21,6 +21,9 @@ from skbio.stats.composition import clr
 from numpy import log, sqrt
 from scipy.stats import f_oneway
 
+logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.INFO)
+logger = logging.getLogger('ANCOM')
+
 _difference_functions = {'mean_difference': lambda x, y: x.mean() - y.mean(),
                          'f_statistic': f_oneway}
 
