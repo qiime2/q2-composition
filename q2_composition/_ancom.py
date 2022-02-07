@@ -51,6 +51,7 @@ def ancom(output_dir: str,
     if metadata.has_missing_values():
         missing_data_sids = metadata.get_ids(where_values_missing=True)
         metadata = metadata.to_series().drop(missing_data_sids)
+        table = table.drop(index=missing_data_sids)
         missing_data_sids = ', '.join(sorted(missing_data_sids))
         logging.info('Metadata column is missing values for the '
                      'following samples. Values %s are excluded from ' 
