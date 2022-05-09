@@ -21,7 +21,7 @@ requirements:
     - scikit-bio {{ scikit_bio }}
     - biom-format >=2.1.5,<2.2.0
     - scipy
-    - pandas >=1
+    - pandas {{ pandas }}
     - qiime2 {{ qiime2_epoch }}.*
     - q2templates {{ qiime2_epoch }}.*
     - q2-types {{ qiime2_epoch }}.*
