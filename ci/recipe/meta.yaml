@@ -18,10 +18,10 @@ requirements:
 
   run:
     - python {{ python }}
-    - scikit-bio
-    - biom-format >=2.1.5,<2.2.0
+    - scikit-bio {{ scikit_bio }}
+    - biom-format {{ biom_format }}
     - scipy
-    - pandas >=1
+    - pandas {{ pandas }}
     - qiime2 {{ qiime2_epoch }}.*
     - q2templates {{ qiime2_epoch }}.*
     - q2-types {{ qiime2_epoch }}.*
