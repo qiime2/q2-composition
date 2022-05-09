@@ -18,7 +18,7 @@ requirements:
 
   run:
     - python {{ python }}
-    - scikit-bio
+    - scikit-bio {{ scikit_bio }}
     - biom-format >=2.1.5,<2.2.0
     - scipy
     - pandas >=1
