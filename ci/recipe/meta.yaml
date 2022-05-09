@@ -19,7 +19,7 @@ requirements:
   run:
     - python {{ python }}
     - scikit-bio {{ scikit_bio }}
-    - biom-format >=2.1.5,<2.2.0
+    - biom-format {{ biom_format }}
     - scipy
     - pandas {{ pandas }}
     - qiime2 {{ qiime2_epoch }}.*
