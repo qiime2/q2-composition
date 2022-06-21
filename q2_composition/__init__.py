@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2022, QIIME 2 development team.
+# Copyright (c) 2022, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -7,11 +7,10 @@
 # ----------------------------------------------------------------------------
 
 from ._impute import add_pseudocount
-from ._ancom import ancom
 from ._version import get_versions
 
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['add_pseudocount', 'ancom']
+__all__ = ['add_pseudocount']

@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2022, QIIME 2 development team.
+# Copyright (c) 2022, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -16,8 +16,8 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    author="Jamie Morton",
-    author_email="jamietmorton@gmail.com",
+    author="",
+    author_email="",
     description="Compositional statistics plugin for QIIME2.",
     license='BSD-3-Clause',
     url="https://qiime2.org",
