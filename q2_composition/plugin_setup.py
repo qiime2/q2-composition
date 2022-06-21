@@ -53,10 +53,11 @@ plugin.methods.register_function(
 #         'table': 'The feature table to be used for ANCOM computation.'
 #     },
 #     parameter_descriptions={
-#             'metadata': ('The categorical sample metadata column to test for '
-#                          'differential abundance across.'),
+#             'metadata': ('The categorical sample metadata column to test for'
+#                          ' differential abundance across.'),
 #             'transform_function': ('The method applied to transform feature '
-#                                    'values before generating volcano plots.'),
+#                                    'values before generating '
+#                                    'volcano plots.'),
 #             'difference_function': 'The method applied to visualize fold '
 #                                    'difference in feature abundances across '
 #                                    'groups for volcano plots.'},
