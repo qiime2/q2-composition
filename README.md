@@ -26,7 +26,7 @@ ANCOMBC. Install instructions for devtools can be found
 ### Install missing dependencies
 nloptr is a dependency for ANCOMBC that is currently missing, and thus needs to
 be installed prior to ANCOMBC. This can be easily done using conda with the
-following command
+following command:
 ```
 conda install -c conda-forge r-nloptr
 ```
