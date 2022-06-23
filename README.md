@@ -9,8 +9,9 @@ This is a QIIME 2 plugin. For details on QIIME 2, see https://qiime2.org.
 This plugin is a wrapper for the ANCOMBC package. We are working with the
 [RELEASE_3_15](https://github.com/FrederickHuangLin/ANCOMBC/tree/RELEASE_3_15)
 branch, as this is where the functionality for ANCOM, ANCOM-BC, and SECOM are
-all located. This release hasn't been published on bioconda yet, so the steps
-to install this latest release (for development purposes) are as follows:
+all located. This bioconductor release hasn't been published on bioconda yet,
+so the steps to install this latest release (for development purposes) are as
+follows:
 
 ### Install R
 
