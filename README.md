@@ -24,7 +24,11 @@ Once installed, you can activate R by typing `R` into the command line.
 ### Install devtools
 Once you have installed R on your machine, you will need devtools to install
 ANCOMBC. Install instructions for devtools can be found
-[here](https://github.com/r-lib/devtools).
+[here](https://github.com/r-lib/devtools). The easiest install method will be
+through CRAN, using the following command:
+```
+install.packages("devtools")
+```
 
 ### Install missing dependencies
 nloptr is a dependency for ANCOMBC that is currently missing, and thus needs to
