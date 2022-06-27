@@ -5,3 +5,73 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import tempfile
+import pandas as pd
+import numpy as np
+import os
+import qiime2
+
+
+def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
+            p_adj_method: str = "holm", zero_cut: float = 0.90,
+            lib_cut: int = 1000, group: str = None, struc_zero: bool = True,
+            neg_lb: bool = True, tol: float = 1e-5, max_iter: int = 100,
+            conserve: bool = True, alpha: float = 0.05) -> pd.DataFrame:
+
+    # create series from metadata column
+    meta = metadata.to_dataframe()
+
+    # check for variable lengths and warn if there's only one value per group.
+    # ANCOM will fail silently later bc of this and that is harder to debug.
+    variables = np.unique(np.hstack([x.split("*")
+                                    for x in formula.split("+")]))
+    variables = np.array([x.strip() for x in variables])
+    var_counts = pd.DataFrame.from_dict(orient='index', data={
+        var: {'n_groups': len(meta[var].dropna().unique())}
+        for var in variables
+        })
+    if (var_counts['n_groups'] < 2).all():
+        raise ValueError("None of the columns in the metadata satisfy"
+                         " ANCOM-BC's requirements. All columns in the"
+                         " formula should have more than one value.")
+
+    # filter the metadata so only the samples present in the table are used.
+    # this also re-orders it for the correct condition selection.
+    # it must be re-ordered for ANCOM-BC to correctly input the conditions.
+    meta = meta.loc[list(table.index)]
+
+    # force re-order based on the data to ensure conds are selected correctly.
+    with tempfile.TemporaryDirectory() as temp_dir_name:
+        temp_dir_name = '.'
+        biom_fp = os.path.join(temp_dir_name, 'input.biom.tsv')
+        meta_fp = os.path.join(temp_dir_name, 'input.map.txt')
+        summary_fp = os.path.join(temp_dir_name, 'output.summary.txt')
+
+        table.to_csv(biom_fp, sep='\t', header=True)
+        meta.to_csv(meta_fp, sep='\t', header=True)
+
+        if group is None:
+            group = formula
+
+        cmd = ['run_ancombc.R',
+               biom_fp,                  # inp.abundances.path
+               meta_fp,                  # inp.metadata.path
+               formula,                  # formula
+               p_adj_method,             # p_adj_method
+               zero_cut,                 # zero_cut
+               lib_cut,                  # lib_cut
+               group,                    # group
+               str(struc_zero).upper(),  # struc_zero
+               str(neg_lb).upper(),      # neg_lb
+               tol,                      # tol
+               max_iter,                 # max_iter
+               str(conserve).upper(),    # conserve
+               alpha,                    # alpha
+               summary_fp                # output
+               ]
+
+        cmd = list(map(str, cmd))
+        summary = pd.read_csv(summary_fp, index_col=0)
+
+        summary.index.set_names('feature-id', inplace=True)
+        return summary
