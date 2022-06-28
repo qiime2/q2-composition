@@ -13,10 +13,11 @@ import qiime2
 
 
 def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
-            p_adj_method: str = "holm", zero_cut: float = 0.90,
-            lib_cut: int = 1000, group: str = None, struc_zero: bool = True,
-            neg_lb: bool = True, tol: float = 1e-5, max_iter: int = 100,
-            conserve: bool = True, alpha: float = 0.05) -> pd.DataFrame:
+            p_adj_method: str = "holm", prv_cut: float = 0.1,
+            lib_cut: int = 0, group: str = None, struc_zero: bool = False,
+            neg_lb: bool = False, tol: float = 1e-05, max_iter: int = 100,
+            conserve: bool = False, alpha: float = 0.05,
+            global_test: bool = False) -> pd.DataFrame:
 
     # create series from metadata column
     meta = metadata.to_dataframe()
@@ -54,11 +55,11 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
             group = formula
 
         cmd = ['run_ancombc.R',
-               biom_fp,                  # inp.abundances.path
-               meta_fp,                  # inp.metadata.path
+               biom_fp,                  # inp_abundances_path
+               meta_fp,                  # inp_metadata_path
                formula,                  # formula
                p_adj_method,             # p_adj_method
-               zero_cut,                 # zero_cut
+               prv_cut,                  # prv_cut
                lib_cut,                  # lib_cut
                group,                    # group
                str(struc_zero).upper(),  # struc_zero
@@ -67,6 +68,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
                max_iter,                 # max_iter
                str(conserve).upper(),    # conserve
                alpha,                    # alpha
+               global_test,              # global_test
                summary_fp                # output
                ]
 
