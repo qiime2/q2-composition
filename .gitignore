@@ -61,6 +61,9 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+#Rhistory
+.Rhistory
+
 # vi
 .*.swp
 
