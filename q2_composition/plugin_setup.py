@@ -6,10 +6,13 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from qiime2.plugin import (Int, Citations, Plugin)
+from qiime2.plugin import (Int, Float, Bool, Str, Choices,
+                           Citations, Plugin, Metadata)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
+from q2_types.feature_data import FeatureData, Differential
 
 import q2_composition
+from q2_composition._ancom import ancombc
 
 
 plugin = Plugin(
@@ -41,28 +44,62 @@ plugin.methods.register_function(
     description="Increment all counts in table by pseudocount."
 )
 
-# plugin.visualizers.register_function(
-#     function=q2_composition.ancom,
-#     inputs={'table': FeatureTable[Composition]},
-#     parameters={
-#         'metadata': MetadataColumn[Categorical],
-#         'transform_function': Str % Choices(_transform_functions),
-#         'difference_function': Str % Choices(_difference_functions)
-#     },
-#     input_descriptions={
-#         'table': 'The feature table to be used for ANCOM computation.'
-#     },
-#     parameter_descriptions={
-#             'metadata': ('The categorical sample metadata column to test for'
-#                          ' differential abundance across.'),
-#             'transform_function': ('The method applied to transform feature '
-#                                    'values before generating '
-#                                    'volcano plots.'),
-#             'difference_function': 'The method applied to visualize fold '
-#                                    'difference in feature abundances across '
-#                                    'groups for volcano plots.'},
-#     name='Apply ANCOM to identify features that differ in abundance.',
-#     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
-#                  "identify features that are differentially abundant across "
-#                  "groups.")
-# )
+plugin.methods.register_function(
+    function=ancombc,
+    inputs={'table': FeatureTable[Frequency]},
+    parameters={
+        'metadata': Metadata,
+        'formula': Str,
+        'p_adj_method': Str % Choices(['holm', 'hochberg', 'hommel',
+                                       'bonferroni', 'BH', 'BY',
+                                       'fdr', 'none']),
+        'prv_cut': Float,
+        'lib_cut': Int,
+        'group': Str,
+        'struc_zero': Bool,
+        'neg_lb': Bool,
+        'tol': Float,
+        'max_iter': Int,
+        'conserve': Bool,
+        'alpha': Float,
+        'global_test': Bool
+    },
+    outputs=[('differentials', FeatureData[Differential])],
+    input_descriptions={
+        'table': 'The feature table to be used for ANCOM computation.'
+    },
+    parameter_descriptions={
+        'metadata': 'The sample metadata.',
+        'formula': 'How the microbial absolute abundances for each taxon'
+                   ' depend on the variables within the `metadata`.',
+        'p_adj_method': 'Method to adjust p-values. Default is "holm".',
+        'prv_cut': 'A numerical fraction between 0-1. Taxa with prevalences'
+                   ' less than this value will be excluded from the analysis.'
+                   ' Default is 0.10.',
+        'lib_cut': 'A numerical threshold for filtering samples based on'
+                   ' library sizes. Samples with library sizes less than this'
+                   ' value will be excluded from the analysis. Default is 0.',
+        'group': ' The name of the group variable within the `metadata`. This'
+                 ' should be a discrete variable. This is required for'
+                 ' `struc_zero` and performing `global_test`.',
+        'struc_zero': ' Whether to detect structural zeros based on `group`.'
+                      ' Default is FALSE.',
+        'neg_lb': 'Whether to classify a taxon as a structural zero using its'
+                  ' asymptotic lower bound. Default is FALSE.',
+        'tol': 'The iteration convergence tolerance for the E-M algorithm.'
+               ' Default is 1e-05.',
+        'max_iter': 'The maximum number of iterations for the E-M algorithm.'
+                    ' Default is 100.',
+        'conserve': 'Whether to use a conservative variance estimator for the'
+                    ' test statistic. It is recommended if the sample size is'
+                    ' small and/or the number of differentially abundant taxa'
+                    ' is believed to be large. Default is FALSE.',
+        'alpha': 'Level of significance. Default is FALSE.',
+        'global_test': 'Whether to perform global test. Default is FALSE.'
+    },
+    output_descriptions={
+        'differentials': 'The calculated per-feature differentials.'
+    },
+    name=('Analysis of Composition of Microbiomes with Bias Correction'),
+    description=('ANCOM-BC description goes here.'),
+)
