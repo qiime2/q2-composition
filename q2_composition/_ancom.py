@@ -35,11 +35,6 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
                          " ANCOM-BC's requirements. All columns in the"
                          " formula should have more than one value.")
 
-    # filter the metadata so only the samples present in the table are used.
-    # this also re-orders it for the correct condition selection.
-    # it must be re-ordered for ANCOM-BC to correctly input the conditions.
-    meta = meta.loc[list(table.index)]
-
     # force re-order based on the data to ensure conds are selected correctly.
     with tempfile.TemporaryDirectory() as temp_dir_name:
         temp_dir_name = '.'
