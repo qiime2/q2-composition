@@ -4,26 +4,61 @@
 suppressWarnings(library(phyloseq))
 suppressWarnings(library(tidyverse))
 suppressWarnings(library(ANCOMBC))
+library('optparse')
 
 # load arguments -----------------
 cat(R.version$version.string, "\n")
-args=commandArgs(TRUE)
 
-inp_abundances_path <- args[[1]]
-inp_metadata_path   <- args[[2]]
-formula             <- args[[3]]
-p_adj_method        <- args[[4]]
-prv_cut             <- as.numeric(args[[5]])
-lib_cut             <- as.numeric(args[[6]])
-group               <- args[[7]]
-struc_zero          <- as.logical(args[[8]])
-neg_lb              <- as.logical(args[[9]])
-tol                 <- as.numeric(args[[10]])
-max_iter            <- as.numeric(args[[11]])
-conserve            <- as.logical(args[[12]])
-alpha               <- as.numeric(args[[13]])
-global              <- as.logical(args[[14]])
-output              <- args[[15]]
+option_list=list(
+  make_option(c('--inp_abundances_path'), action='store', default='NULL',
+              type='character', help=''),
+  make_option(c('--inp_metadata_path'), action='store', default='NULL',
+              type='character', help=''),
+  make_option(c('--formula'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--p_adj_method'), action='store', default='NULL',
+              type='character', help=''),
+  make_option(c('--prv_cut'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--lib_cut'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--group'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--struc_zero'), action='store', default='NULL',
+              type='character', help=''),
+  make_option(c('--neg_lb'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--tol'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--max_iter'), action='store', default='NULL',
+              type='character', help=''),
+  make_option(c('--conserve'), action='store', default='NULL',
+              type='character', help=''),
+  make_option(c('--alpha'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--global'), action='store', default='NULL', type='character',
+              help=''),
+  make_option(c('--output'), action='store', default='NULL', type='character',
+              help=''),
+)
+opt=parse_args(OptionParser(option_list=option_list))
+
+# Assign each arg (in positional order) to an appropriately named R variable
+inp_abundances_path <- opt$inp_abundances_path
+inp_metadata_path   <- opt$inp_metadata_path
+formula             <- opt$formula
+p_adj_method        <- opt$p_adj_method
+prv_cut             <- as.numeric(opt$prv_cut)
+lib_cut             <- as.numeric(opt$lib_cut)
+group               <- opt$group
+struc_zero          <- as.logical(opt$struc_zero)
+neg_lb              <- as.logical(opt$neg_lb)
+tol                 <- as.numeric(opt$tol)
+max_iter            <- as.numeric(opt$max_iter)
+conserve            <- as.logical(opt$conserve)
+alpha               <- as.numeric(opt$alpha)
+global              <- as.logical(opt$global)
+output              <- opt$global
 
 # load data ----------------------
 if(!path.exists(inp_abundances_path)) {
