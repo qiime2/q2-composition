@@ -20,6 +20,10 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
 
     # create series from metadata column
     meta = metadata.to_dataframe()
+    print('first meta---------->')
+    print(meta)
+    print('first meta size------>')
+    print(meta.size)
 
     # check for variable lengths and warn if there's only one value per group.
     # ANCOM will fail silently later bc of this and that is harder to debug.
@@ -34,6 +38,15 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
         raise ValueError("None of the columns in the metadata satisfy"
                          " ANCOM-BC's requirements. All columns in the"
                          " formula should have more than one value.")
+
+    # filter the metadata so only the samples present in the table are used.
+    # this also re-orders it for the correct condition selection.
+    # it must be re-ordered for ANCOM-BC to correctly input the conditions.
+    meta = meta.loc[table.index]
+    print('second meta--------->')
+    print(meta)
+    print('second meta size----->')
+    print(meta.size)
 
     # force re-order based on the data to ensure conds are selected correctly.
     with tempfile.TemporaryDirectory() as temp_dir_name:
@@ -63,7 +76,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
                str(conserve).upper(),    # conserve
                alpha,                    # alpha
                global_test,              # global_test
-               summary_fp                # output
+               # summary_fp                # output
                ]
 
         cmd = list(map(str, cmd))
