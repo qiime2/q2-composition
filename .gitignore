@@ -67,4 +67,9 @@ target/
 # vi
 .*.swp
 
+# tmp files
+input.biom.tsv
+input.map.txt
+output.summary.txt
+
 .DS_Store

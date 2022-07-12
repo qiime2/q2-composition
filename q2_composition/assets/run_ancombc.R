@@ -38,7 +38,7 @@ option_list <- list(
   make_option("--global", action = "store", default = "NULL",
               type = "character"),
   make_option("--output", action = "store", default = "NULL",
-              type = "character"),
+              type = "character")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
 
@@ -60,13 +60,13 @@ global              <- as.logical(opt$global)
 output              <- opt$global
 
 # load data ----------------------
-if (!path.exists(inp_abundances_path)) {
+if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
   otu_file <- t(read.delim(inp_abundances_path, check.names = FALSE,
                             row.names = 1))
   }
-if (!path.exists(inp_metadata_path)) {
+if (!file.exists(inp_metadata_path)) {
   errQuit("Metadata file path does not exist.")
 } else {
   metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,

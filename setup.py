@@ -19,6 +19,7 @@ setup(
     author="",
     author_email="",
     description="Compositional statistics plugin for QIIME2.",
+    scripts=['q2_composition/assets/run_ancombc.R'],
     license='BSD-3-Clause',
     url="https://qiime2.org",
     entry_points={
