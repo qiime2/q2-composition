@@ -57,7 +57,7 @@ max_iter            <- as.numeric(opt$max_iter)
 conserve            <- as.logical(opt$conserve)
 alpha               <- as.numeric(opt$alpha)
 global              <- as.logical(opt$global)
-output              <- opt$global
+output              <- opt$output
 
 # load data ----------------------
 if (!file.exists(inp_abundances_path)) {
@@ -72,6 +72,7 @@ if (!file.exists(inp_metadata_path)) {
   metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,
                               row.names = 1)
   }
+
 otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
@@ -105,7 +106,9 @@ colnames(q_val) <- modify(colnames(q_val),
           return(paste(x, "q-value", sep = "_"))})
 
 # Concat everything into a distance matrix
-diffs <- as.data.frame(cbind(beta, se, w, p_val, q_val))
+coeffs <- list(beta, se, w, p_val, q_val)
+coeffs <- unlist(coeffs)
+diffs <- as.data.frame(x = coeffs)
 
 # Write distance matrix to file
 write.csv(diffs, file = output)

@@ -33,6 +33,25 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
             tol: float = 1e-05, max_iter: int = 100, conserve: bool = False,
             alpha: float = 0.05, global_test: bool = False) -> pd.DataFrame:
 
+    return _ancombc(
+        table=table,
+        metadata=metadata,
+        formula=formula,
+        p_adj_method=p_adj_method,
+        prv_cut=prv_cut,
+        lib_cut=lib_cut,
+        group=group,
+        struc_zero=struc_zero,
+        neg_lb=neg_lb,
+        tol=tol,
+        max_iter=max_iter,
+        conserve=conserve,
+        alpha=alpha,
+        global_test=global_test
+    )
+
+def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut, group,
+             struc_zero, neg_lb, tol, max_iter, conserve, alpha, global_test):
     # create series from metadata column
     meta = metadata.to_dataframe()
 
@@ -41,13 +60,6 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
     variables = np.unique(np.hstack([x.split("*")
                                     for x in formula.split("+")]))
     variables = np.array([x.strip() for x in variables])
-
-    print('Variables: %s' % variables)
-    print('\n')
-    for var in variables:
-        print('var: %s' % var)
-        print('var length: %s' % var.size)
-        print('\n')
 
     var_counts = pd.DataFrame.from_dict(orient='index', data={
         var: {'n_groups': len(meta[var].dropna().unique())}
@@ -82,20 +94,20 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
                '--inp_metadata_path', meta_fp,
                '--formula', formula,
                '--p_adj_method', p_adj_method,
-               '--prv_cut', prv_cut,
-               '--lib_cut', lib_cut,
+               '--prv_cut', str(prv_cut),
+               '--lib_cut', str(lib_cut),
                '--group', group,
                '--struc_zero', str(struc_zero),
                '--neg_lb', str(neg_lb),
-               '--tol', tol,
-               '--max_iter', max_iter,
+               '--tol', str(tol),
+               '--max_iter', str(max_iter),
                '--conserve', str(conserve),
-               '--alpha', alpha,
-               '--global', global_test,
+               '--alpha', str(alpha),
+               '--global', str(global_test),
                '--output', summary_fp
                ]
 
-        cmd = list(map(str, cmd))
+        # cmd = list(map(str, cmd))
 
         try:
             global_test = run_commands([cmd])
