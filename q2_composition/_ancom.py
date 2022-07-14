@@ -27,11 +27,12 @@ def run_commands(cmds, verbose=True):
         subprocess.run(cmd, check=True)
 
 
-def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
-            p_adj_method: str = 'holm', prv_cut: float = 0.1, lib_cut: int = 0,
-            group: str = None, struc_zero: bool = False, neg_lb: bool = False,
-            tol: float = 1e-05, max_iter: int = 100, conserve: bool = False,
-            alpha: float = 0.05, global_test: bool = False) -> pd.DataFrame:
+def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
+            formula: str = None, p_adj_method: str = 'holm',
+            prv_cut: float = 0.1, lib_cut: int = 0, group: str = None,
+            struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
+            max_iter: int = 100, conserve: bool = False, alpha: float = 0.05,
+            global_test: bool = False) -> pd.DataFrame:
 
     return _ancombc(
         table=table,

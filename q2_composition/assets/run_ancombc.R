@@ -81,34 +81,57 @@ data <- phyloseq(otu, md)
 # analysis -----------------------
 fit <- ancombc(data, formula, p_adj_method)
 
-# extract multivariate regression coefficients from the structure
-beta  <- fit$res$beta    # beta
-se    <- fit$res$se      # standard error
-w     <- fit$res$W       # test statistic
-p_val <- fit$res$p_val   # p-value
-q_val <- fit$res$q_val   # q-value
+# extract stuff from the structure
+feature_table <- fit$feature_table
+zero_ind  <- fit$zero_ind
+samp_frac <- fit$samp_frac
+resid     <- fit$resid
+delta_em  <- fit$delta_em
+delta_wls <- fit$delta_wls
+
+# result details
+lfc      <- fit$res$lfc
+se       <- fit$res$se
+w        <- fit$res$W
+p_val    <- fit$res$p_val
+q_val    <- fit$res$q_val
+diff_abn <- fit$res$diff_abn
+
+# global test result details
+# global_w        <- fit$res_global$W
+# global_p_val    <- fit$res_global$p_val
+# global_q_val    <- fit$res_global$q_val
+# global_diff_abn <- fit$res_global$diff_abn
 
 # adding descriptors to each column
-colnames(beta) <- modify(colnames(beta),
-        function(x) {
-          return(paste(x, "beta", sep = "_"))})
-colnames(se) <- modify(colnames(se),
-        function(x) {
-          return(paste(x, "se", sep = "_"))})
-colnames(w) <- modify(colnames(w),
-        function(x) {
-          return(paste(x, "W", sep = "_"))})
-colnames(p_val) <- modify(colnames(p_val),
-        function(x) {
-          return(paste(x, "p-value", sep = "_"))})
-colnames(q_val) <- modify(colnames(q_val),
-        function(x) {
-          return(paste(x, "q-value", sep = "_"))})
+# colnames(feature_table) <- modify(colnames(feature_table),
+#         function(x) {
+#           return(paste(x, "feature_table", sep = "_"))})
 
 # Concat everything into a distance matrix
-coeffs <- list(beta, se, w, p_val, q_val)
-coeffs <- unlist(coeffs)
-diffs <- as.data.frame(x = coeffs)
+# coeffs <- unlist(coeffs)
+# diffs <- as.data.frame(x = coeffs)
+# fit <- unlist(fit)
+# diffs <- as.data.frame(x = fit)
 
 # Write distance matrix to file
-write.csv(diffs, file = output)
+write.csv(feature_table, file = "feature_table")
+write.csv(zero_ind, file = "zero_ind")
+write.csv(samp_frac, file = "samp_frac")
+write.csv(resid, file = "resid")
+write.csv(delta_em, file = "delta_em")
+write.csv(delta_wls, file = "delta_wls")
+
+write.csv(lfc, file = "lfc")
+write.csv(se, file = "se")
+write.csv(w, file = "w")
+write.csv(p_val, file = "p_val")
+write.csv(q_val, file = "q_val")
+write.csv(diff_abn, file = "diff_abn")
+
+# write.csv(global_w, file = output)
+# write.csv(global_p_val, file = output)
+# write.csv(global_q_val, file = output)
+# write.csv(global_diff_abn, file = output)
+
+##### try running again w/no formula and only group
