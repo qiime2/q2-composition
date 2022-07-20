@@ -28,10 +28,10 @@ def run_commands(cmds, verbose=True):
 
 
 def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
-            formula: str = None, p_adj_method: str = 'holm',
-            prv_cut: float = 0.1, lib_cut: int = 0, group: str = None,
-            struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
-            max_iter: int = 100, conserve: bool = False, alpha: float = 0.05,
+            formula: str, p_adj_method: str = 'holm', prv_cut: float = 0.1,
+            lib_cut: int = 0, group: str = None, struc_zero: bool = False,
+            neg_lb: bool = False, tol: float = 1e-05, max_iter: int = 100,
+            conserve: bool = False, alpha: float = 0.05,
             global_test: bool = False) -> pd.DataFrame:
 
     return _ancombc(
@@ -87,8 +87,8 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut, group,
         table.to_csv(biom_fp, sep='\t', header=True)
         meta.to_csv(meta_fp, sep='\t', header=True)
 
-        if group is None:
-            group = formula
+        # if group is None:
+        #     group = formula
 
         # most likely need to wrap commands in R formulae quoting using ``
         cmd = ['run_ancombc.R',
@@ -98,7 +98,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut, group,
                '--p_adj_method', p_adj_method,
                '--prv_cut', str(prv_cut),
                '--lib_cut', str(lib_cut),
-               '--group', group,
+               '--group', str(group),
                '--struc_zero', str(struc_zero),
                '--neg_lb', str(neg_lb),
                '--tol', str(tol),

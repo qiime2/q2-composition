@@ -72,6 +72,7 @@ if (!file.exists(inp_metadata_path)) {
   metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,
                               row.names = 1)
   }
+print(struc_zero)
 
 otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
@@ -79,15 +80,17 @@ row.names(md) <- rownames(metadata_file)
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
-fit <- ancombc(data, formula, p_adj_method)
+fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
+               struc_zero, neg_lb, tol, max_iter, conserve, alpha)
+print(fit$zero_ind)
 
 # extract stuff from the structure
 feature_table <- fit$feature_table
-zero_ind  <- fit$zero_ind
-samp_frac <- fit$samp_frac
-resid     <- fit$resid
-delta_em  <- fit$delta_em
-delta_wls <- fit$delta_wls
+zero_ind      <- fit$zero_ind
+samp_frac     <- fit$samp_frac
+resid         <- fit$resid
+delta_em      <- fit$delta_em
+delta_wls     <- fit$delta_wls
 
 # result details
 lfc      <- fit$res$lfc
@@ -98,10 +101,10 @@ q_val    <- fit$res$q_val
 diff_abn <- fit$res$diff_abn
 
 # global test result details
-# global_w        <- fit$res_global$W
-# global_p_val    <- fit$res_global$p_val
-# global_q_val    <- fit$res_global$q_val
-# global_diff_abn <- fit$res_global$diff_abn
+global_w        <- fit$res_global$W
+global_p_val    <- fit$res_global$p_val
+global_q_val    <- fit$res_global$q_val
+global_diff_abn <- fit$res_global$diff_abn
 
 # adding descriptors to each column
 # colnames(feature_table) <- modify(colnames(feature_table),
@@ -115,23 +118,23 @@ diff_abn <- fit$res$diff_abn
 # diffs <- as.data.frame(x = fit)
 
 # Write distance matrix to file
-write.csv(feature_table, file = "feature_table")
-write.csv(zero_ind, file = "zero_ind")
-write.csv(samp_frac, file = "samp_frac")
-write.csv(resid, file = "resid")
-write.csv(delta_em, file = "delta_em")
-write.csv(delta_wls, file = "delta_wls")
+# write.csv(feature_table, file = "feature_table.csv")
+write.csv(zero_ind, file = "zero_ind.csv")
+# write.csv(samp_frac, file = "samp_frac.csv")
+# write.csv(resid, file = "resid.csv")
+# write.csv(delta_em, file = "delta_em.csv")
+# write.csv(delta_wls, file = "delta_wls.csv")
 
-write.csv(lfc, file = "lfc")
-write.csv(se, file = "se")
-write.csv(w, file = "w")
-write.csv(p_val, file = "p_val")
-write.csv(q_val, file = "q_val")
-write.csv(diff_abn, file = "diff_abn")
+# write.csv(lfc, file = "lfc.csv")
+# write.csv(se, file = "se.csv")
+# write.csv(w, file = "w.csv")
+# write.csv(p_val, file = "p_val.csv")
+# write.csv(q_val, file = "q_val.csv")
+# write.csv(diff_abn, file = "diff_abn.csv")
 
-# write.csv(global_w, file = output)
-# write.csv(global_p_val, file = output)
-# write.csv(global_q_val, file = output)
-# write.csv(global_diff_abn, file = output)
+# write.csv(global_w, file = "global_w.csv")
+# write.csv(global_p_val, file = "global_p_val.csv")
+# write.csv(global_q_val, file = "global_q_val.csv")
+# write.csv(global_diff_abn, file = "global_diff_abn.csv")
 
-##### try running again w/no formula and only group
+##### determine whether phyloseq object takes only the intersection of md/table
