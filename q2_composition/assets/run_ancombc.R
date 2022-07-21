@@ -24,6 +24,8 @@ option_list <- list(
               type = "character"),
   make_option("--group", action = "store", default = "NULL",
               type = "character"),
+  make_option("--group_order", action = "store", default = "NULL",
+              type = "character"),
   make_option("--struc_zero", action = "store", default = "NULL",
               type = "character"),
   make_option("--neg_lb", action = "store", default = "NULL",
@@ -50,6 +52,7 @@ p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
 group               <- opt$group
+group_order         <- opt$group_order
 struc_zero          <- as.logical(opt$struc_zero)
 neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
@@ -72,17 +75,26 @@ if (!file.exists(inp_metadata_path)) {
   metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,
                               row.names = 1)
   }
-print(struc_zero)
 
 otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
+
+# group ordering for model.matrix calculation
+if (!is.null(group_order)) {
+  group_vector <- unlist(strsplit(group_order, ","))
+  group_vector <- trimws(group_vector, which = "both", whitespace = " ")
+  md[[group]] <- factor(md[[group]], levels = group_vector)
+}
+print(md[[group]])
+# create phyloseq object for use in ancombc
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
 fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
                struc_zero, neg_lb, tol, max_iter, conserve, alpha)
-print(fit$zero_ind)
+
+## TODO: how to add group_order to ancombc & include model matrix in result ##
 
 # extract stuff from the structure
 feature_table <- fit$feature_table
@@ -106,6 +118,7 @@ global_p_val    <- fit$res_global$p_val
 global_q_val    <- fit$res_global$q_val
 global_diff_abn <- fit$res_global$diff_abn
 
+# ############################################################
 # adding descriptors to each column
 # colnames(feature_table) <- modify(colnames(feature_table),
 #         function(x) {
@@ -116,6 +129,7 @@ global_diff_abn <- fit$res_global$diff_abn
 # diffs <- as.data.frame(x = coeffs)
 # fit <- unlist(fit)
 # diffs <- as.data.frame(x = fit)
+# ############################################################
 
 # Write distance matrix to file
 # write.csv(feature_table, file = "feature_table.csv")
@@ -127,7 +141,7 @@ write.csv(zero_ind, file = "zero_ind.csv")
 
 # write.csv(lfc, file = "lfc.csv")
 # write.csv(se, file = "se.csv")
-# write.csv(w, file = "w.csv")
+write.csv(w, file = "w.csv")
 # write.csv(p_val, file = "p_val.csv")
 # write.csv(q_val, file = "q_val.csv")
 # write.csv(diff_abn, file = "diff_abn.csv")

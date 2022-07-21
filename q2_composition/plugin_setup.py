@@ -56,6 +56,7 @@ plugin.methods.register_function(
         'prv_cut': Float,
         'lib_cut': Int,
         'group': Str,
+        'group_order': Str,
         'struc_zero': Bool,
         'neg_lb': Bool,
         'tol': Float,
@@ -82,6 +83,8 @@ plugin.methods.register_function(
         'group': ' The name of the group variable within the `metadata`. This'
                  ' should be a discrete variable. This is required for'
                  ' `struc_zero` and performing `global_test`.',
+        'group_order': ' The preferred order (if any) for the values in the'
+                       ' `group` column, if provided.',
         'struc_zero': ' Whether to detect structural zeros based on `group`.'
                       ' Default is FALSE.',
         'neg_lb': 'Whether to classify a taxon as a structural zero using its'
