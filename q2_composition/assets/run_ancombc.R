@@ -24,7 +24,7 @@ option_list <- list(
               type = "character"),
   make_option("--group", action = "store", default = "NULL",
               type = "character"),
-  make_option("--group_order", action = "store", default = "NULL",
+  make_option("--level_ordering", action = "store", default = "NULL",
               type = "character"),
   make_option("--struc_zero", action = "store", default = "NULL",
               type = "character"),
@@ -52,7 +52,7 @@ p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
 group               <- opt$group
-group_order         <- opt$group_order
+level_ordering      <- opt$level_ordering
 struc_zero          <- as.logical(opt$struc_zero)
 neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
@@ -80,21 +80,35 @@ otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
 
-# group ordering for model.matrix calculation
-if (!is.null(group_order)) {
-  group_vector <- unlist(strsplit(group_order, ","))
-  group_vector <- trimws(group_vector, which = "both", whitespace = " ")
-  md[[group]] <- factor(md[[group]], levels = group_vector)
+# level ordering for model.matrix calculation
+if (!is.null(level_ordering)) {
+  level_vector <- unlist(strsplit(level_ordering, ", "))
+  for (i in level_vector) {
+    column          <- unlist(strsplit(i, "::"))[1]
+    ordering_vector <- unlist(strsplit(i, "::"))[2]
+    ordering_vector <- unlist(strsplit(ordering_vector, ","))
+
+    # handling formula input(s)
+    formula_vector  <- strsplit(formula, " ")
+    for (j in formula_vector) {
+      if (all(j == column)) {
+        md[[formula]] <- factor(md[[formula]], levels = ordering_vector)
+      }
+    }
+
+    # handling group input
+    if ((!is.null(group)) && (all(group == column))) {
+      md[[group]] <- factor(md[[group]], levels = ordering_vector)
+    }
+  }
 }
-print(md[[group]])
+
 # create phyloseq object for use in ancombc
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
 fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
                struc_zero, neg_lb, tol, max_iter, conserve, alpha)
-
-## TODO: how to add group_order to ancombc & include model matrix in result ##
 
 # extract stuff from the structure
 feature_table <- fit$feature_table
@@ -142,7 +156,7 @@ write.csv(zero_ind, file = "zero_ind.csv")
 # write.csv(lfc, file = "lfc.csv")
 # write.csv(se, file = "se.csv")
 write.csv(w, file = "w.csv")
-# write.csv(p_val, file = "p_val.csv")
+write.csv(p_val, file = "p_val.csv")
 # write.csv(q_val, file = "q_val.csv")
 # write.csv(diff_abn, file = "diff_abn.csv")
 

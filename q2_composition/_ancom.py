@@ -29,7 +29,7 @@ def run_commands(cmds, verbose=True):
 
 def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
             formula: str, p_adj_method: str = 'holm', prv_cut: float = 0.1,
-            lib_cut: int = 0, group: str = None, group_order: str = None,
+            lib_cut: int = 0, group: str = None, level_ordering: str = None,
             struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
             max_iter: int = 100, conserve: bool = False, alpha: float = 0.05,
             global_test: bool = False) -> pd.DataFrame:
@@ -42,7 +42,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
         prv_cut=prv_cut,
         lib_cut=lib_cut,
         group=group,
-        group_order=group_order,
+        level_ordering=level_ordering,
         struc_zero=struc_zero,
         neg_lb=neg_lb,
         tol=tol,
@@ -54,7 +54,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
 
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
-             group, group_order, struc_zero, neg_lb, tol, max_iter,
+             group, level_ordering, struc_zero, neg_lb, tol, max_iter,
              conserve, alpha, global_test):
     # create series from metadata column
     meta = metadata.to_dataframe()
@@ -95,12 +95,12 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,
                '--inp_metadata_path', meta_fp,
-               '--formula', formula,
+               '--formula', str(formula),
                '--p_adj_method', p_adj_method,
                '--prv_cut', str(prv_cut),
                '--lib_cut', str(lib_cut),
                '--group', str(group),
-               '--group_order', group_order,
+               '--level_ordering', str(level_ordering),
                '--struc_zero', str(struc_zero),
                '--neg_lb', str(neg_lb),
                '--tol', str(tol),
