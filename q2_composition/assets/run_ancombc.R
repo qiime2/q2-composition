@@ -80,22 +80,28 @@ otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
 
+print(level_ordering)
+
 # level ordering for model.matrix calculation
+formula_vector  <- unlist(strsplit(formula, " "))
+level_vector    <- unlist(strsplit(level_ordering, ", "))
+
+# split the level_ordering param into each column and associated level order
 if (!is.null(level_ordering)) {
-  level_vector <- unlist(strsplit(level_ordering, ", "))
   for (i in level_vector) {
     column          <- unlist(strsplit(i, "::"))[1]
     ordering_vector <- unlist(strsplit(i, "::"))[2]
     ordering_vector <- unlist(strsplit(ordering_vector, ","))
+    ordering_vector <- gsub("\\'", "", ordering_vector)
+    ordering_vector <- gsub("\\]", "", ordering_vector)
+    ordering_vector <- gsub("\\[", "", ordering_vector)
 
     # handling formula input(s)
-    formula_vector  <- strsplit(formula, " ")
     for (j in formula_vector) {
-      if (all(j == column)) {
-        md[[formula]] <- factor(md[[formula]], levels = ordering_vector)
+      if (grepl(j, column, fixed = TRUE) == TRUE) {
+        md[[j]] <- factor(md[[j]], levels = ordering_vector)
       }
     }
-
     # handling group input
     if ((!is.null(group)) && (all(group == column))) {
       md[[group]] <- factor(md[[group]], levels = ordering_vector)
