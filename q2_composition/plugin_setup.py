@@ -84,7 +84,7 @@ plugin.methods.register_function(
                  ' should be a discrete variable. This is required for'
                  ' `struc_zero` and performing `global_test`.',
         'level_ordering': ' The preferred order (if any) for the values in the'
-                       ' `group` and `formula` columns, if provided.',
+                          ' `group` and `formula` columns, if provided.',
         'struc_zero': ' Whether to detect structural zeros based on `group`.'
                       ' Default is FALSE.',
         'neg_lb': 'Whether to classify a taxon as a structural zero using its'
