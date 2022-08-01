@@ -58,6 +58,10 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
     meta = metadata.to_dataframe()
 
+    # TODO:
+    # Error handling for formula & group values - assert in md columns
+    # Error handling for intersection of md & table IDs - error on missing md
+
     with tempfile.TemporaryDirectory() as temp_dir_name:
         temp_dir_name = '.'
         biom_fp = os.path.join(temp_dir_name, 'input.biom.tsv')
