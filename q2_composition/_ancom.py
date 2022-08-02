@@ -70,8 +70,8 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         table.to_csv(biom_fp, sep='\t', header=True)
         meta.to_csv(meta_fp, sep='\t', header=True)
 
-        if group is None:
-            group = formula
+        # if group is None:
+        #     group = formula
 
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,

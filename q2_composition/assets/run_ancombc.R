@@ -109,7 +109,7 @@ data <- phyloseq(otu, md)
 
 # analysis -----------------------
 fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
-               struc_zero, neg_lb, tol, max_iter, conserve, alpha)
+               struc_zero, neg_lb, tol, max_iter, conserve, alpha, global)
 
 # extract stats from the structure
 feature_table <- fit$feature_table
