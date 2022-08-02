@@ -30,8 +30,8 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
             formula: str, p_adj_method: str = 'holm', prv_cut: float = 0.1,
             lib_cut: int = 0, group: str = None, level_ordering: str = None,
             struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
-            max_iter: int = 100, conserve: bool = False, alpha: float = 0.05,
-            global_test: bool = False) -> pd.DataFrame:
+            max_iter: int = 100, conserve: bool = False,
+            alpha: float = 0.05) -> pd.DataFrame:
 
     return _ancombc(
         table=table,
@@ -48,13 +48,12 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
         max_iter=max_iter,
         conserve=conserve,
         alpha=alpha,
-        global_test=global_test
     )
 
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              group, level_ordering, struc_zero, neg_lb, tol, max_iter,
-             conserve, alpha, global_test):
+             conserve, alpha):
 
     meta = metadata.to_dataframe()
 
@@ -88,16 +87,14 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--max_iter', str(max_iter),
                '--conserve', str(conserve),
                '--alpha', str(alpha),
-               '--global', str(global_test),
                ]
 
         try:
-            global_test = run_commands([cmd])
+            run_commands([cmd])
         except subprocess.CalledProcessError as e:
             raise Exception('An error was encountered while running ANCOM-BC'
                             ' in R (return code %d), please inspect stdout and'
                             ' stderr to learn more.' % e.returncode)
-
         # summary = pd.read_csv(filepath_or_buffer=summary_fp, index_col=0)
 
         # summary.index.set_names('feature-id', inplace=True)

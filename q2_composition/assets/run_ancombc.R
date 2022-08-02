@@ -36,8 +36,6 @@ option_list <- list(
   make_option("--conserve", action = "store", default = "NULL",
               type = "character"),
   make_option("--alpha", action = "store", default = "NULL",
-              type = "character"),
-  make_option("--global", action = "store", default = "NULL",
               type = "character")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -57,7 +55,6 @@ tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
 conserve            <- as.logical(opt$conserve)
 alpha               <- as.numeric(opt$alpha)
-global              <- as.logical(opt$global)
 
 # load data ----------------------
 if (!file.exists(inp_abundances_path)) {
@@ -109,10 +106,10 @@ data <- phyloseq(otu, md)
 
 # analysis -----------------------
 fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
-               struc_zero, neg_lb, tol, max_iter, conserve, alpha, global)
+               struc_zero, neg_lb, tol, max_iter, conserve, alpha)
 
 # extract stats from the structure
-feature_table <- fit$feature_table
+# feature_table <- fit$feature_table
 zero_ind      <- fit$zero_ind
 samp_frac     <- fit$samp_frac
 resid         <- fit$resid
@@ -127,14 +124,8 @@ p_val    <- fit$res$p_val
 q_val    <- fit$res$q_val
 diff_abn <- fit$res$diff_abn
 
-# global test result details
-global_w        <- fit$res_global$W
-global_p_val    <- fit$res_global$p_val
-global_q_val    <- fit$res_global$q_val
-global_diff_abn <- fit$res_global$diff_abn
-
 # Write results to file
-write.csv(feature_table, file = "feature_table.csv")
+# write.csv(feature_table, file = "feature_table.csv")
 write.csv(zero_ind, file = "zero_ind.csv")
 write.csv(samp_frac, file = "samp_frac.csv")
 write.csv(resid, file = "resid.csv")
@@ -147,8 +138,3 @@ write.csv(w, file = "w.csv")
 write.csv(p_val, file = "p_val.csv")
 write.csv(q_val, file = "q_val.csv")
 write.csv(diff_abn, file = "diff_abn.csv")
-
-write.csv(global_w, file = "global_w.csv")
-write.csv(global_p_val, file = "global_p_val.csv")
-write.csv(global_q_val, file = "global_q_val.csv")
-write.csv(global_diff_abn, file = "global_diff_abn.csv")

@@ -63,7 +63,6 @@ plugin.methods.register_function(
         'max_iter': Int,
         'conserve': Bool,
         'alpha': Float,
-        'global_test': Bool
     },
     outputs=[('differentials', FeatureData[Differential])],
     input_descriptions={
@@ -98,7 +97,6 @@ plugin.methods.register_function(
                     ' small and/or the number of differentially abundant taxa'
                     ' is believed to be large. Default is FALSE.',
         'alpha': 'Level of significance. Default is FALSE.',
-        'global_test': 'Whether to perform global test. Default is FALSE.'
     },
     output_descriptions={
         'differentials': 'The calculated per-feature differentials.'
