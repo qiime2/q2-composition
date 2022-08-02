@@ -82,21 +82,23 @@ level_vector    <- unlist(strsplit(level_ordering, ", "))
 if (!is.null(level_ordering)) {
   for (i in level_vector) {
     column          <- unlist(strsplit(i, "::"))[1]
-    ordering_vector <- unlist(strsplit(i, "::"))[2]
-    ordering_vector <- unlist(strsplit(ordering_vector, ","))
-    ordering_vector <- gsub("\\'", "", ordering_vector)
-    ordering_vector <- gsub("\\]", "", ordering_vector)
-    ordering_vector <- gsub("\\[", "", ordering_vector)
+    intercept_vector <- unlist(strsplit(i, "::"))[2]
+    # intercept_vector <- unlist(strsplit(intercept_vector, ","))
+    intercept_vector <- gsub("\\'", "", intercept_vector)
+    intercept_vector <- gsub("\\]", "", intercept_vector)
+    intercept_vector <- gsub("\\[", "", intercept_vector)
 
     # handling formula input(s)
     for (j in formula_vector) {
       if (grepl(j, column, fixed = TRUE) == TRUE) {
-        md[[j]] <- factor(md[[j]], levels = ordering_vector)
+        md[[j]] <- factor(md[[j]])
+        md[[j]] <- relevel(md[[j]], ref = intercept_vector)
       }
     }
     # handling group input
     if ((!is.null(group)) && (all(group == column))) {
-      md[[group]] <- factor(md[[group]], levels = ordering_vector)
+      md[[group]] <- factor(md[[group]])
+      md[[group]] <- relevel(md[[group]], ref = intercept_vector)
     }
   }
 }

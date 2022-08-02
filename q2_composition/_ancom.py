@@ -8,6 +8,7 @@
 import subprocess
 import tempfile
 import pandas as pd
+import numpy as np
 import os
 import qiime2
 
@@ -50,6 +51,15 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
         alpha=alpha,
     )
 
+def _column_validation(value, parameter, metadata):
+    if value not in metadata.columns:
+        raise ValueError('Value provided in the `%s` parameter was not found'
+                         ' in any of the metadata columns. Please make sure to'
+                         ' only include values that are present within the'
+                         ' metadata columns.'
+                         ' \n\n'
+                         ' Value that was not found as a metadata column: "%s"'
+                          % (parameter, value))
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              group, level_ordering, struc_zero, neg_lb, tol, max_iter,
@@ -57,8 +67,40 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
     meta = metadata.to_dataframe()
 
+    # column validation for the formula parameter
+    formula_list = formula.split(' + ')
+    for column in formula_list:
+        _column_validation(column, 'formula', meta)
+
+    # column validation for the group parameter
+    _column_validation(group, 'group', meta)
+
+    # column validation for the level_ordering parameter
+    column_list = []
+    for i in level_ordering:
+        column_list.append(i.split('::')[0])
+
+    for column in column_list:
+        _column_validation(column, 'level_ordering', meta)
+
+    # level validation for the level_ordering parameter
+    # level_list = []
+    # for i in level_ordering:
+    #     level_list.append(i.split('::')[1])
+    # print(level_list)
+
+    # group validation for 3+ categories in the chosen column
+    group_list = np.unique(meta[group])
+    if len(group_list) < 3:
+        raise ValueError('Column selected for the `group` parameter has less'
+                         ' than three unique values. ANCOM-BC can only proceed'
+                         ' with a `group` column that contains three or more'
+                         ' unique values.'
+                         ' \n\n'
+                         ' Column chosen that contains less than'
+                         ' three unique values: "%s"' % group)
+
     # TODO:
-    # Error handling for formula & group values - assert in md columns
     # Error handling for intersection of md & table IDs - error on missing md
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
