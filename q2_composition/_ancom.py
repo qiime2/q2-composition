@@ -11,6 +11,7 @@ import pandas as pd
 import numpy as np
 import os
 import qiime2
+from qiime2 import Artifact
 
 
 def run_commands(cmds, verbose=True):
@@ -69,28 +70,40 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
     meta = metadata.to_dataframe()
 
+    if not(set(table.index).issubset(set(meta.index))):
+        raise KeyError('Not all samples present within the table were found in'
+                       ' the associated metadata file. Please make sure that'
+                       ' all samples in the FeatureTable are also present in'
+                       ' the metadata.')
+
     # column validation for the group parameter
     if group is not None:
         _column_validation(group, 'group', meta)
+    else:
+        group = ''
 
     # column & level validation for the level_ordering parameter
-    for i in level_ordering:
-        column = i.split('::')[0]
-        level_value = i.split('::')[1]
+    if level_ordering is not None:
+        for i in level_ordering:
+            column = i.split('::')[0]
+            level_value = i.split('::')[1]
 
-        _column_validation(column, 'level_ordering', meta)
+            _column_validation(column, 'level_ordering', meta)
 
-        if level_value not in np.unique(meta[column].values):
-            raise ValueError('Value provided in `level_ordering` parameter not'
-                             ' found in the associated column within the'
-                             ' metadata. Please make sure each column::value'
-                             ' pair is present within the metadata file.'
-                             ' \n\n'
-                             ' column::value pair with a value that was not'
-                             ' found: "%s"' % i)
+            if level_value not in np.unique(meta[column].values):
+                raise ValueError('Value provided in `level_ordering` parameter'
+                                ' not found in the associated column within'
+                                ' the metadata. Please make sure each'
+                                ' column::value pair is present within the'
+                                ' metadata file.'
+                                ' \n\n'
+                                ' column::value pair with a value that was not'
+                                ' found: "%s"' % i)
+    else:
+        level_ordering = ''
 
     # TODO:
-    # Error handling for intersection of md & table IDs - error on missing md
+    # Error when there are values in the table that aren't in the md
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
         temp_dir_name = '.'
@@ -99,9 +112,6 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
         table.to_csv(biom_fp, sep='\t', header=True)
         meta.to_csv(meta_fp, sep='\t', header=True)
-
-        if group is None:
-            group = ''
 
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,

@@ -74,13 +74,15 @@ otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
 
-# level ordering for model.matrix calculation
-level_vector    <- unlist(strsplit(level_ordering, ", "))
+if (level_ordering == "") {
+  level_ordering <- NULL
+}
 
 # split the level_ordering param into each column and associated level order
 if (!is.null(level_ordering)) {
+  level_vector <- unlist(strsplit(level_ordering, ", "))
   for (i in level_vector) {
-    column          <- unlist(strsplit(i, "::"))[1]
+    column <- unlist(strsplit(i, "::"))[1]
     column <- gsub("\\'", "", column)
     column <- gsub("\\]", "", column)
     column <- gsub("\\[", "", column)
