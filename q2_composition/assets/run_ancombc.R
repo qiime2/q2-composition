@@ -75,25 +75,26 @@ md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
 
 # level ordering for model.matrix calculation
-formula_vector  <- unlist(strsplit(formula, " "))
 level_vector    <- unlist(strsplit(level_ordering, ", "))
 
 # split the level_ordering param into each column and associated level order
 if (!is.null(level_ordering)) {
   for (i in level_vector) {
     column          <- unlist(strsplit(i, "::"))[1]
+    column <- gsub("\\'", "", column)
+    column <- gsub("\\]", "", column)
+    column <- gsub("\\[", "", column)
+
     intercept_vector <- unlist(strsplit(i, "::"))[2]
-    # intercept_vector <- unlist(strsplit(intercept_vector, ","))
+    intercept_vector <- unlist(strsplit(intercept_vector, ","))
     intercept_vector <- gsub("\\'", "", intercept_vector)
     intercept_vector <- gsub("\\]", "", intercept_vector)
     intercept_vector <- gsub("\\[", "", intercept_vector)
 
     # handling formula input(s)
-    for (j in formula_vector) {
-      if (grepl(j, column, fixed = TRUE) == TRUE) {
-        md[[j]] <- factor(md[[j]])
-        md[[j]] <- relevel(md[[j]], ref = intercept_vector)
-      }
+    for (j in column) {
+      md[[j]] <- factor(md[[j]])
+      md[[j]] <- relevel(md[[j]], ref = intercept_vector)
     }
     # handling group input
     if ((!is.null(group)) && (all(group == column))) {
@@ -107,6 +108,10 @@ if (!is.null(level_ordering)) {
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
+if (group == "") {
+  group <- NULL
+}
+
 fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
                struc_zero, neg_lb, tol, max_iter, conserve, alpha)
 

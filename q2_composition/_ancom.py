@@ -51,6 +51,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
         alpha=alpha,
     )
 
+
 def _column_validation(value, parameter, metadata):
     if value not in metadata.columns:
         raise ValueError('Value provided in the `%s` parameter was not found'
@@ -59,7 +60,8 @@ def _column_validation(value, parameter, metadata):
                          ' metadata columns.'
                          ' \n\n'
                          ' Value that was not found as a metadata column: "%s"'
-                          % (parameter, value))
+                         % (parameter, value))
+
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              group, level_ordering, struc_zero, neg_lb, tol, max_iter,
@@ -67,38 +69,25 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
     meta = metadata.to_dataframe()
 
-    # column validation for the formula parameter
-    formula_list = formula.split(' + ')
-    for column in formula_list:
-        _column_validation(column, 'formula', meta)
-
     # column validation for the group parameter
-    _column_validation(group, 'group', meta)
+    if group is not None:
+        _column_validation(group, 'group', meta)
 
-    # column validation for the level_ordering parameter
-    column_list = []
+    # column & level validation for the level_ordering parameter
     for i in level_ordering:
-        column_list.append(i.split('::')[0])
+        column = i.split('::')[0]
+        level_value = i.split('::')[1]
 
-    for column in column_list:
         _column_validation(column, 'level_ordering', meta)
 
-    # level validation for the level_ordering parameter
-    # level_list = []
-    # for i in level_ordering:
-    #     level_list.append(i.split('::')[1])
-    # print(level_list)
-
-    # group validation for 3+ categories in the chosen column
-    group_list = np.unique(meta[group])
-    if len(group_list) < 3:
-        raise ValueError('Column selected for the `group` parameter has less'
-                         ' than three unique values. ANCOM-BC can only proceed'
-                         ' with a `group` column that contains three or more'
-                         ' unique values.'
-                         ' \n\n'
-                         ' Column chosen that contains less than'
-                         ' three unique values: "%s"' % group)
+        if level_value not in np.unique(meta[column].values):
+            raise ValueError('Value provided in `level_ordering` parameter not'
+                             ' found in the associated column within the'
+                             ' metadata. Please make sure each column::value'
+                             ' pair is present within the metadata file.'
+                             ' \n\n'
+                             ' column::value pair with a value that was not'
+                             ' found: "%s"' % i)
 
     # TODO:
     # Error handling for intersection of md & table IDs - error on missing md
@@ -111,8 +100,8 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         table.to_csv(biom_fp, sep='\t', header=True)
         meta.to_csv(meta_fp, sep='\t', header=True)
 
-        # if group is None:
-        #     group = formula
+        if group is None:
+            group = ''
 
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,
