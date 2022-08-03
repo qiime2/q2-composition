@@ -11,7 +11,6 @@ import pandas as pd
 import numpy as np
 import os
 import qiime2
-from qiime2 import Artifact
 
 
 def run_commands(cmds, verbose=True):
@@ -92,13 +91,13 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
             if level_value not in np.unique(meta[column].values):
                 raise ValueError('Value provided in `level_ordering` parameter'
-                                ' not found in the associated column within'
-                                ' the metadata. Please make sure each'
-                                ' column::value pair is present within the'
-                                ' metadata file.'
-                                ' \n\n'
-                                ' column::value pair with a value that was not'
-                                ' found: "%s"' % i)
+                                 ' not found in the associated column within'
+                                 ' the metadata. Please make sure each'
+                                 ' column::value pair is present within the'
+                                 ' metadata file.'
+                                 ' \n\n'
+                                 ' column::value pair with a value that was'
+                                 ' not found: "%s"' % i)
     else:
         level_ordering = ''
 
