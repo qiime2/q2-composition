@@ -8,7 +8,6 @@
 import subprocess
 import tempfile
 import pandas as pd
-import numpy as np
 import os
 import qiime2
 
@@ -70,10 +69,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     meta = metadata.to_dataframe()
 
     # error on IDs found in table but not in metadata
-    missing_ids = []
-    for i in set(table.index):
-        if i not in set(meta.index):
-            missing_ids.append(i)
+    missing_ids = table.index.difference(meta.index).values
 
     if not(set(table.index).issubset(set(meta.index))):
         raise KeyError('Not all samples present within the table were found in'
@@ -97,7 +93,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
             _column_validation(column, 'level_ordering', meta)
 
-            if level_value not in np.unique(meta[column].values):
+            if level_value not in pd.unique(meta[column].values):
                 raise ValueError('Value provided in `level_ordering` parameter'
                                  ' not found in the associated column within'
                                  ' the metadata. Please make sure each'
