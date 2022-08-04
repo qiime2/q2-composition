@@ -20,7 +20,7 @@ requirements:
     - python {{ python }}
     - scikit-bio {{ scikit_bio }}
     - biom-format {{ biom_format }}
-    - scipy
+    - scipy {{ scipy }}
     - pandas {{ pandas }}
     - qiime2 {{ qiime2_epoch }}.*
     - q2templates {{ qiime2_epoch }}.*
