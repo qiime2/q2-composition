@@ -12,7 +12,7 @@ from q2_types.feature_table import FeatureTable, Frequency, Composition
 from q2_types.feature_data import FeatureData, Differential
 
 import q2_composition
-from q2_composition._ancom import ancombc
+from q2_composition._ancombc import ancombc
 
 
 plugin = Plugin(

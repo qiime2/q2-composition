@@ -118,7 +118,6 @@ fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
                struc_zero, neg_lb, tol, max_iter, conserve, alpha)
 
 # extract stats from the structure
-# feature_table <- fit$feature_table
 zero_ind      <- fit$zero_ind
 samp_frac     <- fit$samp_frac
 resid         <- fit$resid
@@ -134,7 +133,6 @@ q_val    <- fit$res$q_val
 diff_abn <- fit$res$diff_abn
 
 # Write results to file
-# write.csv(feature_table, file = "feature_table.csv")
 write.csv(zero_ind, file = "zero_ind.csv")
 write.csv(samp_frac, file = "samp_frac.csv")
 write.csv(resid, file = "resid.csv")

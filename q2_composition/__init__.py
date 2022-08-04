@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from ._impute import add_pseudocount
-from ._ancom import ancombc
+from ._ancombc import ancombc
 from ._version import get_versions
 
 
