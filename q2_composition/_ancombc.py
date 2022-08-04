@@ -71,7 +71,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     # error on IDs found in table but not in metadata
     missing_ids = table.index.difference(meta.index).values
 
-    if not(set(table.index).issubset(set(meta.index))):
+    if not (set(table.index).issubset(set(meta.index))):
         raise KeyError('Not all samples present within the table were found in'
                        ' the associated metadata file. Please make sure that'
                        ' all samples in the FeatureTable are also present in'
