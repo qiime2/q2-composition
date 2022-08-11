@@ -10,6 +10,7 @@ import tempfile
 import pandas as pd
 import os
 import qiime2
+from q2_stats._format import DataLoafPackageDirFmt
 
 
 def run_commands(cmds, verbose=True):
@@ -113,6 +114,8 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         table.to_csv(biom_fp, sep='\t', header=True)
         meta.to_csv(meta_fp, sep='\t', header=True)
 
+        output_loaf = DataLoafPackageDirFmt()
+
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,
                '--inp_metadata_path', meta_fp,
@@ -128,6 +131,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--max_iter', str(max_iter),
                '--conserve', str(conserve),
                '--alpha', str(alpha),
+               '--output-loaf', str(output_loaf),
                ]
 
         try:
@@ -136,7 +140,5 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
             raise Exception('An error was encountered while running ANCOM-BC'
                             ' in R (return code %d), please inspect stdout and'
                             ' stderr to learn more.' % e.returncode)
-        # summary = pd.read_csv(filepath_or_buffer=summary_fp, index_col=0)
 
-        # summary.index.set_names('feature-id', inplace=True)
-        # return summary
+        return output_loaf

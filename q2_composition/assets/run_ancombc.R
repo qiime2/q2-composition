@@ -37,6 +37,8 @@ option_list <- list(
               type = "character"),
   make_option("--alpha", action = "store", default = "NULL",
               type = "character")
+  make_option("--output_loaf", action = "store", default = "NULL",
+              type = "character")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
 
@@ -55,6 +57,7 @@ tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
 conserve            <- as.logical(opt$conserve)
 alpha               <- as.numeric(opt$alpha)
+output_loaf         <- opt$output_loaf
 
 # load data ----------------------
 if (!file.exists(inp_abundances_path)) {
@@ -117,31 +120,36 @@ if (group == "") {
 fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
                struc_zero, neg_lb, tol, max_iter, conserve, alpha)
 
-# extract stats from the structure
-zero_ind      <- fit$zero_ind
+# Diagnostics
 samp_frac     <- fit$samp_frac
 resid         <- fit$resid
 delta_em      <- fit$delta_em
 delta_wls     <- fit$delta_wls
 
-# result details
+# DataLoafPackageDirFmt slices
 lfc      <- fit$res$lfc
 se       <- fit$res$se
 w        <- fit$res$W
 p_val    <- fit$res$p_val
 q_val    <- fit$res$q_val
+
+# FeatureData[Selection]
+zero_ind      <- fit$zero_ind
 diff_abn <- fit$res$diff_abn
 
 # Write results to file
-write.csv(zero_ind, file = "zero_ind.csv")
-write.csv(samp_frac, file = "samp_frac.csv")
-write.csv(resid, file = "resid.csv")
-write.csv(delta_em, file = "delta_em.csv")
-write.csv(delta_wls, file = "delta_wls.csv")
+# write.csv(zero_ind, file = "zero_ind.csv")
+# write.csv(samp_frac, file = "samp_frac.csv")
+# write.csv(resid, file = "resid.csv")
+# write.csv(delta_em, file = "delta_em.csv")
+# write.csv(delta_wls, file = "delta_wls.csv")
 
-write.csv(lfc, file = "lfc.csv")
-write.csv(se, file = "se.csv")
-write.csv(w, file = "w.csv")
-write.csv(p_val, file = "p_val.csv")
-write.csv(q_val, file = "q_val.csv")
-write.csv(diff_abn, file = "diff_abn.csv")
+# write.csv(lfc, file = "lfc.csv")
+# write.csv(se, file = "se.csv")
+# write.csv(w, file = "w.csv")
+# write.csv(p_val, file = "p_val.csv")
+# write.csv(q_val, file = "q_val.csv")
+# write.csv(diff_abn, file = "diff_abn.csv")
+
+# TODO: construct data slices for each structure in the DataLoaf
+# and save to the output_loaf
