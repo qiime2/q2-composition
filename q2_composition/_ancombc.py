@@ -131,7 +131,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--max_iter', str(max_iter),
                '--conserve', str(conserve),
                '--alpha', str(alpha),
-               '--output-loaf', str(output_loaf),
+               '--output_loaf', str(output_loaf),
                ]
 
         try:

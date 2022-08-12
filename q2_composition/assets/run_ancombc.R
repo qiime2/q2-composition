@@ -5,6 +5,7 @@ suppressWarnings(library(phyloseq))
 suppressWarnings(library(tidyverse))
 suppressWarnings(library(ANCOMBC))
 library("optparse")
+library("frictionless")
 
 # load arguments -----------------
 cat(R.version$version.string, "\n")
@@ -36,7 +37,7 @@ option_list <- list(
   make_option("--conserve", action = "store", default = "NULL",
               type = "character"),
   make_option("--alpha", action = "store", default = "NULL",
-              type = "character")
+              type = "character"),
   make_option("--output_loaf", action = "store", default = "NULL",
               type = "character")
 )
@@ -134,22 +135,18 @@ p_val    <- fit$res$p_val
 q_val    <- fit$res$q_val
 
 # FeatureData[Selection]
-zero_ind      <- fit$zero_ind
+zero_ind <- fit$zero_ind
 diff_abn <- fit$res$diff_abn
-
-# Write results to file
-# write.csv(zero_ind, file = "zero_ind.csv")
-# write.csv(samp_frac, file = "samp_frac.csv")
-# write.csv(resid, file = "resid.csv")
-# write.csv(delta_em, file = "delta_em.csv")
-# write.csv(delta_wls, file = "delta_wls.csv")
-
-# write.csv(lfc, file = "lfc.csv")
-# write.csv(se, file = "se.csv")
-# write.csv(w, file = "w.csv")
-# write.csv(p_val, file = "p_val.csv")
-# write.csv(q_val, file = "q_val.csv")
-# write.csv(diff_abn, file = "diff_abn.csv")
 
 # TODO: construct data slices for each structure in the DataLoaf
 # and save to the output_loaf
+dataloaf_package <-
+  create_package()
+  add_resource(resource_name = "lfc_slice", data = lfc)
+  add_resource(resource_name = "se_slice", data = se)
+  add_resource(resource_name = "w_slice", data = w)
+  add_resource(resource_name = "p_val_slice", data = p_val)
+  add_resource(resource_name = "q_val_slice", data = q_val)
+
+dataloaf_package
+  write_package(directory = output_loaf)
