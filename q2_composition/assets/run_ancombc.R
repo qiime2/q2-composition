@@ -140,13 +140,17 @@ diff_abn <- fit$res$diff_abn
 
 # TODO: construct data slices for each structure in the DataLoaf
 # and save to the output_loaf
-dataloaf_package <-
-  create_package()
-  add_resource(resource_name = "lfc_slice", data = lfc)
-  add_resource(resource_name = "se_slice", data = se)
-  add_resource(resource_name = "w_slice", data = w)
-  add_resource(resource_name = "p_val_slice", data = p_val)
-  add_resource(resource_name = "q_val_slice", data = q_val)
+dataloaf_package <- create_package()
 
-dataloaf_package
-  write_package(directory = output_loaf)
+dataloaf_package <- add_resource(package = dataloaf_package,
+                                 resource_name = "lfc_slice", data = lfc)
+dataloaf_package <- add_resource(package = dataloaf_package,
+                                 resource_name = "se_slice", data = se)
+dataloaf_package <- add_resource(package = dataloaf_package,
+                                 resource_name = "w_slice", data = w)
+dataloaf_package <- add_resource(package = dataloaf_package,
+                                 resource_name = "p_val_slice", data = p_val)
+dataloaf_package <- add_resource(package = dataloaf_package,
+                                 resource_name = "q_val_slice", data = q_val)
+
+write_package(package = dataloaf_package, directory = output_loaf)

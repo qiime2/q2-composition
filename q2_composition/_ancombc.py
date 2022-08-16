@@ -32,7 +32,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
             lib_cut: int = 0, group: str = None, level_ordering: str = None,
             struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
             max_iter: int = 100, conserve: bool = False,
-            alpha: float = 0.05) -> pd.DataFrame:
+            alpha: float = 0.05) -> DataLoafPackageDirFmt:
 
     return _ancombc(
         table=table,
