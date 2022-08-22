@@ -9,7 +9,8 @@
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
-from q2_types.feature_data import FeatureData, Differential
+from q2_types.feature_data import FeatureData
+from q2_stats import DifferentialAbundance
 
 import q2_composition
 from q2_composition._ancombc import ancombc
@@ -64,7 +65,7 @@ plugin.methods.register_function(
         'conserve': Bool,
         'alpha': Float,
     },
-    outputs=[('differentials', FeatureData[Differential])],
+    outputs=[('differentials', FeatureData[DifferentialAbundance])],
     input_descriptions={
         'table': 'The feature table to be used for ANCOM computation.'
     },
