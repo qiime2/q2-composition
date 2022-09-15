@@ -32,7 +32,8 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
             lib_cut: int = 0, group: str = None, level_ordering: str = None,
             struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
             max_iter: int = 100, conserve: bool = False,
-            alpha: float = 0.05) -> DataLoafPackageDirFmt:
+            alpha: float = 0.05) -> (DataLoafPackageDirFmt,
+                                     DataLoafPackageDirFmt):
 
     return _ancombc(
         table=table,
@@ -115,6 +116,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         meta.to_csv(meta_fp, sep='\t', header=True)
 
         output_loaf = DataLoafPackageDirFmt()
+        output_zeros = DataLoafPackageDirFmt()
 
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,
@@ -132,6 +134,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--conserve', str(conserve),
                '--alpha', str(alpha),
                '--output_loaf', str(output_loaf),
+               '--output_zeros', str(output_zeros)
                ]
 
         try:
@@ -141,4 +144,4 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                             ' in R (return code %d), please inspect stdout and'
                             ' stderr to learn more.' % e.returncode)
 
-        return output_loaf
+        return output_loaf, output_zeros

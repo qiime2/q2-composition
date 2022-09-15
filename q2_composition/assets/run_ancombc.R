@@ -39,6 +39,8 @@ option_list <- list(
   make_option("--alpha", action = "store", default = "NULL",
               type = "character"),
   make_option("--output_loaf", action = "store", default = "NULL",
+              type = "character"),
+  make_option("--output_zeros", action = "store", default = "NULL",
               type = "character")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
@@ -59,6 +61,7 @@ max_iter            <- as.numeric(opt$max_iter)
 conserve            <- as.logical(opt$conserve)
 alpha               <- as.numeric(opt$alpha)
 output_loaf         <- opt$output_loaf
+output_zeros        <- opt$output_zeros
 
 # load data ----------------------
 if (!file.exists(inp_abundances_path)) {
@@ -122,10 +125,10 @@ fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
                struc_zero, neg_lb, tol, max_iter, conserve, alpha)
 
 # Diagnostics
-samp_frac     <- fit$samp_frac
-resid         <- fit$resid
-delta_em      <- fit$delta_em
-delta_wls     <- fit$delta_wls
+samp_frac <- fit$samp_frac
+resid     <- fit$resid
+delta_em  <- fit$delta_em
+delta_wls <- fit$delta_wls
 
 # DataLoafPackageDirFmt slices
 lfc   <- cbind(id = rownames(fit$res$lfc), fit$res$lfc)
@@ -135,8 +138,9 @@ p_val <- cbind(id = rownames(fit$res$p_val), fit$res$p_val)
 q_val <- cbind(id = rownames(fit$res$q_val), fit$res$q_val)
 
 # FeatureData[Selection]
-zero_ind <- fit$zero_ind
-diff_abn <- fit$res$diff_abn
+zeros_foo <- cbind(id = rownames(fit$zero_ind), fit$zero_ind)
+zeros_df  <- as.data.frame(zeros_foo)
+diff_abn  <- fit$res$diff_abn
 
 # TODO: construct data slices for each structure in the DataLoaf
 # and save to the output_loaf
@@ -154,3 +158,12 @@ dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "q_val_slice", data = q_val)
 
 write_package(package = dataloaf_package, directory = output_loaf)
+
+# testing for struc zeros
+zeros_package <- create_package()
+
+zeros_package <- add_resource(package = zeros_package,
+                              resource_name = "struc_zero_slice",
+                              data = zeros_df)
+
+write_package(package = zeros_package, directory = output_zeros)
