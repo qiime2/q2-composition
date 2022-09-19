@@ -42,5 +42,5 @@ conda install -c conda-forge r-nloptr
 ### Install ANCOMBC using devtools
 ANCOMBC can be installed using devtools with the following command:
 ```
-devtools::install_github("git@github.com:FrederickHuangLin/ANCOMBC.git")
+devtools::install_github("https://github.com/FrederickHuangLin/ANCOMBC/tree/RELEASE_3_15")
 ```
