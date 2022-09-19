@@ -12,20 +12,10 @@ import versioneer
 
 
 setup(
-    name="q2-composition",
+    name='q2-composition',
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    author="",
-    author_email="",
-    description="Compositional statistics plugin for QIIME2.",
-    scripts=['q2_composition/assets/run_ancombc.R'],
-    license='BSD-3-Clause',
-    url="https://qiime2.org",
-    entry_points={
-        'qiime2.plugins':
-        ['q2-composition=q2_composition.plugin_setup:plugin']
-    },
     package_data={
         'q2_composition': [
             'citations.bib',
@@ -33,7 +23,18 @@ setup(
             'assets/ancom/css/*',
             'assets/ancom/js/*',
             'assets/ancom/licenses/*',
-        ]
+        ],
+        'q2_composition.tests': ['data/*'],
+    },
+    author='Liz Gehret',
+    author_email='elizabeth.gehret@nau.edu',
+    description='Compositional statistics plugin for QIIME2.',
+    scripts=['q2_composition/assets/run_ancombc.R'],
+    license='BSD-3-Clause',
+    url='https://qiime2.org',
+    entry_points={
+        'qiime2.plugins':
+        ['q2-composition=q2_composition.plugin_setup:plugin']
     },
     zip_safe=False,
 )

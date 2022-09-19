@@ -14,7 +14,7 @@ from q2_stats import DifferentialAbundance
 
 import q2_composition
 from q2_composition._ancombc import ancombc
-
+import q2_composition._examples as ex
 
 plugin = Plugin(
     name='composition',
@@ -106,4 +106,7 @@ plugin.methods.register_function(
     },
     name=('Analysis of Composition of Microbiomes with Bias Correction'),
     description=('ANCOM-BC description goes here.'),
+    examples={
+        'ancombc_single_formula_no_group': ex.ancombc_single_formula_no_group
+    }
 )

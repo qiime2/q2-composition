@@ -22,6 +22,11 @@ requirements:
     - biom-format {{ biom_format }}
     - scipy
     - pandas {{ pandas }}
+    - bioconductor-ANCOMBC 1.6.2
+    - bioconductor-phyloseq 1.40.0
+    - r-tidyverse
+    - r-optparse
+    - r-frictionless
     - qiime2 {{ qiime2_epoch }}.*
     - q2templates {{ qiime2_epoch }}.*
     - q2-types {{ qiime2_epoch }}.*
