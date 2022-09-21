@@ -1,5 +1,15 @@
 #!/usr/bin/env Rscript
 
+# error handling -----------------
+options(error = function() {
+  sink(stderr())
+  on.exit(sink(NULL))
+  traceback(3)
+  if (!interactive()) {
+    q(status = 1)
+  }
+})
+
 # load libraries -----------------
 suppressWarnings(library(phyloseq))
 suppressWarnings(library(tidyverse))
