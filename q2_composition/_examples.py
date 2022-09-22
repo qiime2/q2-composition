@@ -45,6 +45,7 @@ def ancombc_single_formula_no_group(use):
 
     dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')
 
+
 def ancombc_single_formula_group(use):
     table = use.init_artifact('table', ancom_table_factory)
     metadata = use.init_metadata('metadata', ancom_md_factory)
@@ -63,6 +64,7 @@ def ancombc_single_formula_group(use):
     )
 
     dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')
+
 
 def ancombc_multi_formula_group_with_level_ordering(use):
     table = use.init_artifact('table', ancom_table_factory)
