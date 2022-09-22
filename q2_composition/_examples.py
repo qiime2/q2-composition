@@ -30,7 +30,6 @@ def ancom_table_factory():
 def ancombc_single_formula_no_group(use):
     table = use.init_artifact('table', ancom_table_factory)
     metadata = use.init_metadata('metadata', ancom_md_factory)
-    print(table)
 
     dataloaf, = use.action(
         use.UsageAction('composition', 'ancombc'),
@@ -43,3 +42,5 @@ def ancombc_single_formula_no_group(use):
             differentials='dataloaf'
         )
     )
+
+    dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')

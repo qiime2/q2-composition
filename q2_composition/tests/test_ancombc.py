@@ -9,7 +9,7 @@
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata, Artifact
 
-from q2_composition._ancombc import ancombc
+# from q2_composition._ancombc import ancombc
 
 
 class TestBase(TestPluginBase):

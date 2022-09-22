@@ -65,8 +65,7 @@ plugin.methods.register_function(
         'conserve': Bool,
         'alpha': Float,
     },
-    outputs=[('differentials', FeatureData[DifferentialAbundance]),
-             ('zero_differentials', FeatureData[DifferentialAbundance])],
+    outputs=[('differentials', FeatureData[DifferentialAbundance])],
     input_descriptions={
         'table': 'The feature table to be used for ANCOM computation.'
     },
@@ -102,7 +101,6 @@ plugin.methods.register_function(
     },
     output_descriptions={
         'differentials': 'The calculated per-feature differentials.',
-        'zero_differentials': ''
     },
     name=('Analysis of Composition of Microbiomes with Bias Correction'),
     description=('ANCOM-BC description goes here.'),
