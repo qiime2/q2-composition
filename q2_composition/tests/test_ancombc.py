@@ -25,3 +25,31 @@ class TestBase(TestPluginBase):
 class TestANCOMBC(TestBase):
     def test_examples(self):
         self.execute_examples()
+
+    # error handling for required fields
+    def test_required_fields_table(self):
+        pass
+
+    def test_required_fields_metadata(self):
+        pass
+
+    def test_required_fields_formula(self):
+        pass
+
+    # error handling for column validation
+    def test_missing_formula_column(self):
+        pass
+
+    def test_missing_group_column(self):
+        pass
+
+    def test_missing_level_ordering_column(self):
+        pass
+
+    # error handling for missing IDs in metadata
+    def test_ids_in_table_not_in_metadata(self):
+        pass
+
+    # confirm level ordering behavior
+    def test_level_ordering_behavior(self):
+        pass
