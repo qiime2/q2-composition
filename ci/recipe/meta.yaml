@@ -22,8 +22,7 @@ requirements:
     - biom-format {{ biom_format }}
     - scipy
     - pandas {{ pandas }}
-    - bioconductor-ANCOMBC 1.6.2
-    - bioconductor-phyloseq 1.40.0
+    - bioconductor-phyloseq
     - r-tidyverse
     - r-optparse
     - r-frictionless
