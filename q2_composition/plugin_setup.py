@@ -105,6 +105,9 @@ plugin.methods.register_function(
     name=('Analysis of Composition of Microbiomes with Bias Correction'),
     description=('ANCOM-BC description goes here.'),
     examples={
-        'ancombc_single_formula_no_group': ex.ancombc_single_formula_no_group
+        'ancombc_single_formula_no_group': ex.ancombc_single_formula_no_group,
+        'ancombc_single_formula_group': ex.ancombc_single_formula_group,
+        'ancombc_multi_formula_group_with_level_ordering': (
+            ex.ancombc_multi_formula_group_with_level_ordering)
     }
 )

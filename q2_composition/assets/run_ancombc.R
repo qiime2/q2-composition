@@ -49,7 +49,7 @@ option_list <- list(
   make_option("--alpha", action = "store", default = "NULL",
               type = "character"),
   make_option("--output_loaf", action = "store", default = "NULL",
-              type = "character"),
+              type = "character")
 )
 opt <- parse_args(OptionParser(option_list = option_list))
 
