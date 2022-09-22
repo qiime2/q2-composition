@@ -1,0 +1,34 @@
+sample-id	barcode-sequence	bodysite	month	day	subject	animal	testcolumn	singlecolumn
+L1S8	AGCTGACTAGTC	gut	10	28	subject-1	dog	test1	value
+L1S57	ACACACTATGGC	gut	1	20	subject-1	dog	test2	value
+L1S76	ACTACGTGTGGT	gut	2	17	subject-1	cow	test1	value
+L1S105	AGTGCGATGCGT	gut	3	17	subject-1	cat	test2	value
+L2S155	ACGATGCGACCA	left palm	1	20	subject-1	cat	test1	value
+L2S175	AGCTATCCACGA	left palm	2	17	subject-1	cat	test2	value
+L2S204	ATGCAGCTCAGT	left palm	3	17	subject-1	bird	test1	value
+L2S222	CACGTGACATGT	left palm	4	14	subject-1	cow	test2	value
+L3S242	ACAGTTGCGCGA	right palm	10	28	subject-1	bird	test1	value
+L3S294	CACGACAGGCTA	right palm	1	20	subject-1	dog	test2	value
+L3S313	AGTGTCACGGTG	right palm	2	17	subject-1	dog	test1	value
+L3S341	CAAGTGAGAGAG	right palm	3	17	subject-1	cat	test2	value
+L3S360	CATCGTATCAAC	right palm	4	14	subject-1	cat	test1	value
+L5S104	CAGTGTCAGGAC	tongue	10	28	subject-1	bird	test2	value
+L5S155	ATCTTAGACTGC	tongue	1	20	subject-1	cow	test1	value
+L5S174	CAGACATTGCGT	tongue	2	17	subject-1	dog	test2	value
+L5S203	CGATGCACCAGA	tongue	3	17	subject-1	cat	test1	value
+L5S222	CTAGAGACTCTT	tongue	4	14	subject-1	bird	test2	value
+L1S140	ATGGCAGCTCTA	gut	10	28	subject-2	dog	test1	value
+L1S208	CTGAGATACGCG	gut	1	20	subject-2	dog	test2	value
+L1S257	CCGACTGAGATG	gut	3	17	subject-2	dog	test1	value
+L1S281	CCTCTCGTGATC	gut	4	14	subject-2	cat	test2	value
+L2S240	CATATCGCAGTT	left palm	10	28	subject-2	cat	test1	value
+L2S309	CGTGCATTATCA	left palm	1	20	subject-2	cat	test2	value
+L2S357	CTAACGCAGTCA	left palm	3	17	subject-2	bird	test1	value
+L2S382	CTCAATGACTCA	left palm	4	14	subject-2	bird	test2	value
+L3S378	ATCGATCTGTGG	right palm	10	28	subject-2	cow	test1	value
+L4S63	CTCGTGGAGTAG	right palm	1	20	subject-2	dog	test2	value
+L4S112	GCGTTACACACA	right palm	3	17	subject-2	cat	test1	value
+L4S137	GAACTGTATCTC	right palm	4	14	subject-2	bird	test2	value
+L5S240	CTGGACTCATAG	tongue	10	28	subject-2	dog	test1	value
+L6S93	GCGTTACACACA	tongue	3	17	subject-2	dog	test1	value
+L6S20	GAACTGTATCTC	tongue	4	14	subject-2	bird	test2	value

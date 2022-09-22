@@ -9,7 +9,7 @@
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata, Artifact
 
-# from q2_composition._ancombc import ancombc
+from q2_composition._ancombc import ancombc
 
 
 class TestBase(TestPluginBase):
@@ -19,36 +19,44 @@ class TestBase(TestPluginBase):
         super().setUp()
 
         self.md = Metadata.load(self.get_data_path('sample-md-ancom.tsv'))
-        self.table = Artifact.load(self.get_data_path('table-ancom.qza'))
+
+        self.missing_md = Metadata.load(self.get_data_path(
+            'sample-md-ancom-missing.tsv'))
+
+        table = self.get_data_path('table-ancom.biom')
+        self.table = Artifact.import_data('FeatureTable[Frequency]', table)
 
 
 class TestANCOMBC(TestBase):
     def test_examples(self):
         self.execute_examples()
 
-    # error handling for required fields
-    def test_required_fields_table(self):
-        pass
-
-    def test_required_fields_metadata(self):
-        pass
-
-    def test_required_fields_formula(self):
-        pass
-
     # error handling for column validation
     def test_missing_formula_column(self):
-        pass
+        with self.assertRaisesRegex(ValueError, 'formula.*parameter was not'
+                                    ' found in any of the metadata columns'):
+            ancombc(table=self.table, metadata=self.md, formula='foo')
 
     def test_missing_group_column(self):
-        pass
+        with self.assertRaisesRegex(ValueError, 'group.*parameter was not'
+                                    ' found in any of the metadata columns'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    group='foo')
 
     def test_missing_level_ordering_column(self):
-        pass
+        with self.assertRaisesRegex(ValueError, 'level_ordering.*parameter'
+                                    ' was not found in any of the metadata'
+                                    ' columns'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    level_ordering='foo::tongue')
 
     # error handling for missing IDs in metadata
     def test_ids_in_table_not_in_metadata(self):
-        pass
+        with self.assertRaisesRegex(KeyError, 'Not all samples present within'
+                                    ' the table were found in the associated'
+                                    ' metadata file.*L6S68'):
+            ancombc(table=self.table, metadata=self.missing_md,
+                    formula='bodysite')
 
     # confirm level ordering behavior
     def test_level_ordering_behavior(self):
