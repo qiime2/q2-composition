@@ -80,6 +80,8 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                        ' Sample IDs not found in the metadata: %s'
                        % missing_ids)
 
+    # TODO: column validation for the formula parameter
+
     # column validation for the group parameter
     if group is not None:
         _column_validation(group, 'group', meta)

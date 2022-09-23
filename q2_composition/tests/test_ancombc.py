@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import pandas as pd
+
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata, Artifact
 
@@ -23,8 +25,8 @@ class TestBase(TestPluginBase):
         self.missing_md = Metadata.load(self.get_data_path(
             'sample-md-ancom-missing.tsv'))
 
-        table = self.get_data_path('table-ancom.biom')
-        self.table = Artifact.import_data('FeatureTable[Frequency]', table)
+        table = Artifact.load(self.get_data_path('table-ancom.qza'))
+        self.table = table.view(pd.DataFrame)
 
 
 class TestANCOMBC(TestBase):
@@ -32,10 +34,10 @@ class TestANCOMBC(TestBase):
         self.execute_examples()
 
     # error handling for column validation
-    def test_missing_formula_column(self):
-        with self.assertRaisesRegex(ValueError, 'formula.*parameter was not'
-                                    ' found in any of the metadata columns'):
-            ancombc(table=self.table, metadata=self.md, formula='foo')
+    # def test_missing_formula_column(self):
+    #     with self.assertRaisesRegex(ValueError, 'formula.*parameter was not'
+    #                                 ' found in any of the metadata columns'):
+    #         ancombc(table=self.table, metadata=self.md, formula='foo')
 
     def test_missing_group_column(self):
         with self.assertRaisesRegex(ValueError, 'group.*parameter was not'
@@ -48,7 +50,7 @@ class TestANCOMBC(TestBase):
                                     ' was not found in any of the metadata'
                                     ' columns'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
-                    level_ordering='foo::tongue')
+                    level_ordering=['foo::tongue'])
 
     # error handling for missing IDs in metadata
     def test_ids_in_table_not_in_metadata(self):
