@@ -9,7 +9,10 @@ import subprocess
 import tempfile
 import pandas as pd
 import os
+import formulaic
+
 import qiime2
+
 from q2_stats._format import DataLoafPackageDirFmt
 
 
@@ -52,6 +55,13 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
     )
 
 
+def _leaf_collector(term):
+    if isinstance(term, formulaic.parser.types.Token):
+        return [term]
+
+    return [*_leaf_collector(term[1]), *_leaf_collector(term[2])]
+
+
 def _column_validation(value, parameter, metadata):
     if value not in metadata.columns:
         raise ValueError('Value provided in the `%s` parameter was not found'
@@ -80,7 +90,14 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                        ' Sample IDs not found in the metadata: %s'
                        % missing_ids)
 
-    # TODO: column validation for the formula parameter
+    # column validation for the formula parameter
+    parse = formulaic.parser.parser.DefaultFormulaParser(
+        include_intercept=False)
+    terms = parse.get_ast(formula=formula).flatten()
+    formula_terms = _leaf_collector(terms)
+
+    for term in formula_terms:
+        _column_validation(term, 'formula', meta)
 
     # column validation for the group parameter
     if group is not None:

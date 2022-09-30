@@ -34,10 +34,10 @@ class TestANCOMBC(TestBase):
         self.execute_examples()
 
     # error handling for column validation
-    # def test_missing_formula_column(self):
-    #     with self.assertRaisesRegex(ValueError, 'formula.*parameter was not'
-    #                                 ' found in any of the metadata columns'):
-    #         ancombc(table=self.table, metadata=self.md, formula='foo')
+    def test_missing_formula_column(self):
+        with self.assertRaisesRegex(ValueError, 'formula.*parameter was not'
+                                    ' found in any of the metadata columns'):
+            ancombc(table=self.table, metadata=self.md, formula='foo')
 
     def test_missing_group_column(self):
         with self.assertRaisesRegex(ValueError, 'group.*parameter was not'
