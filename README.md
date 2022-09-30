@@ -56,3 +56,8 @@ ANCOMBC can be installed using devtools with the following command:
 ```
 devtools::install_github("https://github.com/FrederickHuangLin/ANCOMBC/tree/RELEASE_3_15")
 ```
+
+### Dev install q2-stats plugin
+The final dependency that needs to be installed is the q2-stats plugin within the QIIME 2 Organization.
+This can be done by cloning [this repository](https://github.com/qiime2/q2-stats) to your local machine
+and running `make dev` in your development environment.
