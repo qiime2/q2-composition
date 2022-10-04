@@ -42,6 +42,15 @@ You can install this package with the following command:
 conda install -c conda-forge -c bioconda r-frictionless
 ```
 
+The last two dependencies that you'll need to install are frictionless (separate from the R package)
+and formulaic. These can be installed with the following commands:
+```
+conda install -c conda-forge frictionless
+```
+```
+conda install -c conda-forge formulaic
+```
+
 ### Install devtools
 Once you have installed R on your machine, you will need devtools to install
 ANCOMBC. Install instructions for devtools can be found
