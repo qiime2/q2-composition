@@ -22,28 +22,18 @@ a conda environment. Install instructions for QIIME 2 can be found
 [here](https://docs.qiime2.org/2022.2/install/native/#install-qiime-2-within-a-conda-environment).
 Once installed, you can activate R by typing `R` into the command line.
 
-### Install missing dependencies
-nloptr is a dependency for ANCOMBC that is currently missing within the R package,
-and thus needs to be installed prior to ANCOMBC.
-This can be easily done using conda with the following command:
+### Install missing dependencies through conda
+The following packages are dependencies for ANCOM-BC and need to be installed prior to installing
+ANCOM-BC on your machine:
 ```
 conda install -c conda-forge r-nloptr
 ```
-
-You will need the phyloseq package in order to run the QIIME 2 ANCOMBC plugin.
-This package can be installed with the following command:
 ```
 conda install -c conda-forge -c bioconda bioconductor-phyloseq
 ```
-
-You will also need the frictionless package for R in order to run the QIIME 2 ANCOMBC plugin.
-You can install this package with the following command:
 ```
 conda install -c conda-forge -c bioconda r-frictionless
 ```
-
-The last two dependencies that you'll need to install are frictionless (separate from the R package)
-and formulaic. These can be installed with the following commands:
 ```
 conda install -c conda-forge frictionless
 ```
@@ -52,8 +42,8 @@ conda install -c conda-forge formulaic
 ```
 
 ### Install devtools
-Once you have installed R on your machine, you will need devtools to install
-ANCOMBC. Install instructions for devtools can be found
+Once you have installed R on your machine and have installed all of the dependencies above through conda,
+you will need devtools to install ANCOMBC. Install instructions for devtools can be found
 [here](https://github.com/r-lib/devtools). The easiest install method will be
 through CRAN, using the following command:
 ```
