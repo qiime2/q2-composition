@@ -70,3 +70,6 @@ devtools::install_github("https://github.com/FrederickHuangLin/ANCOMBC/tree/RELE
 The final dependency that needs to be installed is the q2-stats plugin within the QIIME 2 Organization.
 This can be done by cloning [this repository](https://github.com/qiime2/q2-stats) to your local machine
 and running `make dev` in your development environment.
+
+### Dev install q2-composition
+Now you're ready to install ANCOM-BC within q2-composition! You'll need to clone this repository to your local machine, run `git fetch` from this remote and checkout the ANCOM-wrapper branch. Once you've done that you can run `make dev` and you'll be ready to use ANCOM-BC!
