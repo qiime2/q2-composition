@@ -138,11 +138,11 @@ delta_em  <- fit$delta_em
 delta_wls <- fit$delta_wls
 
 # DataLoafPackageDirFmt slices
-lfc   <- cbind(id = rownames(fit$res$lfc), fit$res$lfc)
-se    <- cbind(id = rownames(fit$res$se), fit$res$se)
-w     <- cbind(id = rownames(fit$res$W), fit$res$W)
-p_val <- cbind(id = rownames(fit$res$p_val), fit$res$p_val)
-q_val <- cbind(id = rownames(fit$res$q_val), fit$res$q_val)
+lfc   <- cbind(feature_id = rownames(fit$res$lfc), fit$res$lfc)
+se    <- cbind(feature_id = rownames(fit$res$se), fit$res$se)
+w     <- cbind(feature_id = rownames(fit$res$W), fit$res$W)
+p_val <- cbind(feature_id = rownames(fit$res$p_val), fit$res$p_val)
+q_val <- cbind(feature_id = rownames(fit$res$q_val), fit$res$q_val)
 
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf

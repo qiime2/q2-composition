@@ -55,11 +55,23 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
     )
 
 
+# utility functions for formula parsing and column validation
+def _parse_terms(formula):
+    parse = formulaic.parser.parser.DefaultFormulaParser(
+        include_intercept=False)
+    terms = parse.get_ast(formula=formula).flatten()
+    formula_terms = _leaf_collector(terms)
+    return formula_terms
+
+
 def _leaf_collector(term):
     if isinstance(term, formulaic.parser.types.Token):
-        return [term]
+        return [str(term)]
 
-    return [*_leaf_collector(term[1]), *_leaf_collector(term[2])]
+    if type(term) is not list:
+        return []
+
+    return _leaf_collector(term[1]) + _leaf_collector(term[2])
 
 
 def _column_validation(value, parameter, metadata):
@@ -91,11 +103,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                        % missing_ids)
 
     # column validation for the formula parameter
-    parse = formulaic.parser.parser.DefaultFormulaParser(
-        include_intercept=False)
-    terms = parse.get_ast(formula=formula).flatten()
-    formula_terms = _leaf_collector(terms)
-
+    formula_terms = _parse_terms(formula=formula)
     for term in formula_terms:
         _column_validation(term, 'formula', meta)
 

@@ -63,3 +63,8 @@ class TestANCOMBC(TestBase):
     # confirm level ordering behavior
     def test_level_ordering_behavior(self):
         pass
+        # add a column in the metadata that's either A or Z for the groups
+        # use level ordering for column::A and column::B
+        # use transformer from frictionless CSV to dataframe for the
+        # dataloaf and use to.iter_views to view each slice and then
+        # confirm the correct column is present for each scenario
