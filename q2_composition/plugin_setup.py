@@ -56,9 +56,7 @@ plugin.methods.register_function(
                                        'fdr', 'none']),
         'prv_cut': Float,
         'lib_cut': Int,
-        'group': Str,
         'level_ordering': List[Str],
-        'struc_zero': Bool,
         'neg_lb': Bool,
         'tol': Float,
         'max_iter': Int,
@@ -80,13 +78,8 @@ plugin.methods.register_function(
         'lib_cut': 'A numerical threshold for filtering samples based on'
                    ' library sizes. Samples with library sizes less than this'
                    ' value will be excluded from the analysis. Default is 0.',
-        'group': ' The name of the group variable within the `metadata`. This'
-                 ' should be a discrete variable. This is required for'
-                 ' `struc_zero` and performing `global_test`.',
         'level_ordering': ' The preferred order (if any) for the values in the'
-                          ' `group` and `formula` columns, if provided.',
-        'struc_zero': ' Whether to detect structural zeros based on `group`.'
-                      ' Default is FALSE.',
+                          ' `formula` column, if provided.',
         'neg_lb': 'Whether to classify a taxon as a structural zero using its'
                   ' asymptotic lower bound. Default is FALSE.',
         'tol': 'The iteration convergence tolerance for the E-M algorithm.'
@@ -105,9 +98,8 @@ plugin.methods.register_function(
     name=('Analysis of Composition of Microbiomes with Bias Correction'),
     description=('ANCOM-BC description goes here.'),
     examples={
-        'ancombc_single_formula_no_group': ex.ancombc_single_formula_no_group,
-        'ancombc_single_formula_group': ex.ancombc_single_formula_group,
-        'ancombc_multi_formula_group_with_level_ordering': (
-            ex.ancombc_multi_formula_group_with_level_ordering)
+        'ancombc_single_formula': ex.ancombc_single_formula,
+        'ancombc_multi_formula_with_level_ordering': (
+            ex.ancombc_multi_formula_with_level_ordering)
     }
 )

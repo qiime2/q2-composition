@@ -27,7 +27,7 @@ def ancom_table_factory():
         _get_data_from_tests('table-ancom.qza'))
 
 
-def ancombc_single_formula_no_group(use):
+def ancombc_single_formula(use):
     table = use.init_artifact('table', ancom_table_factory)
     metadata = use.init_metadata('metadata', ancom_md_factory)
 
@@ -46,27 +46,7 @@ def ancombc_single_formula_no_group(use):
     dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')
 
 
-def ancombc_single_formula_group(use):
-    table = use.init_artifact('table', ancom_table_factory)
-    metadata = use.init_metadata('metadata', ancom_md_factory)
-
-    dataloaf, = use.action(
-        use.UsageAction('composition', 'ancombc'),
-        use.UsageInputs(
-            table=table,
-            metadata=metadata,
-            formula='bodysite',
-            group='month',
-        ),
-        use.UsageOutputNames(
-            differentials='dataloaf'
-        )
-    )
-
-    dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')
-
-
-def ancombc_multi_formula_group_with_level_ordering(use):
+def ancombc_multi_formula_with_level_ordering(use):
     table = use.init_artifact('table', ancom_table_factory)
     metadata = use.init_metadata('metadata', ancom_md_factory)
 
@@ -76,7 +56,6 @@ def ancombc_multi_formula_group_with_level_ordering(use):
             table=table,
             metadata=metadata,
             formula='bodysite + month',
-            group='bodysite',
             level_ordering=["bodysite::tongue"]
         ),
         use.UsageOutputNames(

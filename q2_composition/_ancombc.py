@@ -30,11 +30,10 @@ def run_commands(cmds, verbose=True):
         subprocess.run(cmd, check=True)
 
 
-def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
-            formula: str, p_adj_method: str = 'holm', prv_cut: float = 0.1,
-            lib_cut: int = 0, group: str = None, level_ordering: str = None,
-            struc_zero: bool = False, neg_lb: bool = False, tol: float = 1e-05,
-            max_iter: int = 100, conserve: bool = False,
+def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
+            p_adj_method: str = 'holm', prv_cut: float = 0.1, lib_cut: int = 0,
+            level_ordering: str = None, neg_lb: bool = False,
+            tol: float = 1e-05, max_iter: int = 100, conserve: bool = False,
             alpha: float = 0.05) -> DataLoafPackageDirFmt:
 
     return _ancombc(
@@ -44,9 +43,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata,
         p_adj_method=p_adj_method,
         prv_cut=prv_cut,
         lib_cut=lib_cut,
-        group=group,
         level_ordering=level_ordering,
-        struc_zero=struc_zero,
         neg_lb=neg_lb,
         tol=tol,
         max_iter=max_iter,
@@ -86,8 +83,7 @@ def _column_validation(value, parameter, metadata):
 
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
-             group, level_ordering, struc_zero, neg_lb, tol, max_iter,
-             conserve, alpha):
+             level_ordering, neg_lb, tol, max_iter, conserve, alpha):
 
     meta = metadata.to_dataframe()
 
@@ -106,12 +102,6 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     formula_terms = _parse_terms(formula=formula)
     for term in formula_terms:
         _column_validation(term, 'formula', meta)
-
-    # column validation for the group parameter
-    if group is not None:
-        _column_validation(group, 'group', meta)
-    else:
-        group = ''
 
     # column & level validation for the level_ordering parameter
     if level_ordering is not None:
@@ -150,15 +140,13 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--p_adj_method', p_adj_method,
                '--prv_cut', str(prv_cut),
                '--lib_cut', str(lib_cut),
-               '--group', str(group),
                '--level_ordering', str(level_ordering),
-               '--struc_zero', str(struc_zero),
                '--neg_lb', str(neg_lb),
                '--tol', str(tol),
                '--max_iter', str(max_iter),
                '--conserve', str(conserve),
                '--alpha', str(alpha),
-               '--output_loaf', str(output_loaf),
+               '--output_loaf', str(output_loaf)
                ]
 
         try:

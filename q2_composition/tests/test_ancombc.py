@@ -39,12 +39,6 @@ class TestANCOMBC(TestBase):
                                     ' found in any of the metadata columns'):
             ancombc(table=self.table, metadata=self.md, formula='foo')
 
-    def test_missing_group_column(self):
-        with self.assertRaisesRegex(ValueError, 'group.*parameter was not'
-                                    ' found in any of the metadata columns'):
-            ancombc(table=self.table, metadata=self.md, formula='bodysite',
-                    group='foo')
-
     def test_missing_level_ordering_column(self):
         with self.assertRaisesRegex(ValueError, 'level_ordering.*parameter'
                                     ' was not found in any of the metadata'

@@ -33,11 +33,7 @@ option_list <- list(
               type = "character"),
   make_option("--lib_cut", action = "store", default = "NULL",
               type = "character"),
-  make_option("--group", action = "store", default = "NULL",
-              type = "character"),
   make_option("--level_ordering", action = "store", default = "NULL",
-              type = "character"),
-  make_option("--struc_zero", action = "store", default = "NULL",
               type = "character"),
   make_option("--neg_lb", action = "store", default = "NULL",
               type = "character"),
@@ -60,9 +56,7 @@ formula             <- opt$formula
 p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
-group               <- opt$group
 level_ordering      <- opt$level_ordering
-struc_zero          <- as.logical(opt$struc_zero)
 neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
@@ -112,11 +106,6 @@ if (!is.null(level_ordering)) {
       md[[j]] <- factor(md[[j]])
       md[[j]] <- relevel(md[[j]], ref = intercept_vector)
     }
-    # handling group input
-    if ((!is.null(group)) && (all(group == column))) {
-      md[[group]] <- factor(md[[group]])
-      md[[group]] <- relevel(md[[group]], ref = intercept_vector)
-    }
   }
 }
 
@@ -124,18 +113,16 @@ if (!is.null(level_ordering)) {
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
-if (group == "") {
-  group <- NULL
-}
+fit <- ancombc(phyloseq = data, formula = formula, p_adj_method = p_adj_method,
+               prv_cut = prv_cut, lib_cut = lib_cut, neg_lb = neg_lb,
+               tol = tol, max_iter = max_iter, conserve = conserve,
+               alpha = alpha)
 
-fit <- ancombc(data, formula, p_adj_method, prv_cut, lib_cut, group,
-               struc_zero, neg_lb, tol, max_iter, conserve, alpha)
-
-# Diagnostics
-samp_frac <- fit$samp_frac
-resid     <- fit$resid
-delta_em  <- fit$delta_em
-delta_wls <- fit$delta_wls
+# Diagnostics - we'll deal with these later
+# samp_frac <- fit$samp_frac
+# resid     <- fit$resid
+# delta_em  <- fit$delta_em
+# delta_wls <- fit$delta_wls
 
 # DataLoafPackageDirFmt slices
 lfc   <- cbind(feature_id = rownames(fit$res$lfc), fit$res$lfc)
