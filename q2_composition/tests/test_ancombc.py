@@ -55,10 +55,22 @@ class TestANCOMBC(TestBase):
                     formula='bodysite')
 
     # confirm level ordering behavior
-    def test_level_ordering_behavior(self):
-        pass
-        # add a column in the metadata that's either A or Z for the groups
-        # use level ordering for column::A and column::B
-        # use transformer from frictionless CSV to dataframe for the
-        # dataloaf and use to.iter_views to view each slice and then
-        # confirm the correct column is present for each scenario
+    def test_level_ordering_behavior_A(self):
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + AZcolumn',
+                           level_ordering=['AZcolumn::A'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('AZcolumnA', col)
+
+    def test_level_ordering_behavior_Z(self):
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + AZcolumn',
+                           level_ordering=['AZcolumn::Z'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('AZcolumnZ', col)
