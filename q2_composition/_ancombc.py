@@ -71,7 +71,7 @@ def _leaf_collector(term):
     return _leaf_collector(term[1]) + _leaf_collector(term[2])
 
 
-def _column_validation(value, parameter, metadata):
+def _column_validation(metadata, parameter, value):
     if value not in metadata.columns:
         raise ValueError('Value provided in the `%s` parameter was not found'
                          ' in any of the metadata columns. Please make sure to'
@@ -90,7 +90,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     # error on IDs found in table but not in metadata
     missing_ids = table.index.difference(meta.index).values
 
-    if not (set(table.index).issubset(set(meta.index))):
+    if missing_ids.size > 0:
         raise KeyError('Not all samples present within the table were found in'
                        ' the associated metadata file. Please make sure that'
                        ' all samples in the FeatureTable are also present in'
@@ -101,7 +101,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     # column validation for the formula parameter
     formula_terms = _parse_terms(formula=formula)
     for term in formula_terms:
-        _column_validation(term, 'formula', meta)
+        _column_validation(meta, 'formula', term)
 
     # column & level validation for the level_ordering parameter
     if level_ordering is not None:
@@ -109,7 +109,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
             column = i.split('::')[0]
             level_value = i.split('::')[1]
 
-            _column_validation(column, 'level_ordering', meta)
+            _column_validation(meta, 'level_ordering', column)
 
             if level_value not in pd.unique(meta[column].values):
                 raise ValueError('Value provided in `level_ordering` parameter'
