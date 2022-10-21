@@ -22,23 +22,32 @@ a conda environment. Install instructions for QIIME 2 can be found
 [here](https://docs.qiime2.org/2022.2/install/native/#install-qiime-2-within-a-conda-environment).
 Once installed, you can activate R by typing `R` into the command line.
 
-### Install missing dependencies through conda
+### Install mamba (faster dependency solver than conda)
+```
+conda install -c conda-forge mamba
+```
+
+### Install missing dependencies through mamba and pip
 The following packages are dependencies for ANCOM-BC and need to be installed prior to installing
 ANCOM-BC on your machine:
+
 ```
-conda install -c conda-forge r-nloptr
-```
-```
-conda install -c conda-forge -c bioconda bioconductor-phyloseq
+mamba install -c conda-forge -c bioconda bioconductor-phyloseq
 ```
 ```
-conda install -c conda-forge -c bioconda r-frictionless
+mamba install -c conda-forge r-tidyverse
 ```
 ```
-conda install -c conda-forge frictionless
+mamba install -c conda-forge r-frictionless
 ```
 ```
-conda install -c conda-forge formulaic
+mamba install -c conda-forge r-nloptr
+```
+```
+pip install frictionless
+```
+```
+pip install formulaic
 ```
 
 ### Install devtools
@@ -53,7 +62,7 @@ install.packages("devtools")
 ### Install ANCOMBC using devtools
 ANCOMBC can be installed using devtools with the following command:
 ```
-devtools::install_github("https://github.com/FrederickHuangLin/ANCOMBC/tree/RELEASE_3_15")
+devtools::install_github("https://github.com/FrederickHuangLin/ANCOMBC/commit/543c77a2eb67f9b781ba8fe585932dee45d4d452")
 ```
 
 ### Dev install q2-stats plugin
