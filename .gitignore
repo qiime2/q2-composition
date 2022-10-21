@@ -61,7 +61,15 @@ target/
 #Ipython Notebook
 .ipynb_checkpoints
 
+#Rhistory
+.Rhistory
+
 # vi
 .*.swp
+
+# tmp files
+input.biom.tsv
+input.map.txt
+output.summary.txt
 
 .DS_Store
