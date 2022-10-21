@@ -77,8 +77,12 @@ plugin.methods.register_function(
         'lib_cut': 'A numerical threshold for filtering samples based on'
                    ' library sizes. Samples with library sizes less than this'
                    ' value will be excluded from the analysis.',
-        'reference_levels': 'The preferred order (if any) for the values in'
-                            ' the `formula` column, if provided.',
+        'reference_levels': 'Define the reference level(s) to be used for'
+                            ' categorical columns found in the `formula`.'
+                            ' These categorical factors are dummy coded'
+                            ' relative to the reference(s) provided.'
+                            ' The syntax is as follows:'
+                            ' "column_name::column_value"',
         'neg_lb': 'Whether to classify a taxon as a structural zero using its'
                   ' asymptotic lower bound.',
         'tol': 'The iteration convergence tolerance for the E-M algorithm.',
