@@ -46,7 +46,7 @@ def ancombc_single_formula(use):
     dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')
 
 
-def ancombc_multi_formula_with_level_ordering(use):
+def ancombc_multi_formula_with_reference_levels(use):
     table = use.init_artifact('table', ancom_table_factory)
     metadata = use.init_metadata('metadata', ancom_md_factory)
 
@@ -56,7 +56,7 @@ def ancombc_multi_formula_with_level_ordering(use):
             table=table,
             metadata=metadata,
             formula='bodysite + month',
-            level_ordering=["bodysite::tongue"]
+            reference_levels=["bodysite::tongue"]
         ),
         use.UsageOutputNames(
             differentials='dataloaf'

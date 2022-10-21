@@ -56,7 +56,7 @@ plugin.methods.register_function(
                                        'fdr', 'none']),
         'prv_cut': Float,
         'lib_cut': Int,
-        'level_ordering': List[Str],
+        'reference_levels': List[Str],
         'neg_lb': Bool,
         'tol': Float,
         'max_iter': Int,
@@ -71,26 +71,23 @@ plugin.methods.register_function(
         'metadata': 'The sample metadata.',
         'formula': 'How the microbial absolute abundances for each taxon'
                    ' depend on the variables within the `metadata`.',
-        'p_adj_method': 'Method to adjust p-values. Default is "holm".',
+        'p_adj_method': 'Method to adjust p-values.',
         'prv_cut': 'A numerical fraction between 0-1. Taxa with prevalences'
-                   ' less than this value will be excluded from the analysis.'
-                   ' Default is 0.10.',
+                   ' less than this value will be excluded from the analysis.',
         'lib_cut': 'A numerical threshold for filtering samples based on'
                    ' library sizes. Samples with library sizes less than this'
-                   ' value will be excluded from the analysis. Default is 0.',
-        'level_ordering': ' The preferred order (if any) for the values in the'
-                          ' `formula` column, if provided.',
+                   ' value will be excluded from the analysis.',
+        'reference_levels': 'The preferred order (if any) for the values in'
+                            ' the `formula` column, if provided.',
         'neg_lb': 'Whether to classify a taxon as a structural zero using its'
-                  ' asymptotic lower bound. Default is FALSE.',
-        'tol': 'The iteration convergence tolerance for the E-M algorithm.'
-               ' Default is 1e-05.',
-        'max_iter': 'The maximum number of iterations for the E-M algorithm.'
-                    ' Default is 100.',
+                  ' asymptotic lower bound.',
+        'tol': 'The iteration convergence tolerance for the E-M algorithm.',
+        'max_iter': 'The maximum number of iterations for the E-M algorithm.',
         'conserve': 'Whether to use a conservative variance estimator for the'
                     ' test statistic. It is recommended if the sample size is'
                     ' small and/or the number of differentially abundant taxa'
-                    ' is believed to be large. Default is FALSE.',
-        'alpha': 'Level of significance. Default is FALSE.',
+                    ' is believed to be large.',
+        'alpha': 'Level of significance.',
     },
     output_descriptions={
         'differentials': 'The calculated per-feature differentials.',
@@ -99,7 +96,7 @@ plugin.methods.register_function(
     description=('ANCOM-BC description goes here.'),
     examples={
         'ancombc_single_formula': ex.ancombc_single_formula,
-        'ancombc_multi_formula_with_level_ordering': (
-            ex.ancombc_multi_formula_with_level_ordering)
+        'ancombc_multi_formula_with_reference_levels': (
+            ex.ancombc_multi_formula_with_reference_levels)
     }
 )

@@ -32,7 +32,7 @@ def run_commands(cmds, verbose=True):
 
 def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
             p_adj_method: str = 'holm', prv_cut: float = 0.1, lib_cut: int = 0,
-            level_ordering: str = None, neg_lb: bool = False,
+            reference_levels: str = None, neg_lb: bool = False,
             tol: float = 1e-05, max_iter: int = 100, conserve: bool = False,
             alpha: float = 0.05) -> DataLoafPackageDirFmt:
 
@@ -43,7 +43,7 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
         p_adj_method=p_adj_method,
         prv_cut=prv_cut,
         lib_cut=lib_cut,
-        level_ordering=level_ordering,
+        reference_levels=reference_levels,
         neg_lb=neg_lb,
         tol=tol,
         max_iter=max_iter,
@@ -83,7 +83,7 @@ def _column_validation(metadata, parameter, value):
 
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
-             level_ordering, neg_lb, tol, max_iter, conserve, alpha):
+             reference_levels, neg_lb, tol, max_iter, conserve, alpha):
 
     meta = metadata.to_dataframe()
 
@@ -103,25 +103,25 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     for term in formula_terms:
         _column_validation(meta, 'formula', term)
 
-    # column & level validation for the level_ordering parameter
-    if level_ordering is not None:
-        for i in level_ordering:
+    # column & level validation for the reference_levels parameter
+    if reference_levels is not None:
+        for i in reference_levels:
             column = i.split('::')[0]
             level_value = i.split('::')[1]
 
-            _column_validation(meta, 'level_ordering', column)
+            _column_validation(meta, 'reference_levels', column)
 
             if level_value not in pd.unique(meta[column].values):
-                raise ValueError('Value provided in `level_ordering` parameter'
-                                 ' not found in the associated column within'
-                                 ' the metadata. Please make sure each'
-                                 ' column::value pair is present within the'
-                                 ' metadata file.'
+                raise ValueError('Value provided in `reference_levels`'
+                                 ' parameter not found in the associated'
+                                 ' column within the metadata. Please make'
+                                 ' sure each column::value pair is present'
+                                 ' within the metadata file.'
                                  ' \n\n'
                                  ' column::value pair with a value that was'
                                  ' not found: "%s"' % i)
     else:
-        level_ordering = ''
+        reference_levels = ''
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
         temp_dir_name = '.'
@@ -140,7 +140,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--p_adj_method', p_adj_method,
                '--prv_cut', str(prv_cut),
                '--lib_cut', str(lib_cut),
-               '--level_ordering', str(level_ordering),
+               '--reference_levels', str(reference_levels),
                '--neg_lb', str(neg_lb),
                '--tol', str(tol),
                '--max_iter', str(max_iter),

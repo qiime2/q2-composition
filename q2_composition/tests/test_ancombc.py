@@ -39,12 +39,12 @@ class TestANCOMBC(TestBase):
                                     ' found in any of the metadata columns'):
             ancombc(table=self.table, metadata=self.md, formula='foo')
 
-    def test_missing_level_ordering_column(self):
-        with self.assertRaisesRegex(ValueError, 'level_ordering.*parameter'
+    def test_missing_reference_levels_column(self):
+        with self.assertRaisesRegex(ValueError, 'reference_levels.*parameter'
                                     ' was not found in any of the metadata'
                                     ' columns'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
-                    level_ordering=['foo::tongue'])
+                    reference_levels=['foo::tongue'])
 
     # error handling for missing IDs in metadata
     def test_ids_in_table_not_in_metadata(self):
@@ -55,20 +55,20 @@ class TestANCOMBC(TestBase):
                     formula='bodysite')
 
     # confirm level ordering behavior
-    def test_level_ordering_behavior_A(self):
+    def test_reference_levels_behavior_A(self):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + AZcolumn',
-                           level_ordering=['AZcolumn::A'])
+                           reference_levels=['AZcolumn::A'])
 
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
                 self.assertNotIn('AZcolumnA', col)
 
-    def test_level_ordering_behavior_Z(self):
+    def test_reference_levels_behavior_Z(self):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + AZcolumn',
-                           level_ordering=['AZcolumn::Z'])
+                           reference_levels=['AZcolumn::Z'])
 
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:

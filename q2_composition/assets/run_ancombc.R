@@ -33,7 +33,7 @@ option_list <- list(
               type = "character"),
   make_option("--lib_cut", action = "store", default = "NULL",
               type = "character"),
-  make_option("--level_ordering", action = "store", default = "NULL",
+  make_option("--reference_levels", action = "store", default = "NULL",
               type = "character"),
   make_option("--neg_lb", action = "store", default = "NULL",
               type = "character"),
@@ -56,7 +56,7 @@ formula             <- opt$formula
 p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
-level_ordering      <- opt$level_ordering
+reference_levels      <- opt$reference_levels
 neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
@@ -82,13 +82,13 @@ otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
 
-if (level_ordering == "") {
-  level_ordering <- NULL
+if (reference_levels == "") {
+  reference_levels <- NULL
 }
 
-# split the level_ordering param into each column and associated level order
-if (!is.null(level_ordering)) {
-  level_vector <- unlist(strsplit(level_ordering, ", "))
+# split the reference_levels param into each column and associated level order
+if (!is.null(reference_levels)) {
+  level_vector <- unlist(strsplit(reference_levels, ", "))
   for (i in level_vector) {
     column <- unlist(strsplit(i, "::"))[1]
     column <- gsub("\\'", "", column)
