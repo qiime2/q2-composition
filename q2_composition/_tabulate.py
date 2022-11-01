@@ -13,21 +13,24 @@ import shutil
 
 import pandas as pd
 
-import qiime2
 import q2templates
+
+from q2_types.feature_data import FeatureData
+from q2_stats import DifferentialAbundance
 
 
 TEMPLATES = pkg_resources.resource_filename('q2_composition', 'templates')
 
 
-def tabulate(output_dir: str, input: qiime2.Metadata,
+def tabulate(output_dir: str,
+             differentials: FeatureData[DifferentialAbundance],
              page_size: int = 100) -> None:
     if page_size < 1:
         raise ValueError('Cannot render less than one record per page.')
 
-    df = input.to_dataframe()
+    df = differentials.to_dataframe()
     df_columns = pd.MultiIndex.from_tuples(
-        [(n, t.type) for n, t in input.columns.items()],
+        [(n, t.type) for n, t in differentials.columns.items()],
         names=['column header', 'type'])
     df.columns = df_columns
     df.reset_index(inplace=True)
@@ -36,7 +39,7 @@ def tabulate(output_dir: str, input: qiime2.Metadata,
     q2templates.render(index, output_dir,
                        context={'table': table, 'page_size': page_size})
 
-    input.save(os.path.join(output_dir, 'metadata.tsv'))
+    differentials.save(os.path.join(output_dir, 'dataloaf.tsv'))
 
     js = os.path.join(TEMPLATES, 'tabulate', 'datatables.min.js')
     os.mkdir(os.path.join(output_dir, 'js'))

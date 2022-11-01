@@ -110,14 +110,13 @@ plugin.methods.register_function(
 
 plugin.visualizers.register_function(
     function=tabulate,
-    inputs={},
-    parameters={
-        'input': FeatureData[DifferentialAbundance],
-        'page_size': qiime2.plugin.Int,
+    inputs={'differentials': FeatureData[DifferentialAbundance]},
+    parameters={'page_size': Int},
+    input_descriptions={
+        'differentials': 'The per-feature differentials to tabulate.'
     },
     parameter_descriptions={
-        'input': 'The per-feature differentials to tabulate.',
-        'page_size': 'The maximum number of records to display per page.',
+        'page_size': 'The maximum number of records to display per page.'
     },
     name='Interactively explore per-feature'
          ' differential data in an HTML table',
