@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import qiime2
+
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
@@ -14,6 +16,7 @@ from q2_stats import DifferentialAbundance
 
 import q2_composition
 from q2_composition._ancombc import ancombc
+from q2_composition._tabulate import tabulate
 import q2_composition._examples as ex
 
 plugin = Plugin(
@@ -103,4 +106,22 @@ plugin.methods.register_function(
         'ancombc_multi_formula_with_reference_levels': (
             ex.ancombc_multi_formula_with_reference_levels)
     }
+)
+
+plugin.visualizers.register_function(
+    function=tabulate,
+    inputs={},
+    parameters={
+        'input': FeatureData[DifferentialAbundance],
+        'page_size': qiime2.plugin.Int,
+    },
+    parameter_descriptions={
+        'input': 'The per-feature differentials to tabulate.',
+        'page_size': 'The maximum number of records to display per page.',
+    },
+    name='Interactively explore per-feature'
+         ' differential data in an HTML table',
+    description='Generate a tabular view of per-feature differentials.'
+                ' The output visualization supports interactive filtering,'
+                ' sorting, and exporting to common file formats.',
 )
