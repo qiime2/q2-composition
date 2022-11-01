@@ -22,9 +22,15 @@ requirements:
     - biom-format {{ biom_format }}
     - scipy
     - pandas {{ pandas }}
+    - formulaic
+    - bioconductor-phyloseq
+    - r-tidyverse
+    - r-optparse
+    - r-frictionless
     - qiime2 {{ qiime2_epoch }}.*
     - q2templates {{ qiime2_epoch }}.*
     - q2-types {{ qiime2_epoch }}.*
+    - q2-stats {{ qiime2_epoch }}.*
 
 test:
   requires:

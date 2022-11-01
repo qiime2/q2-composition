@@ -7,10 +7,11 @@
 # ----------------------------------------------------------------------------
 
 from ._impute import add_pseudocount
+from ._ancombc import ancombc
 from ._version import get_versions
 
 
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['add_pseudocount']
+__all__ = ['add_pseudocount', 'ancombc']
