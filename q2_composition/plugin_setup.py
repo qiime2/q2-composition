@@ -6,8 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import qiime2
-
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
