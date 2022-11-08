@@ -35,6 +35,9 @@ ANCOM-BC on your machine:
 mamba install -c conda-forge -c bioconda bioconductor-phyloseq
 ```
 ```
+mamba install -c conda-forge r-base>=4.2.0
+```
+```
 mamba install -c conda-forge r-tidyverse
 ```
 ```
