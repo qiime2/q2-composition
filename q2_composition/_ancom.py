@@ -57,7 +57,7 @@ def ancom(output_dir: str,
             missing_data_sids = ', '.join(missing_data_sids)
         else:
             raise ValueError(f'Metadata column {metadata.name} is missing '
-                             f'values for samples' 
+                             f'values for samples'
                              f'{", ".join(missing_data_sids)}')
 
     else:
