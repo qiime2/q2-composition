@@ -56,10 +56,10 @@ def ancom(output_dir: str,
             table = table.drop(index=missing_data_sids)
             missing_data_sids = ', '.join(missing_data_sids)
         else:
-            raise ValueError(f'Metadata column {metadata.name} is missing values for '
-                             f'samples {", ".join(missing_data_sids)}')
-                     
-    else: 
+            raise ValueError(f'Metadata column {metadata.name} is missing '
+                             f'values for samples {", ".join(missing_data_sids)}')
+
+    else:
         metadata = metadata.to_series()
 
     ancom_results = skbio_ancom(table,
@@ -135,23 +135,23 @@ def ancom(output_dir: str,
                  'title': transform_function_name},
                 {'scale': 'yScale', 'orient': 'left', 'title': 'W'}],
             'marks': [
-              {'type': 'symbol',
-               'from': {'data': 'values'},
-               'encode': {
-                   'hover': {
-                       'fill': {'value': '#FF0000'},
-                       'opacity': {'value': 1}},
-                   'enter': {
-                       'x': {'scale': 'xScale',
-                             'field': transform_function_name},
-                       'y': {'scale': 'yScale', 'field': 'W'}},
-                   'update': {
-                       'fill': {'value': 'black'},
-                       'opacity': {'value': 0.3},
-                       'tooltip': {
-                           'signal': "{{'title': datum['id'], '{0}': "
-                                     "datum['{0}'], 'W': datum['W']}}".format(
-                                         transform_function_name)}}}}]}
+                {'type': 'symbol',
+                 'from': {'data': 'values'},
+                 'encode': {
+                     'hover': {
+                         'fill': {'value': '#FF0000'},
+                         'opacity': {'value': 1}},
+                     'enter': {
+                         'x': {'scale': 'xScale',
+                               'field': transform_function_name},
+                         'y': {'scale': 'yScale', 'field': 'W'}},
+                     'update': {
+                         'fill': {'value': 'black'},
+                         'opacity': {'value': 0.3},
+                         'tooltip': {
+                             'signal': "{{'title': datum['id'], '{0}': "
+                             "datum['{0}'], 'W': datum['W']}}".format(
+                                 transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
         if filtered_ids:
             context['filtered_ids'] = ', '.join(sorted(filtered_ids))

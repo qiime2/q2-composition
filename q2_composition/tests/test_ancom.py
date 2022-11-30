@@ -21,8 +21,8 @@ from q2_composition import ancom
 class AncomTests(TestPluginBase):
     package = 'q2_composition.tests'
 
-    def setUp(self): 
-        super().setUp() 
+    def setUp(self):
+        super().setUp()
         self.example_obs = ['O1', 'O2', 'O3', 'O4', 'O5', 'O6', 'O7']
         self.example_samples = ['S1', 'S2', 'S3', 'S4', 'S5', 'S6']
         self.otu_table = pd.DataFrame([[9, 9, 9, 19, 19, 19],
@@ -32,9 +32,9 @@ class AncomTests(TestPluginBase):
                                        [9, 10, 9, 9, 9, 9],
                                        [9, 10, 9, 9, 9, 10],
                                        [9, 12, 9, 9, 9, 11]],
-                                     index=self.example_obs,
-                                     columns=self.example_samples).T
-        
+                                      index=self.example_obs,
+                                      columns=self.example_samples).T
+
         self.otu_table_3class = pd.DataFrame([[9, 9, 19, 19, 29, 29],
                                               [10, 11, 20, 20, 29, 28],
                                               [9, 10, 9, 9, 10, 9],
@@ -42,18 +42,19 @@ class AncomTests(TestPluginBase):
                                               [9, 10, 9, 9, 9, 9],
                                               [9, 10, 9, 9, 9, 10],
                                               [9, 12, 9, 9, 9, 11]],
-                                            index=self.example_obs,
-                                            columns=self.example_samples).T
+                                             index=self.example_obs,
+                                             columns=self.example_samples).T
 
         self.index_fp = os.path.join(self.temp_dir.name, 'index.html')
 
     def test_ancom(self):
         t = self.otu_table
         c = qiime2.CategoricalMetadataColumn(
-                pd.Series(['a', 'a', 'a', '1', '1', '1'], name='n',
-                          index=pd.Index(self.example_samples, name='id'))
+            pd.Series(['a', 'a', 'a', '1', '1', '1'], name='n',
+                      index=pd.Index(self.example_samples, name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=self.otu_table + 1, metadata=c)
+        ancom(output_dir=self.temp_dir.name,
+              table=self.otu_table + 1, metadata=c)
 
         res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
                           index_col=0, sep='\t')
@@ -84,10 +85,11 @@ class AncomTests(TestPluginBase):
 
     def test_ancom_3class_anova(self):
         c = qiime2.CategoricalMetadataColumn(
-                pd.Series(['0', '0', '1', '1', '2', '2'], name='n',
-                          index=pd.Index(self.example_samples, name='id'))
+            pd.Series(['0', '0', '1', '1', '2', '2'], name='n',
+                      index=pd.Index(self.example_samples, name='id'))
         )
-        ancom(output_dir=self.temp_dir.name, table=self.otu_table_3class + 1, metadata=c)
+        ancom(output_dir=self.temp_dir.name,
+              table=self.otu_table_3class + 1, metadata=c)
 
         res = pd.read_csv(os.path.join(self.temp_dir.name, 'ancom.tsv'),
                           index_col=0, sep='\t')
@@ -114,13 +116,12 @@ class AncomTests(TestPluginBase):
         )
         ancom(output_dir=self.temp_dir.name, table=t + 1, metadata=c)
 
-        
         with open(self.index_fp, 'r') as fh:
             html = fh.read()
             self.assertIn('<th>O7</th>', html)
 
     def test_ancom_no_volcano_plot(self):
-        short_index = self.example_samples[:4] 
+        short_index = self.example_samples[:4]
         t = pd.DataFrame([[1, 1], [1, 1], [1, 1], [1, 1]],
                          index=short_index, columns=self.example_obs[:2])
         c = qiime2.CategoricalMetadataColumn(
@@ -175,7 +176,7 @@ class AncomTests(TestPluginBase):
                 'non-numeric results:\n    <strong>O2</strong>' in f)
 
     def test_ancom_filter_nan_values_metadata(self):
-        # Testing if test produces an output and info when 
+        # Testing if test produces an output and info when
         # metadata contains empty values & filter_missing_samples=True
         t = pd.DataFrame(self.otu_table,
                          index=self.example_samples,
@@ -186,7 +187,8 @@ class AncomTests(TestPluginBase):
                                      name='id'))
         )
 
-        ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c, filter_missing=True)
+        ancom(output_dir=self.temp_dir.name, table=t +
+              1, metadata=c, filter_missing=True)
 
         with open(self.index_fp, 'r') as fh:
             html = fh.read()
@@ -194,19 +196,19 @@ class AncomTests(TestPluginBase):
             self.assertNotIn('<th>S6</th>', html)
 
     def test_ancom_error_nan_values_metadata(self):
-            # Testing if ANCOM produces raises an error when 
-            # metadata contains empty values & filter_missing_samples=False
-            t = pd.DataFrame(self.otu_table,
-                            index=self.example_samples,
-                            columns=self.example_obs)
-            c = qiime2.CategoricalMetadataColumn(
-                pd.Series(['0', '0', '1', '1', np.nan, np.nan], name='n',
-                        index=pd.Index(self.example_samples,
-                                        name='id')))
-        
-            with self.assertRaisesRegex(ValueError, 'S5, S6'):
-                ancom(output_dir=self.temp_dir.name, table=t+1, metadata=c, filter_missing=False)
+        # Testing if ANCOM produces raises an error when
+        # metadata contains empty values & filter_missing_samples=False
+        t = pd.DataFrame(self.otu_table,
+                         index=self.example_samples,
+                         columns=self.example_obs)
+        c = qiime2.CategoricalMetadataColumn(
+            pd.Series(['0', '0', '1', '1', np.nan, np.nan], name='n',
+                      index=pd.Index(self.example_samples,
+                                     name='id')))
 
+        with self.assertRaisesRegex(ValueError, 'S5, S6'):
+            ancom(output_dir=self.temp_dir.name, table=t +
+                  1, metadata=c, filter_missing=False)
 
 
 if __name__ == "__main__":
