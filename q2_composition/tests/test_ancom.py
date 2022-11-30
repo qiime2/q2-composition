@@ -48,7 +48,6 @@ class AncomTests(TestPluginBase):
         self.index_fp = os.path.join(self.temp_dir.name, 'index.html')
 
     def test_ancom(self):
-        t = self.otu_table
         c = qiime2.CategoricalMetadataColumn(
             pd.Series(['a', 'a', 'a', '1', '1', '1'], name='n',
                       index=pd.Index(self.example_samples, name='id'))

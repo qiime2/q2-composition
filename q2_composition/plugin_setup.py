@@ -58,18 +58,18 @@ plugin.visualizers.register_function(
         'table': 'The feature table to be used for ANCOM computation.'
     },
     parameter_descriptions={
-            'metadata': ('The categorical sample metadata column to test for '
-                         'differential abundance across.'),
-            'transform_function': ('The method applied to transform feature '
-                                   'values before generating volcano plots.'),
-            'difference_function': 'The method applied to visualize fold '
-                                   'difference in feature abundances across '
-                                   'groups for volcano plots.', 
-            'filter_missing':      'If True, samples with missing metadata '
-                                   'values will be filtered from the table ' 
-                                   'prior to analysis. If False, an error '
-                                   'will be raised if there are any missing '
-                                   'metadata values.'},
+        'metadata': ('The categorical sample metadata column to test for '
+                     'differential abundance across.'),
+        'transform_function': ('The method applied to transform feature '
+                               'values before generating volcano plots.'),
+        'difference_function': 'The method applied to visualize fold '
+        'difference in feature abundances across '
+        'groups for volcano plots.',
+        'filter_missing':      'If True, samples with missing metadata '
+        'values will be filtered from the table '
+        'prior to analysis. If False, an error '
+        'will be raised if there are any missing '
+        'metadata values.'},
     name='Apply ANCOM to identify features that differ in abundance.',
     description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
                  "identify features that are differentially abundant across "
