@@ -46,16 +46,18 @@ def ancom(output_dir: str,
           table: pd.DataFrame,
           metadata: qiime2.CategoricalMetadataColumn,
           transform_function: str = 'clr',
-          difference_function: str = None) -> None:
+          difference_function: str = None,
+          filter_missing: bool = False) -> None:
     metadata = metadata.filter_ids(table.index)
     if metadata.has_missing_values():
         missing_data_sids = metadata.get_ids(where_values_missing=True)
-        metadata = metadata.to_series().drop(missing_data_sids)
-        table = table.drop(index=missing_data_sids)
-        missing_data_sids = ', '.join(sorted(missing_data_sids))
-        logging.info('Metadata column is missing values for '
-                     'samples  %s. These samples are excluded from ' 
-                     'analysis.' % missing_data_sids)
+        if filter_missing:
+            metadata = metadata.to_series().drop(missing_data_sids)
+            table = table.drop(index=missing_data_sids)
+            missing_data_sids = ', '.join(missing_data_sids)
+        else:
+            raise ValueError(f'Metadata column {metadata.name} is missing values for '
+                             f'samples {", ".join(missing_data_sids)}')
                      
     else: 
         metadata = metadata.to_series()
@@ -96,6 +98,7 @@ def ancom(output_dir: str,
             return args[0]
         else:
             return args
+
     # effectively doing a groupby operation wrt to the metadata
     fold_change = transformed_table.apply(diff_func, axis=0)
     if not pd.isnull(fold_change).all():
