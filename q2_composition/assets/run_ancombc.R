@@ -113,7 +113,7 @@ if (!is.null(reference_levels)) {
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
-fit <- ancombc(phyloseq = data, formula = formula, p_adj_method = p_adj_method,
+fit <- ancombc(data = data, formula = formula, p_adj_method = p_adj_method,
                prv_cut = prv_cut, lib_cut = lib_cut, neg_lb = neg_lb,
                tol = tol, max_iter = max_iter, conserve = conserve,
                alpha = alpha)

@@ -24,6 +24,7 @@ requirements:
     - pandas {{ pandas }}
     - formulaic
     - bioconductor-phyloseq
+    - bioconductor-ancombc
     - r-tidyverse
     - r-optparse
     - r-frictionless
