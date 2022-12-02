@@ -14,6 +14,7 @@ from q2_stats import DifferentialAbundance
 
 import q2_composition
 from q2_composition._ancombc import ancombc
+from q2_composition._dummy_viz._visualizer import hello_world
 import q2_composition._examples as ex
 
 plugin = Plugin(
@@ -103,4 +104,12 @@ plugin.methods.register_function(
         'ancombc_multi_formula_with_reference_levels': (
             ex.ancombc_multi_formula_with_reference_levels)
     }
+)
+
+plugin.visualizers.register_function(
+    function=hello_world,
+    inputs={},
+    parameters={'input_var': Str},
+    name='Hello World',
+    description='',
 )
