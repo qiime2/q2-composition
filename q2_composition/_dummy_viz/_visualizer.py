@@ -6,13 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import jinja2
 import pkg_resources
 import os
 import q2templates
 
 
-def hello_world(output_dir: str, input_var: str=None):
+def hello_world(output_dir: str, input_var: str = None):
     # J_ENV = jinja2.Environment(
     #     loader=jinja2.PackageLoader('q2_composition._dummy_viz', 'assets')
     # )
@@ -24,5 +23,5 @@ def hello_world(output_dir: str, input_var: str=None):
 
     q2templates.render(index, output_dir)
 
-    with open(os.path.join(output_dir, "index.html"), "w") as fh:
-        fh.write('')
+    # with open(os.path.join(output_dir, "index.html"), "w") as fh:
+    #     fh.write()

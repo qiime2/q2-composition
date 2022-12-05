@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 
-<html>
- <head>
- </head>
- <body>
-   <h1>Hello World! {{input_var}}<h1>
- </body>
-</html>
+{% block content %}
+<div class="row">
+  <div class="col-lg-12">
+    <h1>Hello World!</h1>
+    {{ input_var }}
+  </div>
+</div>
+{% endblock %}
