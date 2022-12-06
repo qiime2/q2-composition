@@ -109,7 +109,7 @@ plugin.methods.register_function(
 plugin.visualizers.register_function(
     function=hello_world,
     inputs={},
-    parameters={'input_var': Str},
+    parameters={'input_var': Metadata},
     name='Hello World',
     description='',
 )
