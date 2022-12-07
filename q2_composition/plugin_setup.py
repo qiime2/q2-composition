@@ -14,7 +14,7 @@ from q2_stats import DifferentialAbundance
 
 import q2_composition
 from q2_composition._ancombc import ancombc
-from q2_composition._dummy_viz._visualizer import hello_world
+from q2_composition._dataloaf_tabulate._visualizer import tabulate
 import q2_composition._examples as ex
 
 plugin = Plugin(
@@ -107,9 +107,9 @@ plugin.methods.register_function(
 )
 
 plugin.visualizers.register_function(
-    function=hello_world,
-    inputs={},
-    parameters={'input_var': Metadata},
-    name='Hello World',
+    function=tabulate,
+    inputs={'dataloaf': FeatureData[DifferentialAbundance]},
+    parameters={},
+    name='Tabulate',
     description='',
 )
