@@ -24,14 +24,22 @@ def tabulate(output_dir: str, dataloaf: DataLoafPackageDirFmt):
     # restructuring input data
     slices = dataloaf.data_slices.iter_views(FrictionlessCSVFileFormat)
 
-    for slice in slices:
-        slice_df = slice[1].view(pd.DataFrame)
+    slice_names = []
+    slice_contents = []
 
-    html_table = q2templates.df_to_html(slice_df)
+    for slice in slices:
+        slice_name = str(slice[0]).split('_slice')[0]
+        slice_df = slice[1].view(pd.DataFrame)
+        slice_html = q2templates.df_to_html(slice_df)
+
+        slice_names.append(slice_name)
+        slice_contents.append(slice_html)
+
+    slice_tables = zip(slice_names, slice_contents)
 
     # Filling in the table that will appear on index.html
     context = {
-        'table': html_table
+        'tables': slice_tables
     }
 
     # Render the results using q2templates

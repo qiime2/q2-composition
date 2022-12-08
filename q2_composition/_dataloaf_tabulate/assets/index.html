@@ -1,10 +1,91 @@
 {% extends "base.html" %}
 
+{% block head %}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      padding: 10px;
+      background: #f2f2f2;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 700px;
+      background: #efefef;
+      box-shadow: 0 48px 80px -32px rgba(0,0,0,0.3);
+    }
+
+    .input {
+      position: absolute;
+      opacity: 0;
+    }
+
+    .label {
+      width: 100%;
+      padding: 20px 30px;
+      background: #e5e5e5;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 18px;
+      color: #7f7f7f;
+      transition: background 0.1s, color 0.1s;
+    }
+
+    .label:hover {
+      background: #d8d8d8;
+    }
+
+    .label:active {
+      background: #ccc;
+    }
+
+    .input:focus + .label {
+      box-shadow: inset 0px 0px 0px 3px #2aa1c0;
+      z-index: 1;
+    }
+
+    .input:checked + .label {
+      background: #fff;
+      color: #000;
+    }
+
+    @media (min-width: 600px) {
+      .label {
+        width: auto;
+      }
+    }
+
+    .panel {
+      display: none;
+      padding: 20px 30px 30px;
+      background: #fff;
+    }
+
+    @media (min-width: 600px) {
+      .panel {
+        order: 99;
+      }
+    }
+
+    .input:checked + .label + .panel {
+      display: block;
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-<div class="row">
-  <div class="col-lg-12">
-    <h3>Dataloaf Slice</h3>
-      {{ table }}
+  <div class="tabs">
+    {% for name, table in tables %}
+      <input name="tabs" type="radio" id="{{ name }}" checked="checked" class="input"/>
+      <label for="{{ name }}" class="label">{{ name }}</label>
+      <div class="panel">
+        <h1>{{ name }}</h1>
+          <table>{{ table }}</table>
+      </div>
+    {% endfor %}
   </div>
-</div>
 {% endblock %}
