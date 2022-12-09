@@ -6,13 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._impute import add_pseudocount
-from ._ancombc import ancombc
-from ._version import get_versions
-from ._dataloaf_tabulate import tabulate
+
+from ._visualizer import tabulate
 
 
-__version__ = get_versions()['version']
-del get_versions
-
-__all__ = ['add_pseudocount', 'ancombc', 'tabulate']
+__all__ = ['tabulate']

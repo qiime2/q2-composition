@@ -13,8 +13,6 @@ from q2_types.feature_data import FeatureData
 from q2_stats import DifferentialAbundance
 
 import q2_composition
-from q2_composition._ancombc import ancombc
-from q2_composition._tabulate._visualizer import tabulate
 import q2_composition._examples as ex
 
 plugin = Plugin(
@@ -47,7 +45,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=ancombc,
+    function=q2_composition.ancombc,
     inputs={'table': FeatureTable[Frequency]},
     parameters={
         'metadata': Metadata,
@@ -107,7 +105,7 @@ plugin.methods.register_function(
 )
 
 plugin.visualizers.register_function(
-    function=tabulate,
+    function=q2_composition.tabulate,
     inputs={'dataloaf': FeatureData[DifferentialAbundance]},
     parameters={},
     name='Tabulate',

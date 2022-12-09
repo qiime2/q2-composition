@@ -18,7 +18,7 @@ from q2_stats import (DataLoafPackageDirFmt, FrictionlessCSVFileFormat)
 def tabulate(output_dir: str, dataloaf: DataLoafPackageDirFmt):
     # setup for the index.html page
     ASSETS = pkg_resources.resource_filename('q2_composition',
-                                             '_tabulate')
+                                             '_dataloaf_tabulate')
     index = os.path.join(ASSETS, 'assets', 'index.html')
 
     # restructuring input data
