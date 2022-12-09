@@ -9,7 +9,7 @@
 from ._impute import add_pseudocount
 from ._ancombc import ancombc
 from ._version import get_versions
-from ._dataloaf_tabulate._visualizer import tabulate
+from ._tabulate import tabulate
 
 
 __version__ = get_versions()['version']

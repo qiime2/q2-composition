@@ -14,7 +14,7 @@ from q2_stats import DifferentialAbundance
 
 import q2_composition
 from q2_composition._ancombc import ancombc
-from q2_composition._dataloaf_tabulate._visualizer import tabulate
+from q2_composition._tabulate._visualizer import tabulate
 import q2_composition._examples as ex
 
 plugin = Plugin(
