@@ -13,7 +13,6 @@ from q2_types.feature_data import FeatureData
 from q2_stats import DifferentialAbundance
 
 import q2_composition
-from q2_composition._ancombc import ancombc
 import q2_composition._examples as ex
 
 plugin = Plugin(
@@ -46,7 +45,7 @@ plugin.methods.register_function(
 )
 
 plugin.methods.register_function(
-    function=ancombc,
+    function=q2_composition.ancombc,
     inputs={'table': FeatureTable[Frequency]},
     parameters={
         'metadata': Metadata,
@@ -103,4 +102,15 @@ plugin.methods.register_function(
         'ancombc_multi_formula_with_reference_levels': (
             ex.ancombc_multi_formula_with_reference_levels)
     }
+)
+
+plugin.visualizers.register_function(
+    function=q2_composition.tabulate,
+    inputs={'data': FeatureData[DifferentialAbundance]},
+    parameters={},
+    input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
+    name=' View tabular output from ANCOM-BC.',
+    description='Generate tabular view of ANCOM-BC output, which includes'
+                ' per-page views for the log-fold change (lfc), standard error'
+                ' (se), P values, Q values, and W scores.',
 )
