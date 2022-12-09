@@ -16,16 +16,6 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     packages=find_packages(),
-    package_data={
-        'q2_composition': [
-            'citations.bib',
-            'assets/ancom/index.html',
-            'assets/ancom/css/*',
-            'assets/ancom/js/*',
-            'assets/ancom/licenses/*',
-        ],
-        'q2_composition.tests': ['data/*'],
-    },
     author='Jamie Morton',
     author_email='jamietmorton@gmail.com',
     description='Compositional statistics plugin for QIIME2.',
@@ -35,6 +25,17 @@ setup(
     entry_points={
         'qiime2.plugins':
         ['q2-composition=q2_composition.plugin_setup:plugin']
+    },
+    package_data={
+        'q2_composition': [
+            'citations.bib',
+            'assets/ancom/index.html',
+            'assets/ancom/css/*',
+            'assets/ancom/js/*',
+            'assets/ancom/licenses/*',
+        ],
+        'q2_composition.tests': ['data/*'],
+        'q2_composition._dataloaf_tabulate': ['assets/*']
     },
     zip_safe=False,
 )
