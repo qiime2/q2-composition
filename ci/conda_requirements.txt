@@ -1,6 +1,6 @@
-- pip
-- nose
-- notebook
-- scikit-bio
-- scipy
-- bokeh
+pip
+nose
+notebook
+scikit-bio
+scipy
+bokeh
