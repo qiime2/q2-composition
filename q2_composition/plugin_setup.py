@@ -106,8 +106,11 @@ plugin.methods.register_function(
 
 plugin.visualizers.register_function(
     function=q2_composition.tabulate,
-    inputs={'dataloaf': FeatureData[DifferentialAbundance]},
+    inputs={'data': FeatureData[DifferentialAbundance]},
     parameters={},
-    name='Tabulate',
-    description='',
+    input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
+    name=' View tabular output from ANCOM-BC.',
+    description='Generate tabular view of ANCOM-BC output, which includes'
+                ' per-page views for the log-fold change (lfc), standard error'
+                ' (se), P values, Q values, and W scores.',
 )

@@ -15,14 +15,14 @@ import q2templates
 from q2_stats import (DataLoafPackageDirFmt, FrictionlessCSVFileFormat)
 
 
-def tabulate(output_dir: str, dataloaf: DataLoafPackageDirFmt):
+def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
     # setup for the index.html page
     ASSETS = pkg_resources.resource_filename('q2_composition',
                                              '_dataloaf_tabulate')
     index = os.path.join(ASSETS, 'assets', 'index.html')
 
     # restructuring input data
-    slices = dataloaf.data_slices.iter_views(FrictionlessCSVFileFormat)
+    slices = data.data_slices.iter_views(FrictionlessCSVFileFormat)
 
     slice_names = []
     slice_contents = []
