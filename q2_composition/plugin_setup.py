@@ -7,7 +7,8 @@
 # ----------------------------------------------------------------------------
 
 from qiime2.plugin import (Int, Float, Bool, Str, List,
-                           Choices, Citations, Plugin, Metadata)
+                           Choices, Citations, Plugin, Metadata,
+                           MetadataColumn, Categorical)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 from q2_types.feature_data import FeatureData
 from q2_stats import DifferentialAbundance
@@ -42,6 +43,34 @@ plugin.methods.register_function(
     },
     name='Add pseudocount to table',
     description="Increment all counts in table by pseudocount."
+)
+
+_transform_functions = q2_composition._ancom.transform_functions()
+_difference_functions = q2_composition._ancom.difference_functions()
+
+plugin.visualizers.register_function(
+    function=q2_composition.ancom,
+    inputs={'table': FeatureTable[Composition]},
+    parameters={
+        'metadata': MetadataColumn[Categorical],
+        'transform_function': Str % Choices(_transform_functions),
+        'difference_function': Str % Choices(_difference_functions)
+    },
+    input_descriptions={
+        'table': 'The feature table to be used for ANCOM computation.'
+    },
+    parameter_descriptions={
+        'metadata': ('The categorical sample metadata column to test for '
+                     'differential abundance across.'),
+        'transform_function': ('The method applied to transform feature '
+                               'values before generating volcano plots.'),
+        'difference_function': 'The method applied to visualize fold '
+                               'difference in feature abundance across '
+                               'groups for volcano plots.'},
+    name='Apply ANCOM to identify features that differ in abundance.',
+    description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
+                 "identify features that are differentially abundant across "
+                 "groups.")
 )
 
 plugin.methods.register_function(

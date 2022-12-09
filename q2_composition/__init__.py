@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 from ._impute import add_pseudocount
+from ._ancom import ancom
 from ._ancombc import ancombc
 from ._version import get_versions
 from ._dataloaf_tabulate import tabulate
@@ -15,4 +16,4 @@ from ._dataloaf_tabulate import tabulate
 __version__ = get_versions()['version']
 del get_versions
 
-__all__ = ['add_pseudocount', 'ancombc', 'tabulate']
+__all__ = ['add_pseudocount', 'ancom', 'ancombc', 'tabulate']
