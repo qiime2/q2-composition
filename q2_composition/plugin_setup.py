@@ -11,9 +11,12 @@ from qiime2.plugin import (Int, Float, Bool, Str, List,
                            MetadataColumn, Categorical)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 from q2_types.feature_data import FeatureData
-from q2_stats import DifferentialAbundance
 
 import q2_composition
+from q2_composition._type import DifferentialAbundance
+from q2_composition._format import (FrictionlessCSVFileFormat,
+                                    DataPackageSchemaFileFormat,
+                                    DataLoafPackageDirFmt)
 import q2_composition._examples as ex
 
 plugin = Plugin(
@@ -26,6 +29,12 @@ plugin = Plugin(
     short_description='Plugin for compositional data analysis.',
     citations=Citations.load('citations.bib', package='q2_composition')
 )
+
+plugin.register_formats(FrictionlessCSVFileFormat, DataPackageSchemaFileFormat,
+                        DataLoafPackageDirFmt)
+
+plugin.register_semantic_type_to_format(FeatureData[DifferentialAbundance],
+                                        DataLoafPackageDirFmt)
 
 plugin.methods.register_function(
     function=q2_composition.add_pseudocount,

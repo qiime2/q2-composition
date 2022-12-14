@@ -12,7 +12,8 @@ import os
 
 import q2templates
 
-from q2_stats import (DataLoafPackageDirFmt, FrictionlessCSVFileFormat)
+from q2_composition._format import (DataLoafPackageDirFmt,
+                                    FrictionlessCSVFileFormat)
 
 
 def tabulate(output_dir: str, data: DataLoafPackageDirFmt):

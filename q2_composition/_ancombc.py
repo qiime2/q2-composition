@@ -13,7 +13,7 @@ import formulaic
 
 import qiime2
 
-from q2_stats._format import DataLoafPackageDirFmt
+from ._format import DataLoafPackageDirFmt
 
 
 def run_commands(cmds, verbose=True):
