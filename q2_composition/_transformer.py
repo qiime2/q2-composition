@@ -13,7 +13,7 @@ from q2_composition._format import FrictionlessCSVFileFormat
 
 
 @plugin.register_transformer
-def _5(obj: FrictionlessCSVFileFormat) -> pd.DataFrame:
+def _1(obj: FrictionlessCSVFileFormat) -> pd.DataFrame:
     path = obj.view(FrictionlessCSVFileFormat)
     df = pd.read_csv(str(path))
 
