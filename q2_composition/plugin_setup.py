@@ -6,6 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import importlib
+
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata,
                            MetadataColumn, Categorical)
@@ -152,3 +154,5 @@ plugin.visualizers.register_function(
                 ' per-page views for the log-fold change (lfc), standard error'
                 ' (se), P values, Q values, and W scores.',
 )
+
+importlib.import_module('q2_composition._transformer')
