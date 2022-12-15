@@ -19,6 +19,7 @@ setup(
     author="Jamie Morton",
     author_email="jamietmorton@gmail.com",
     description="Compositional statistics plugin for QIIME2.",
+    scripts=['q2_composition/assets/run_ancombc.R'],
     license='BSD-3-Clause',
     url="https://qiime2.org",
     entry_points={
@@ -32,7 +33,9 @@ setup(
             'assets/ancom/css/*',
             'assets/ancom/js/*',
             'assets/ancom/licenses/*',
-        ]
+        ],
+        'q2_composition.tests': ['data/*'],
+        'q2_composition._dataloaf_tabulate': ['assets/*']
     },
     zip_safe=False,
 )
