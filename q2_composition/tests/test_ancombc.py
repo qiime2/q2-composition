@@ -26,6 +26,7 @@ class TestBase(TestPluginBase):
             'sample-md-ancombc-missing.tsv'))
 
         table = Artifact.load(self.get_data_path('table-ancombc.qza'))
+
         self.table = table.view(pd.DataFrame)
 
 
