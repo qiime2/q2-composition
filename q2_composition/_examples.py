@@ -17,19 +17,24 @@ def _get_data_from_tests(path):
                                            os.path.join('data', path))
 
 
-def ancom_md_factory():
+def ancombc_md_factory():
     return qiime2.Metadata.load(
-        _get_data_from_tests('sample-md-ancom.tsv'))
+        _get_data_from_tests('sample-md-ancombc.tsv'))
 
 
-def ancom_table_factory():
+def ancombc_table_factory():
     return qiime2.Artifact.load(
-        _get_data_from_tests('table-ancom.qza'))
+        _get_data_from_tests('table-ancombc.qza'))
+
+
+def ancombc_dataloaf_factory():
+    return qiime2.Artifact.load(
+        _get_data_from_tests('dataloaf.qza'))
 
 
 def ancombc_single_formula(use):
-    table = use.init_artifact('table', ancom_table_factory)
-    metadata = use.init_metadata('metadata', ancom_md_factory)
+    table = use.init_artifact('table', ancombc_table_factory)
+    metadata = use.init_metadata('metadata', ancombc_md_factory)
 
     dataloaf, = use.action(
         use.UsageAction('composition', 'ancombc'),
@@ -47,8 +52,8 @@ def ancombc_single_formula(use):
 
 
 def ancombc_multi_formula_with_reference_levels(use):
-    table = use.init_artifact('table', ancom_table_factory)
-    metadata = use.init_metadata('metadata', ancom_md_factory)
+    table = use.init_artifact('table', ancombc_table_factory)
+    metadata = use.init_metadata('metadata', ancombc_md_factory)
 
     dataloaf, = use.action(
         use.UsageAction('composition', 'ancombc'),
@@ -64,3 +69,19 @@ def ancombc_multi_formula_with_reference_levels(use):
     )
 
     dataloaf.assert_output_type('FeatureData[DifferentialAbundance]')
+
+
+def ancombc_tabulate(use):
+    data = use.init_artifact('dataloaf', ancombc_dataloaf_factory)
+
+    viz, = use.action(
+        use.UsageAction('composition', 'tabulate'),
+        use.UsageInputs(
+            data=data
+        ),
+        use.UsageOutputNames(
+            visualization='visualization'
+        )
+    )
+
+    viz.assert_output_type('Visualization')
