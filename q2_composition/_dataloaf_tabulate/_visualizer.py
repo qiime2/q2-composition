@@ -30,7 +30,9 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
 
     for slice in slices:
         slice_name = str(slice[0]).split('_slice')[0]
-        slice_df = slice[1].view(pd.DataFrame).set_index('id')
+        slice_df = slice[1].view(pd.DataFrame)
+        idx = str(slice_df.columns[0])
+        slice_df = slice_df.set_index(idx)
         slice_html = q2templates.df_to_html(slice_df)
 
         slice_names.append(slice_name)
