@@ -124,12 +124,19 @@ fit <- ancombc(data = data, formula = formula, p_adj_method = p_adj_method,
 # delta_em  <- fit$delta_em
 # delta_wls <- fit$delta_wls
 
+# Re-naming index for each data slice
+colnames(fit$res$lfc)[1] <- 'feature_id'
+colnames(fit$res$se)[1] <- 'feature_id'
+colnames(fit$res$W)[1] <- 'feature_id'
+colnames(fit$res$p_val)[1] <- 'feature_id'
+colnames(fit$res$q_val)[1] <- 'feature_id'
+
 # DataLoafPackageDirFmt slices
-lfc   <- cbind(feature_id = rownames(fit$res$lfc), fit$res$lfc)
-se    <- cbind(feature_id = rownames(fit$res$se), fit$res$se)
-w     <- cbind(feature_id = rownames(fit$res$W), fit$res$W)
-p_val <- cbind(feature_id = rownames(fit$res$p_val), fit$res$p_val)
-q_val <- cbind(feature_id = rownames(fit$res$q_val), fit$res$q_val)
+lfc   <- cbind(fit$res$lfc)
+se    <- cbind(fit$res$se)
+w     <- cbind(fit$res$W)
+p_val <- cbind(fit$res$p_val)
+q_val <- cbind(fit$res$q_val)
 
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf
