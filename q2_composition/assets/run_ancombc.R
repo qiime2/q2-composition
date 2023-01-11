@@ -132,11 +132,11 @@ colnames(fit$res$p_val)[1] <- 'feature_id'
 colnames(fit$res$q_val)[1] <- 'feature_id'
 
 # DataLoafPackageDirFmt slices
-lfc   <- cbind(fit$res$lfc)
-se    <- cbind(fit$res$se)
-w     <- cbind(fit$res$W)
-p_val <- cbind(fit$res$p_val)
-q_val <- cbind(fit$res$q_val)
+lfc   <- fit$res$lfc
+se    <- fit$res$se
+w     <- fit$res$W
+p_val <- fit$res$p_val
+q_val <- fit$res$q_val
 
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf
