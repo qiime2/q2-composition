@@ -26,7 +26,7 @@ class TestTransformers(TestBase):
                                        filename='data_slice.csv')
 
         exp = pd.DataFrame({
-            'feature_id': ['sample1'],
+            'id': ['sample1'],
             'bodysiteleft palm': [-4.391278379],
             'bodysiteright palm': [-3.390748186],
             'bodysitetongue': [-4.326335562],

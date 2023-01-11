@@ -125,11 +125,11 @@ fit <- ancombc(data = data, formula = formula, p_adj_method = p_adj_method,
 # delta_wls <- fit$delta_wls
 
 # Re-naming index for each data slice
-colnames(fit$res$lfc)[1]   <- 'feature_id'
-colnames(fit$res$se)[1]    <- 'feature_id'
-colnames(fit$res$W)[1]     <- 'feature_id'
-colnames(fit$res$p_val)[1] <- 'feature_id'
-colnames(fit$res$q_val)[1] <- 'feature_id'
+colnames(fit$res$lfc)[1]   <- 'id'
+colnames(fit$res$se)[1]    <- 'id'
+colnames(fit$res$W)[1]     <- 'id'
+colnames(fit$res$p_val)[1] <- 'id'
+colnames(fit$res$q_val)[1] <- 'id'
 
 # DataLoafPackageDirFmt slices
 lfc   <- fit$res$lfc
