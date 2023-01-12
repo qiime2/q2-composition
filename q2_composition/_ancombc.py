@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2022, QIIME 2 development team.
+# Copyright (c) 2016-2023, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -124,7 +124,6 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         reference_levels = ''
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
-        temp_dir_name = '.'
         biom_fp = os.path.join(temp_dir_name, 'input.biom.tsv')
         meta_fp = os.path.join(temp_dir_name, 'input.map.txt')
 

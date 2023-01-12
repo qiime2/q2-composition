@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Copyright (c) 2016-2022, QIIME 2 development team.
+# Copyright (c) 2016-2023, QIIME 2 development team.
 #
 # Distributed under the terms of the Modified BSD License.
 #
@@ -20,12 +20,12 @@ class TestBase(TestPluginBase):
     def setUp(self):
         super().setUp()
 
-        self.md = Metadata.load(self.get_data_path('sample-md-ancom.tsv'))
+        self.md = Metadata.load(self.get_data_path('sample-md-ancombc.tsv'))
 
         self.missing_md = Metadata.load(self.get_data_path(
-            'sample-md-ancom-missing.tsv'))
+            'sample-md-ancombc-missing.tsv'))
 
-        table = Artifact.load(self.get_data_path('table-ancom.qza'))
+        table = Artifact.load(self.get_data_path('table-ancombc.qza'))
         self.table = table.view(pd.DataFrame)
 
 
