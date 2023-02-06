@@ -52,8 +52,8 @@ plugin.methods.register_function(
     output_descriptions={
         'composition_table': 'The resulting feature table.'
     },
-    name='Add pseudocount to table',
-    description="Increment all counts in table by pseudocount."
+    name='Add pseudocount to table.',
+    description='Increment all counts in table by pseudocount.'
 )
 
 _transform_functions = q2_composition._ancom.transform_functions()
@@ -71,17 +71,17 @@ plugin.visualizers.register_function(
         'table': 'The feature table to be used for ANCOM computation.'
     },
     parameter_descriptions={
-        'metadata': ('The categorical sample metadata column to test for '
-                     'differential abundance across.'),
-        'transform_function': ('The method applied to transform feature '
-                               'values before generating volcano plots.'),
-        'difference_function': 'The method applied to visualize fold '
-                               'difference in feature abundances across '
-                               'groups for volcano plots.'},
+        'metadata': ('The categorical sample metadata column to test for'
+                     ' differential abundance across.'),
+        'transform_function': ('The method applied to transform feature'
+                               ' values before generating volcano plots.'),
+        'difference_function': 'The method applied to visualize fold'
+                               ' difference in feature abundances across'
+                               ' groups for volcano plots.'},
     name='Apply ANCOM to identify features that differ in abundance.',
-    description=("Apply Analysis of Composition of Microbiomes (ANCOM) to "
-                 "identify features that are differentially abundant across "
-                 "groups.")
+    description=('Apply Analysis of Composition of Microbiomes (ANCOM) to'
+                 ' identify features that are differentially abundant across'
+                 ' groups.')
 )
 
 plugin.methods.register_function(
@@ -104,7 +104,7 @@ plugin.methods.register_function(
     },
     outputs=[('differentials', FeatureData[DifferentialAbundance])],
     input_descriptions={
-        'table': 'The feature table to be used for ANCOM computation.'
+        'table': 'The feature table to be used for ANCOM-BC computation.'
     },
     parameter_descriptions={
         'metadata': 'The sample metadata.',
@@ -136,7 +136,9 @@ plugin.methods.register_function(
         'differentials': 'The calculated per-feature differentials.',
     },
     name=('Analysis of Composition of Microbiomes with Bias Correction'),
-    description=('ANCOM-BC description goes here.'),
+    description=('Apply Analysis of Compositions of Microbiomes with Bias'
+                 ' Correction (ANCOM-BC) to identify features that are'
+                 ' differentially abundant across groups.'),
     examples={
         'ancombc_single_formula': ex.ancombc_single_formula,
         'ancombc_multi_formula_with_reference_levels': (
