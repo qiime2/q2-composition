@@ -33,3 +33,6 @@ L5S240	CTGGACTCATAG	tongue	10	28	subject-2	dog	test1	value	A
 L6S93	GCGTTACACACA	tongue	3	17	subject-2	dog	test1	value	Z
 L6S20	GAACTGTATCTC	tongue	4	14	subject-2	bird	test2	value	Z
 L6S68	CTGGACTCATAG	gut	10	28	subject-2	cow	test1	value	Z
+L6SD93	GCGTTACACACA	toe	3	17	subject-2	dog	test1	value
+L6SD20	GAACTGTATCTC	toe	4	14	subject-2	bird	test2	value
+L6SD68	CTGGACTCATAG	toe	10	28	subject-2	cow	test1	value
