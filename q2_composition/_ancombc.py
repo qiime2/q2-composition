@@ -72,17 +72,6 @@ def _leaf_collector(term):
     return _leaf_collector(term[1]) + _leaf_collector(term[2])
 
 
-def _column_validation(metadata, parameter, value):
-    if value not in metadata.columns:
-        raise ValueError('Value provided in the `%s` parameter was not found'
-                         ' in any of the metadata columns. Please make sure to'
-                         ' only include values that are present within the'
-                         ' metadata columns.'
-                         ' \n\n'
-                         ' Value that was not found as a metadata column: "%s"'
-                         % (parameter, value))
-
-
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              reference_levels, neg_lb, tol, max_iter, conserve, alpha):
 
@@ -102,7 +91,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     # column validation for the formula parameter
     formula_terms = _parse_terms(formula=formula)
     for term in formula_terms:
-        _column_validation(meta, 'formula', term)
+        metadata.get_column(term)
 
     # column & level validation for the reference_levels parameter
     if reference_levels is not None:
