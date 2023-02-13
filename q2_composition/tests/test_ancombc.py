@@ -40,9 +40,8 @@ class TestANCOMBC(TestBase):
             ancombc(table=self.table, metadata=self.md, formula='foo')
 
     def test_missing_reference_levels_column(self):
-        with self.assertRaisesRegex(ValueError, 'reference_levels.*parameter'
-                                    ' was not found in any of the metadata'
-                                    ' columns'):
+        with self.assertRaisesRegex(ValueError, "'foo' is not a column in"
+                                    " the metadata"):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
                     reference_levels=['foo::tongue'])
 
@@ -74,3 +73,9 @@ class TestANCOMBC(TestBase):
         for _, slice in slices:
             for col in slice.columns:
                 self.assertNotIn('AZcolumnZ', col)
+
+    def test_numerical_md_col_reference_level_failure(self):
+        with self.assertRaisesRegex(TypeError, 'Column chosen with'
+                                    ' non-discrete values:.*month'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=['month::10'])

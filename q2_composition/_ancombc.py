@@ -12,6 +12,7 @@ import os
 import formulaic
 
 import qiime2
+from qiime2.metadata import NumericMetadataColumn
 
 from ._format import DataLoafPackageDirFmt
 
@@ -109,7 +110,17 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
             column = i.split('::')[0]
             level_value = i.split('::')[1]
 
-            _column_validation(meta, 'reference_levels', column)
+            # check that reference_level columns are present in the metadata
+            ref_column = metadata.get_column(column)
+
+            # check that each chosen column contains discrete values
+            if isinstance(ref_column, NumericMetadataColumn):
+                raise TypeError('`reference_levels` column chosen does not'
+                                ' contain discrete values. Please make sure'
+                                ' all chosen reference level columns only'
+                                ' contain discrete values.'
+                                ' Column chosen with non-discrete values:'
+                                ' %s' % column)
 
             if level_value not in pd.unique(meta[column].values):
                 raise ValueError('Value provided in `reference_levels`'
@@ -120,6 +131,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                                  ' \n\n'
                                  ' column::value pair with a value that was'
                                  ' not found: "%s"' % i)
+
     else:
         reference_levels = ''
 

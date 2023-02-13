@@ -60,8 +60,8 @@ def ancombc_multi_formula_with_reference_levels(use):
         use.UsageInputs(
             table=table,
             metadata=metadata,
-            formula='bodysite + month',
-            reference_levels=["bodysite::tongue"]
+            formula='bodysite + animal',
+            reference_levels=["bodysite::tongue", "animal::dog"]
         ),
         use.UsageOutputNames(
             differentials='dataloaf'
