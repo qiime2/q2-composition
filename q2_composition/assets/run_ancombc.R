@@ -56,7 +56,7 @@ formula             <- opt$formula
 p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
-reference_levels      <- opt$reference_levels
+reference_levels    <- opt$reference_levels
 neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
@@ -88,8 +88,8 @@ if (reference_levels == "") {
 
 # split the reference_levels param into each column and associated level order
 if (!is.null(reference_levels)) {
-  level_vector <- unlist(strsplit(reference_levels, ", "))
-  for (i in level_vector) {
+  level_vectors <- unlist(strsplit(reference_levels, ", "))
+  for (i in level_vectors) {
     column <- unlist(strsplit(i, "::"))[1]
     column <- gsub("\\'", "", column)
     column <- gsub("\\]", "", column)
@@ -102,10 +102,8 @@ if (!is.null(reference_levels)) {
     intercept_vector <- gsub("\\[", "", intercept_vector)
 
     # handling formula input(s)
-    for (j in column) {
-      md[[j]] <- factor(md[[j]])
-      md[[j]] <- relevel(md[[j]], ref = intercept_vector)
-    }
+    md[[column]] <- factor(md[[column]])
+    md[[column]] <- relevel(md[[column]], ref = intercept_vector)
   }
 }
 
