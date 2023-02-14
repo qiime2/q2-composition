@@ -104,11 +104,11 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
             # check that each chosen column contains discrete values
             if isinstance(ref_column, NumericMetadataColumn):
-                raise TypeError('`reference_levels` column chosen does not'
-                                ' contain discrete values. Please make sure'
-                                ' all chosen reference level columns only'
-                                ' contain discrete values.'
-                                ' Column chosen with non-discrete values:'
+                raise TypeError('One of the `reference_levels` columns is not'
+                                ' a categorical Metadata column. Please make'
+                                ' sure that all chosen reference level columns'
+                                ' are categorical, and not numeric.'
+                                ' Non-categorical column selected:'
                                 ' %s' % column)
 
             if level_value not in pd.unique(meta[column].values):

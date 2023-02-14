@@ -75,7 +75,7 @@ class TestANCOMBC(TestBase):
                 self.assertNotIn('AZcolumnZ', col)
 
     def test_numerical_md_col_reference_level_failure(self):
-        with self.assertRaisesRegex(TypeError, 'Column chosen with'
-                                    ' non-discrete values:.*month'):
+        with self.assertRaisesRegex(TypeError, 'Non-categorical column'
+                                    ' selected:.*month'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
                     reference_levels=['month::10'])
