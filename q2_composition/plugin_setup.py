@@ -8,9 +8,11 @@
 
 import importlib
 
+import numpy as np
+
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata,
-                           MetadataColumn, Categorical)
+                           MetadataColumn, Categorical, Range)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 from q2_types.feature_data import FeatureData
 
@@ -157,4 +159,39 @@ plugin.visualizers.register_function(
                 ' (se), P values, Q values, and W scores.',
 )
 
+plugin.visualizers.register_function(
+    function=q2_composition.da_barplot,
+    inputs={'data': FeatureData[DifferentialAbundance]},
+    parameters={'effect_size_column': Str,
+                'feature_id_column': Str,
+                'error_column': Str,
+                'significance_column': Str,
+                'significance_threshold': Float % Range(0.0, 1.0,
+                                                        inclusive_start=True,
+                                                        inclusive_end=True),
+                'effect_size_threshold': Float % Range(0.0, np.inf,
+                                                       inclusive_start=True),
+                'feature_ids': Metadata},
+    input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
+    parameter_descriptions={
+        'effect_size_column': "Column header for effect sizes in `data`.",
+        'feature_id_column': "Column header for feature ids in `data`.",
+        'error_column': "Column header for error in effect sizes in `data`.",
+        'significance_column': ("Column header for statistical significance "
+                                "level in `data`."),
+        'significance_threshold': ("Exclude features with statistical "
+                                   "significance level greater (i.e., less "
+                                   "significant) than this threshold."),
+        'effect_size_threshold': ("Exclude features with an absolute value "
+                                  "of effect size less than this threshold."),
+        'feature_ids': ("Exclude features if their ids are not included in "
+                        "this index.")},
+    name='Differential abundance bar plots',
+    description=('Generate bar plot views of ANCOM-BC output. One plot will '
+                 'be present per column in the ANCOM-BC output. The filtering '
+                 'parameters (`significance_threshold`, '
+                 '`effect_size_threshold` and `feature_ids`) are additive, '
+                 'such that only features that remain after all three '
+                 'features have been applied will be present in the output.'),
+)
 importlib.import_module('q2_composition._transformer')

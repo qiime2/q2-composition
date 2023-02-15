@@ -17,10 +17,11 @@ from ._impute import add_pseudocount
 from ._ancom import ancom
 from ._ancombc import ancombc
 from ._dataloaf_tabulate import tabulate
+from ._diff_abundance_plots import da_barplot
 
 __version__ = get_versions()['version']
 del get_versions
 
 __all__ = ['FrictionlessCSVFileFormat', 'DataPackageSchemaFileFormat',
            'DataLoafPackageDirFmt', 'DifferentialAbundance', 'add_pseudocount',
-           'ancom', 'ancombc', 'tabulate']
+           'ancom', 'ancombc', 'tabulate', 'da_barplot']
