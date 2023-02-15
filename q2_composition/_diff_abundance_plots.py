@@ -1,3 +1,10 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2016-2023, QIIME 2 development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+# ----------------------------------------------------------------------------
 from pathlib import Path
 from collections import OrderedDict
 
@@ -7,6 +14,7 @@ import numpy as np
 
 import qiime2
 from q2_composition import DataLoafPackageDirFmt
+
 
 def _plot_differentials(
         output_dir,
@@ -59,7 +67,6 @@ def _plot_differentials(
     df['enriched'] = ["enriched" if x else "depleted"
                       for x in df[effect_size_column] > 0]
 
-
     df['error-upper'] = df[effect_size_column] + df[error_column]
     df['error-lower'] = df[effect_size_column] - df[error_column]
 
@@ -93,12 +100,13 @@ def _plot_differentials(
     chart.save(fig_fp)
     return fig_fp
 
+
 def da_barplot(output_dir: str,
                data: DataLoafPackageDirFmt,
-               effect_size_column: str='lfc',
-               feature_id_column: str='id',
-               error_column: str='se',
-               significance_column: str='q_val',
+               effect_size_column: str = 'lfc',
+               feature_id_column: str = 'id',
+               error_column: str = 'se',
+               significance_column: str = 'q_val',
                significance_threshold: float = 1.0,
                effect_size_threshold: float = 0.0,
                feature_ids: qiime2.Metadata = None):
@@ -106,13 +114,13 @@ def da_barplot(output_dir: str,
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    index_fp = output_dir / Path(f'index.html')
+    index_fp = output_dir / Path('index.html')
 
     with open(index_fp, 'w') as index_f:
         index_f.write('<html><body>\n')
         categorical_data = {}
         for e in data.data_slices.iter_views(pd.DataFrame):
-            categorical_data[str(e[0]).replace('_slice.csv','')] = e[1]
+            categorical_data[str(e[0]).replace('_slice.csv', '')] = e[1]
         columns = [e for e in categorical_data[effect_size_column].columns
                    if e not in '(Intercept)']
 
@@ -120,13 +128,14 @@ def da_barplot(output_dir: str,
         for category in columns:
             if category == 'id':
                 continue
-            df = pd.concat([categorical_data[effect_size_column][feature_id_column],
-                            categorical_data[effect_size_column][category],
-                            categorical_data[error_column][category],
-                            categorical_data[significance_column][category]],
-                           keys=[feature_id_column, effect_size_column,
-                                 error_column, significance_column],
-                           axis=1)
+            df = pd.concat(
+                [categorical_data[effect_size_column][feature_id_column],
+                 categorical_data[effect_size_column][category],
+                 categorical_data[error_column][category],
+                 categorical_data[significance_column][category]],
+                keys=[feature_id_column, effect_size_column,
+                      error_column, significance_column],
+                axis=1)
             figure_data.append((category, df))
 
             try:
@@ -145,4 +154,3 @@ def da_barplot(output_dir: str,
                 index_f.write(
                     f"Plotting {category} failed with error: {str(e)} <hr>\n")
         index_f.write('</body></html>')
-
