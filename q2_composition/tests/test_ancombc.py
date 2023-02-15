@@ -74,6 +74,18 @@ class TestANCOMBC(TestBase):
             for col in slice.columns:
                 self.assertNotIn('AZcolumnZ', col)
 
+    def test_multi_reference_levels(self):
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + month',
+                           reference_levels=['bodysite::tongue',
+                                             'animal::dog'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitetongue', col)
+                self.assertNotIn('animaldog', col)
+
     def test_numerical_md_col_reference_level_failure(self):
         with self.assertRaisesRegex(TypeError, 'Non-categorical column'
                                     ' selected:.*month'):

@@ -86,6 +86,7 @@ if (reference_levels == "") {
   reference_levels <- NULL
 }
 
+intercept_columns <- list()
 # split the reference_levels param into each column and associated level order
 if (!is.null(reference_levels)) {
   level_vectors <- unlist(strsplit(reference_levels, ", "))
@@ -94,6 +95,7 @@ if (!is.null(reference_levels)) {
     column <- gsub("\\'", "", column)
     column <- gsub("\\]", "", column)
     column <- gsub("\\[", "", column)
+    intercept_columns <- append(intercept_columns, column)
 
     intercept_vector <- unlist(strsplit(i, "::"))[2]
     intercept_vector <- unlist(strsplit(intercept_vector, ","))
@@ -139,6 +141,7 @@ q_val <- fit$res$q_val
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf
 dataloaf_package <- create_package()
+dataloaf_package$descriptor["Columns Used to Calculate Intercept:"] <- intercept_columns
 
 dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "lfc_slice", data = lfc)
@@ -150,5 +153,11 @@ dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "p_val_slice", data = p_val)
 dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "q_val_slice", data = q_val)
+
+# adding descriptor info for LFC and W-score slices
+dataloaf_package$resources[[1]]$descriptor['Log-Fold Change (LFC)'] <- 'ln(A/B) = ln(B) - ln(A)'
+dataloaf_package$resources[[1]]$descriptor['A > B'] <- 'positive number (enriched)'
+dataloaf_package$resources[[1]]$descriptor['A < B'] <- 'negative number (depleted)'
+dataloaf_package$resources[[3]]$descriptor['W-Scores'] <- 'W = (lfc/se)'
 
 write_package(package = dataloaf_package, directory = output_loaf)
