@@ -20,19 +20,27 @@ def _plot_differentials(
         output_dir,
         df,
         category,
-        effect_size_column,
         feature_id_column,
-        error_column,
+        effect_size_column,
         significance_column,
-        significance_threshold,
+        error_column,
+        feature_ids,
         effect_size_threshold,
-        feature_ids):
+        significance_threshold):
 
     if len(df) == 0:
         raise ValueError("No features present in input.")
 
+    # ensure that all columns are of the types required internally
+    df = df.astype({feature_id_column: pd.StringDtype(),
+                    error_column: pd.Float64Dtype(),
+                    significance_column: pd.Float64Dtype(),
+                    effect_size_column: pd.Float64Dtype()})
+
+
+
     if feature_ids is not None:
-        df = df.query(f'`{feature_id_column}` in @feature_ids.index')
+        df = df.query(f'`{feature_id_column}` in @feature_ids')
 
     df = df[df[significance_column] <= significance_threshold]
     df = df[np.abs(df[effect_size_column]) >= effect_size_threshold]
@@ -111,6 +119,19 @@ def da_barplot(output_dir: str,
                effect_size_threshold: float = 0.0,
                feature_ids: qiime2.Metadata = None):
 
+    # validate the provided column headers - this isn't working right now,
+    # hence the failing unit test. pick up here.
+    # provided_column_headers = set([feature_id_column,
+    #                                effect_size_column,
+    #                                significance_column,
+    #                                error_column])
+    # existing_column_headers = set(df.columns)
+    # missing_columns = provided_column_headers - existing_column_headers
+    # if len(missing_columns) > 0:
+    #     raise KeyError(f"Column headers {' '.join(missing_columns)} are not "
+    #                    "present in input. Available column headers are: "
+    #                    f"{' '.join(existing_column_headers)}.")
+
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -121,12 +142,14 @@ def da_barplot(output_dir: str,
         categorical_data = {}
         for e in data.data_slices.iter_views(pd.DataFrame):
             categorical_data[str(e[0]).replace('_slice.csv', '')] = e[1]
+
+        # don't plot the Intercept column
         columns = [e for e in categorical_data[effect_size_column].columns
                    if e not in '(Intercept)']
 
         figure_data = []
         for category in columns:
-            if category == 'id':
+            if category == feature_id_column:
                 continue
             df = pd.concat(
                 [categorical_data[effect_size_column][feature_id_column],
