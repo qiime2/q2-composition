@@ -211,7 +211,7 @@ class TestDABarplot(TestBase):
             left_palm_path = \
                 output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
 
-            # feature ids expected to be absent are
+            # feature ids expected to be absent are absent
             self.assertFalse(
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
                 open(tongue_path).read())
@@ -222,7 +222,7 @@ class TestDABarplot(TestBase):
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
                 open(left_palm_path).read())
 
-            # feature ids expected to be present are
+            # feature ids expected to be present are present
             self.assertTrue(
                 'bfbed36e63b69fec4627424163d20118' in
                 open(tongue_path).read())
@@ -248,3 +248,5 @@ class TestDABarplot(TestBase):
             with self.assertRaisesRegex(KeyError, "Column .* id .* not prese"):
                 da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt))
+
+    ## Add tests using q2_composition/tests/data/dataloaf-hmp1-body-habitat.qza

@@ -108,7 +108,7 @@ def _plot_differentials(
     chart.save(fig_fp)
     return fig_fp
 
-
+# effect size "column" to "label"?
 def da_barplot(output_dir: str,
                data: DataLoafPackageDirFmt,
                effect_size_column: str = 'lfc',
