@@ -6,15 +6,12 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 import tempfile
-import os.path
 from pathlib import Path
 
-import pandas as pd
-
 from qiime2.plugin.testing import TestPluginBase
-from qiime2 import Metadata, Artifact
+from qiime2 import Artifact
 
-from q2_composition import (ancombc, da_barplot, DataLoafPackageDirFmt)
+from q2_composition import (da_barplot, DataLoafPackageDirFmt)
 
 
 class TestBase(TestPluginBase):
@@ -35,9 +32,9 @@ class TestDABarplot(TestBase):
     def test_basic(self):
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon')
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon')
             self.assertTrue((output_dir / 'index.html').exists())
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -71,10 +68,10 @@ class TestDABarplot(TestBase):
         # confirm feature presence when not filtering
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon',
-                             significance_threshold=1.0)
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon',
+                           significance_threshold=1.0)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
             right_palm_path = \
@@ -95,10 +92,10 @@ class TestDABarplot(TestBase):
         # confirm feature absence when filtering
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon',
-                             significance_threshold=1e-3)
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon',
+                           significance_threshold=1e-3)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
             right_palm_path = \
@@ -122,10 +119,10 @@ class TestDABarplot(TestBase):
         # confirm feature presence when not filtering
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon',
-                             effect_size_threshold=0)
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon',
+                           effect_size_threshold=0)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
             right_palm_path = \
@@ -146,10 +143,10 @@ class TestDABarplot(TestBase):
         # confirm feature absence when filtering
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon',
-                             effect_size_threshold=3.5)
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon',
+                           effect_size_threshold=3.5)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
             right_palm_path = \
@@ -176,10 +173,10 @@ class TestDABarplot(TestBase):
         # confirm feature presence when no filtering
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon',
-                             feature_ids=None)
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon',
+                           feature_ids=None)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
             right_palm_path = \
@@ -200,10 +197,10 @@ class TestDABarplot(TestBase):
         # confirm feature absence when filtering
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
-            viz = da_barplot(output_dir,
-                             self.dataloaf1.view(DataLoafPackageDirFmt),
-                             feature_id_column='taxon',
-                             feature_ids=ids_to_keep)
+            _ = da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_column='taxon',
+                           feature_ids=ids_to_keep)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
             right_palm_path = \
@@ -249,4 +246,4 @@ class TestDABarplot(TestBase):
                 da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt))
 
-    ## Add tests using q2_composition/tests/data/dataloaf-hmp1-body-habitat.qza
+    # Add tests using q2_composition/tests/data/dataloaf-hmp1-body-habitat.qza

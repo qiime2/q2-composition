@@ -37,8 +37,6 @@ def _plot_differentials(
                     significance_column: pd.Float64Dtype(),
                     effect_size_column: pd.Float64Dtype()})
 
-
-
     if feature_ids is not None:
         df = df.query(f'`{feature_id_column}` in @feature_ids')
 
@@ -107,6 +105,7 @@ def _plot_differentials(
     chart = (bars + error).properties()
     chart.save(fig_fp)
     return fig_fp
+
 
 # effect size "column" to "label"?
 def da_barplot(output_dir: str,
