@@ -60,7 +60,7 @@ def _plot_differentials(
     # see https://github.com/altair-viz/altair/issues/938).
     y_labels = OrderedDict()
     for i, e in enumerate(df[feature_id_column]):
-        fields = [field for field in e.split(';') if field != '__']
+        fields = [field for field in e.split(';') if not field.endswith('__')]
 
         most_specific = fields[-1]
         if most_specific in y_labels:
