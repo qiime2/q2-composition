@@ -5,3 +5,9 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+
+
+from ._visualizer import tabulate
+
+
+__all__ = ['tabulate']

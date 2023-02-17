@@ -5,3 +5,16 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+
+import pandas as pd
+
+from q2_composition.plugin_setup import plugin
+from q2_composition._format import FrictionlessCSVFileFormat
+
+
+@plugin.register_transformer
+def _1(obj: FrictionlessCSVFileFormat) -> pd.DataFrame:
+    path = obj.view(FrictionlessCSVFileFormat)
+    df = pd.read_csv(str(path))
+
+    return df
