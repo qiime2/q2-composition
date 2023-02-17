@@ -205,7 +205,8 @@ class AncomTests(TestPluginBase):
                       index=pd.Index(self.example_samples,
                                      name='id')))
 
-        with self.assertRaisesRegex(ValueError, 'S5, S6'):
+        with self.assertRaisesRegex(ValueError, 'Metadata column n is missing'
+                                    ' values for samples S5, S6'):
             ancom(output_dir=self.temp_dir.name, table=t +
                   1, metadata=c, filter_missing=False)
 
