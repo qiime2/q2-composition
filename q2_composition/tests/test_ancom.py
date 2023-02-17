@@ -206,7 +206,7 @@ class AncomTests(TestPluginBase):
                                      name='id')))
 
         with self.assertRaisesRegex(ValueError, 'Metadata column n is missing'
-                                    ' values for samples S5, S6'):
+                                    ' values for samples S6, S5'):
             ancom(output_dir=self.temp_dir.name, table=t +
                   1, metadata=c, filter_missing=False)
 
