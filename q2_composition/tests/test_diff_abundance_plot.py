@@ -19,17 +19,14 @@ class TestBase(TestPluginBase):
 
     def setUp(self):
         super().setUp()
-
-        # self.md = Metadata.load(self.get_data_path('sample-md-ancombc.tsv'))
-        # table = Artifact.load(self.get_data_path('table-ancombc.qza'))
-        # self.table = table.view(pd.DataFrame)
-
         self.dataloaf1 = Artifact.load(self.get_data_path('dataloaf.qza'))
+        self.dataloaf2 = \
+            Artifact.load(self.get_data_path('dataloaf-hmp1-body-habitat.qza'))
 
 
 class TestDABarplot(TestBase):
 
-    def test_basic(self):
+    def test_basic_dl1(self):
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
@@ -63,6 +60,48 @@ class TestDABarplot(TestBase):
             self.assertTrue(
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
                 open(left_palm_path).read())
+
+    def test_basic_dl2(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            output_dir = Path(output_dir)
+            _ = da_barplot(output_dir,
+                           self.dataloaf2.view(DataLoafPackageDirFmt))
+            self.assertTrue((output_dir / 'index.html').exists())
+
+            feces_path =  \
+                output_dir / 'body_habitatUBERON:feces-ancombc-barplot.html'
+            self.assertTrue(feces_path.exists())
+
+            oral_cavity_path = output_dir / \
+                'body_habitatUBERON:oral-cavity-ancombc-barplot.html'
+            self.assertTrue(oral_cavity_path.exists())
+
+            saliva_path = \
+                output_dir / 'body_habitatUBERON:saliva-ancombc-barplot.html'
+            self.assertTrue(saliva_path.exists())
+
+            vagina_path = \
+                output_dir / 'body_habitatUBERON:vagina-ancombc-barplot.html'
+            self.assertTrue(vagina_path.exists())
+
+            # file shouldn't exist for reference column
+            skin_path = \
+                output_dir / 'body_habitatUBERON:skin-ancombc-barplot.html'
+            self.assertFalse(skin_path.exists())
+
+            # spot check for a feature id
+            self.assertTrue(
+                'g__Staphylococcus' in
+                open(feces_path).read())
+            self.assertTrue(
+                'g__Staphylococcus' in
+                open(oral_cavity_path).read())
+            self.assertTrue(
+                'g__Staphylococcus' in
+                open(saliva_path).read())
+            self.assertTrue(
+                'g__Staphylococcus' in
+                open(vagina_path).read())
 
     def test_filter_on_significance(self):
         # confirm feature presence when not filtering
@@ -252,5 +291,3 @@ class TestDABarplot(TestBase):
                            self.dataloaf1.view(DataLoafPackageDirFmt),
                            feature_id_label='taxon',
                            error_label='stderr')
-
-    # Add tests using q2_composition/tests/data/dataloaf-hmp1-body-habitat.qza

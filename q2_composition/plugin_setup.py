@@ -174,10 +174,10 @@ plugin.visualizers.register_function(
                 'feature_ids': Metadata},
     input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
     parameter_descriptions={
-        'effect_size_label': "Column header for effect sizes in `data`.",
-        'feature_id_label': "Column header for feature ids in `data`.",
-        'error_label': "Column header for error in effect sizes in `data`.",
-        'significance_label': ("Column header for statistical significance "
+        'effect_size_label': "Label for effect sizes in `data`.",
+        'feature_id_label': "Label for feature ids in `data`.",
+        'error_label': "Label for effect size errors in `data`.",
+        'significance_label': ("Label for statistical significance "
                                "level in `data`."),
         'significance_threshold': ("Exclude features with statistical "
                                    "significance level greater (i.e., less "
@@ -188,10 +188,10 @@ plugin.visualizers.register_function(
                         "this index.")},
     name='Differential abundance bar plots',
     description=('Generate bar plot views of ANCOM-BC output. One plot will '
-                 'be present per column in the ANCOM-BC output. The filtering '
-                 'parameters (`significance_threshold`, '
-                 '`effect_size_threshold` and `feature_ids`) are additive, '
+                 'be present per column in the ANCOM-BC output. The '
+                 '`significance_threshold`, `effect_size_threshold` '
+                 'and `feature_ids` filter results are intersected, '
                  'such that only features that remain after all three '
-                 'features have been applied will be present in the output.'),
+                 'filters have been applied will be present in the output.'),
 )
 importlib.import_module('q2_composition._transformer')
