@@ -34,7 +34,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon')
+                           feature_id_label='taxon')
             self.assertTrue((output_dir / 'index.html').exists())
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -70,7 +70,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon',
+                           feature_id_label='taxon',
                            significance_threshold=1.0)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -94,7 +94,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon',
+                           feature_id_label='taxon',
                            significance_threshold=1e-3)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -121,7 +121,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon',
+                           feature_id_label='taxon',
                            effect_size_threshold=0)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -145,7 +145,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon',
+                           feature_id_label='taxon',
                            effect_size_threshold=3.5)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -175,7 +175,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon',
+                           feature_id_label='taxon',
                            feature_ids=None)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -199,7 +199,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_column='taxon',
+                           feature_id_label='taxon',
                            feature_ids=ids_to_keep)
 
             tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
@@ -242,8 +242,15 @@ class TestDABarplot(TestBase):
 
     def test_error_on_bad_column_names(self):
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(KeyError, "Column .* id .* not prese"):
+            with self.assertRaisesRegex(KeyError, "ture id .* \"id\" .* not "):
                 da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt))
+
+        with tempfile.TemporaryDirectory() as output_dir:
+            with self.assertRaisesRegex(KeyError, "label.* stderr.*not"):
+                da_barplot(output_dir,
+                           self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_label='taxon',
+                           error_label='stderr')
 
     # Add tests using q2_composition/tests/data/dataloaf-hmp1-body-habitat.qza

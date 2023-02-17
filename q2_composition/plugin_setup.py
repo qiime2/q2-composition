@@ -162,10 +162,10 @@ plugin.visualizers.register_function(
 plugin.visualizers.register_function(
     function=q2_composition.da_barplot,
     inputs={'data': FeatureData[DifferentialAbundance]},
-    parameters={'effect_size_column': Str,
-                'feature_id_column': Str,
-                'error_column': Str,
-                'significance_column': Str,
+    parameters={'effect_size_label': Str,
+                'feature_id_label': Str,
+                'error_label': Str,
+                'significance_label': Str,
                 'significance_threshold': Float % Range(0.0, 1.0,
                                                         inclusive_start=True,
                                                         inclusive_end=True),
@@ -174,11 +174,11 @@ plugin.visualizers.register_function(
                 'feature_ids': Metadata},
     input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
     parameter_descriptions={
-        'effect_size_column': "Column header for effect sizes in `data`.",
-        'feature_id_column': "Column header for feature ids in `data`.",
-        'error_column': "Column header for error in effect sizes in `data`.",
-        'significance_column': ("Column header for statistical significance "
-                                "level in `data`."),
+        'effect_size_label': "Column header for effect sizes in `data`.",
+        'feature_id_label': "Column header for feature ids in `data`.",
+        'error_label': "Column header for error in effect sizes in `data`.",
+        'significance_label': ("Column header for statistical significance "
+                               "level in `data`."),
         'significance_threshold': ("Exclude features with statistical "
                                    "significance level greater (i.e., less "
                                    "significant) than this threshold."),
