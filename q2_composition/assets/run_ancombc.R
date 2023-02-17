@@ -138,26 +138,54 @@ w     <- fit$res$W
 p_val <- fit$res$p_val
 q_val <- fit$res$q_val
 
+# Helper method for resource creation
+create_resource <- function(rcs_name, data, descriptor) {
+  rcs <- c(
+    "name": rcs_name,
+    "description": descriptor,
+    "path": c(rcs_name, ".csv"), # need a built-in to accomplish this
+    "profile": "tabular-data-resource",
+    "format": "csv",
+    "mediatype": "text/csv",
+    "encoding": "utf-8",
+    "schema": create_schema(data)
+    )
+  return(rcs)
+}
+
+# Creating customized resource objects that contain data slice descriptions
+lfc_rcs <- create_resource(rcs_name = "lfc_slice",
+                           data = lfc,
+                           descriptor = c("Log-Fold Change (LFC):
+                                          Positive numbers represent
+                                          enrichment, and negative numbers
+                                          represent depletion (relative
+                                          to the intercept)."))
+
+se_rcs <- create_resource(rcs_name = "se_slice",
+                          data = se,
+                          descriptor = c("Standard Error (SE)"))
+
+w_rcs <- create_resource(rcs_name = "w_slice",
+                         data = w,
+                         descriptor = c("W-Scores:
+                                        Log-Fold Change (LFC) divided
+                                        by the Standard Error (SE)"))
+
+p_val_rcs <- create_resource(rcs_name = "p_val_slice",
+                             data = p_val,
+                             descriptor = c("P Values"))
+
+q_val_rcs <- create_resource(rcs_name = "q_val_slice",
+                             data = q_val,
+                             descriptor = c("Q Values"))
+
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf
 dataloaf_package <- create_package()
-dataloaf_package$descriptor["Columns Used to Calculate Intercept:"] <- intercept_columns
+dataloaf_package$descriptor["Columns Used to Calculate Intercept"] <- intercept_columns
 
-dataloaf_package <- add_resource(package = dataloaf_package,
-                                 resource_name = "lfc_slice", data = lfc)
-dataloaf_package <- add_resource(package = dataloaf_package,
-                                 resource_name = "se_slice", data = se)
-dataloaf_package <- add_resource(package = dataloaf_package,
-                                 resource_name = "w_slice", data = w)
-dataloaf_package <- add_resource(package = dataloaf_package,
-                                 resource_name = "p_val_slice", data = p_val)
-dataloaf_package <- add_resource(package = dataloaf_package,
-                                 resource_name = "q_val_slice", data = q_val)
-
-# adding descriptor info for LFC and W-score slices
-dataloaf_package$resources[[1]]$descriptor['Log-Fold Change (LFC)'] <- 'ln(A/B) = ln(B) - ln(A)'
-dataloaf_package$resources[[1]]$descriptor['A > B'] <- 'positive number (enriched)'
-dataloaf_package$resources[[1]]$descriptor['A < B'] <- 'negative number (depleted)'
-dataloaf_package$resources[[3]]$descriptor['W-Scores'] <- 'W = (lfc/se)'
+dataloaf_package$resources <- c(list(lfc_rcs), list(se_rcs), list(w_rcs),
+                                list(p_val_rcs), list(q_val_rcs))
 
 write_package(package = dataloaf_package, directory = output_loaf)
