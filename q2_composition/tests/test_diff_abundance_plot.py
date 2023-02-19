@@ -286,7 +286,7 @@ class TestDABarplot(TestBase):
                            self.dataloaf1.view(DataLoafPackageDirFmt))
 
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(KeyError, "label.* stderr.*not"):
+            with self.assertRaisesRegex(KeyError, "label.*stderr.*not"):
                 da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
                            feature_id_label='taxon',

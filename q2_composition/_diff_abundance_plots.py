@@ -19,7 +19,7 @@ from q2_composition import DataLoafPackageDirFmt
 def _plot_differentials(
         output_dir,
         df,
-        column_label,
+        title,
         feature_id_label,
         effect_size_label,
         significance_label,
@@ -48,7 +48,7 @@ def _plot_differentials(
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    fig_fn = '-'.join(f'{column_label}-ancombc-barplot.html'.split())
+    fig_fn = '-'.join(f'{title}-ancombc-barplot.html'.split())
     fig_fp = output_dir / Path(fig_fn)
 
     # For readability, only the most specific named taxonomy will be
@@ -102,7 +102,15 @@ def _plot_differentials(
         y=shared_y,
     )
 
-    chart = (bars + error).properties()
+    chart = (bars + error).properties(title=title)
+    chart = chart.configure_legend(
+        strokeColor='gray',
+        fillColor='#EEEEEE',
+        padding=10,
+        cornerRadius=10,
+        orient='top-left'
+    )
+
     chart.save(fig_fp)
     return fig_fp
 
@@ -137,22 +145,25 @@ def da_barplot(output_dir: str,
         missing_slice_labels = provided_slice_labels - observed_slice_labels
         if len(missing_slice_labels) > 0:
             raise KeyError(
-                f"The label(s): {' '.join(missing_slice_labels)}\n"
-                "are not present in input. Available options are:\n"
+                f"Provide label(s) ({' '.join(missing_slice_labels)}) "
+                "are not present in input. Available options are: "
                 f"{' '.join(observed_slice_labels)}.")
 
         # exclude the Intercept column from plots
         column_labels = [e for e in slice_data[effect_size_label].columns
                          if e not in '(Intercept)']
 
-        if feature_id_label not in column_labels[:2]:
+        if feature_id_label not in column_labels:
             raise KeyError(f"Feature id header \"{feature_id_label}\" is not "
                            "present in input. Available options are: "
-                           f"{' '.join(column_labels[:2])}.")
+                           f"{' '.join(column_labels)}.")
 
         # create figure_data, which contains the cross-slice data for each
-        # column of the input dataloaf. for example, if the input dataloaf
-        # looks like:
+        # column of the input dataloaf. some of this logic likely makes sense
+        # to move into a transformer which handles the arrangement of data
+        # into a multi-index dataframe.
+        #
+        # if the input dataloaf looks like:
         # slice1: lfc
         # feature-id skin gut
         # f1 0.2 5.4
@@ -171,7 +182,6 @@ def da_barplot(output_dir: str,
         # feature-id lfc q_value
         # f1 5.4 0.01
         # f2 0.1 0.8
-        # I'm sure there's a better way to do this with pandas.(TM)
         figure_data = []
         for column_label in column_labels:
             if column_label == feature_id_label:
@@ -188,7 +198,8 @@ def da_barplot(output_dir: str,
 
             try:
                 figure_fp = _plot_differentials(
-                    output_dir, df, column_label,
+                    output_dir, df,
+                    title=column_label,
                     effect_size_label=effect_size_label,
                     feature_id_label=feature_id_label,
                     error_label=error_label,
