@@ -42,17 +42,25 @@ def ancom(output_dir: str,
           table: pd.DataFrame,
           metadata: qiime2.CategoricalMetadataColumn,
           transform_function: str = 'clr',
-          difference_function: str = None) -> None:
+          difference_function: str = None,
+          filter_missing: bool = False) -> None:
     metadata = metadata.filter_ids(table.index)
     if metadata.has_missing_values():
         missing_data_sids = metadata.get_ids(where_values_missing=True)
-        missing_data_sids = ', '.join(sorted(missing_data_sids))
-        raise ValueError('Metadata column is missing values for the '
-                         'following samples. Values need to be added for '
-                         'these samples, or the samples need to be removed '
-                         'from the table: %s' % missing_data_sids)
+        if filter_missing:
+            metadata = metadata.to_series().drop(missing_data_sids)
+            table = table.drop(index=missing_data_sids)
+            missing_data_sids = ', '.join(sorted(missing_data_sids))
+        else:
+            raise ValueError(f'Metadata column {metadata.name} is missing '
+                             f'values for samples '
+                             f'{", ".join(sorted(missing_data_sids))}')
+
+    else:
+        metadata = metadata.to_series()
+
     ancom_results = skbio_ancom(table,
-                                metadata.to_series(),
+                                metadata,
                                 significance_test=f_oneway)
     ancom_results[0].sort_values(by='W', ascending=False, inplace=True)
     ancom_results[0].rename(columns={'reject': 'Reject null hypothesis'},
@@ -67,7 +75,6 @@ def ancom(output_dir: str,
         context['percent_abundances'] = q2templates.df_to_html(
             ancom_results[1].loc[significant_features.index])
 
-    metadata = metadata.to_series()
     cats = list(set(metadata))
     transform_function_name = transform_function
     transform_function = _transform_functions[transform_function]
@@ -88,6 +95,7 @@ def ancom(output_dir: str,
             return args[0]
         else:
             return args
+
     # effectively doing a groupby operation wrt to the metadata
     fold_change = transformed_table.apply(diff_func, axis=0)
     if not pd.isnull(fold_change).all():
@@ -124,23 +132,23 @@ def ancom(output_dir: str,
                  'title': transform_function_name},
                 {'scale': 'yScale', 'orient': 'left', 'title': 'W'}],
             'marks': [
-              {'type': 'symbol',
-               'from': {'data': 'values'},
-               'encode': {
-                   'hover': {
-                       'fill': {'value': '#FF0000'},
-                       'opacity': {'value': 1}},
-                   'enter': {
-                       'x': {'scale': 'xScale',
-                             'field': transform_function_name},
-                       'y': {'scale': 'yScale', 'field': 'W'}},
-                   'update': {
-                       'fill': {'value': 'black'},
-                       'opacity': {'value': 0.3},
-                       'tooltip': {
-                           'signal': "{{'title': datum['id'], '{0}': "
-                                     "datum['{0}'], 'W': datum['W']}}".format(
-                                         transform_function_name)}}}}]}
+                {'type': 'symbol',
+                 'from': {'data': 'values'},
+                 'encode': {
+                     'hover': {
+                         'fill': {'value': '#FF0000'},
+                         'opacity': {'value': 1}},
+                     'enter': {
+                         'x': {'scale': 'xScale',
+                               'field': transform_function_name},
+                         'y': {'scale': 'yScale', 'field': 'W'}},
+                     'update': {
+                         'fill': {'value': 'black'},
+                         'opacity': {'value': 0.3},
+                         'tooltip': {
+                             'signal': "{{'title': datum['id'], '{0}': "
+                             "datum['{0}'], 'W': datum['W']}}".format(
+                                 transform_function_name)}}}}]}
         context['vega_spec'] = json.dumps(spec)
         if filtered_ids:
             context['filtered_ids'] = ', '.join(sorted(filtered_ids))
