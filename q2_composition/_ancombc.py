@@ -126,18 +126,18 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
             level_value_idx = meta.index[meta[column] == level_value].tolist()
             table_idx_list = table.index.tolist()
 
-            for id in level_value_idx:
-                if id not in table_idx_list:
-                    raise ValueError('Value provided in `reference_levels`'
-                                     ' parameter not associated with any IDs'
-                                     ' in the feature table. Please make sure'
-                                     ' the value(s) selected in each'
-                                     ' column::value pair are associated with'
-                                     ' IDs present in the feature table.'
-                                     ' \n\n'
-                                     ' Value not associated with any IDs in'
-                                     ' the table: "%s"' % level_value,
-                                     ' ID not found in table: "%s"' % id)
+            if not list(set(level_value_idx) & set(table_idx_list)):
+                raise ValueError('Value provided in `reference_levels`'
+                                 ' parameter not associated with any IDs'
+                                 ' in the feature table. Please make sure'
+                                 ' the value(s) selected in each'
+                                 ' column::value pair are associated with'
+                                 ' IDs present in the feature table.'
+                                 ' \n\n'
+                                 ' Value not associated with any IDs in'
+                                 ' the table: "%s"' % level_value,
+                                 ' IDs not found in table:'
+                                 ' "%s"' % level_value_idx)
 
     else:
         reference_levels = ''
