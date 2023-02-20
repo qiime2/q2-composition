@@ -15,8 +15,7 @@ import numpy as np
 import qiime2
 from q2_composition import DataLoafPackageDirFmt
 
-
-_html_head = """
+_html_head = """<html>
 <head>
 <style>
     body {
@@ -29,9 +28,15 @@ _html_head = """
 </style>
 <meta charset="UTF-8">
 </head>
+<body>
+<p>Click a link to see the differential abundance bar plot for the specified
+   category:
+</p>
+<ul>
 """
 
-_interpreting_text = """<div>
+_html_foot = """</ul>
+<div>
 <hr>
 <p>Notes on interpreting plots with taxonomic feature identifiers:</p>
 <ul>
@@ -49,6 +54,8 @@ current figure. It is not taxonomically meaningful, and won't be
 consistent across visualizations.</li>
 </ul>
 </div>
+</body>
+</html>
 """
 
 
@@ -141,7 +148,6 @@ def _plot_differentials(
     chart = (bars + error).properties(title=title)
     chart = chart.configure_legend(
         strokeColor='gray',
-        fillColor='#EEEEEE',
         padding=10,
         cornerRadius=10,
     )
@@ -171,9 +177,7 @@ def da_barplot(output_dir: str,
     index_fp = output_dir / Path('index.html')
 
     with open(index_fp, 'w') as index_f:
-        index_f.write(f'<html>\n{_html_head}\n<body>\n')
-        index_f.write('Click link to see figure for specific category:<p>\n')
-        index_f.write('<ul>\n')
+        index_f.write(_html_head)
         slice_data = {}
         for e in data.data_slices.iter_views(pd.DataFrame):
             slice_data[str(e[0]).replace('_slice.csv', '')] = e[1]
@@ -245,14 +249,12 @@ def da_barplot(output_dir: str,
                     effect_size_threshold=effect_size_threshold,
                     feature_ids=feature_ids)
                 figure_fn = figure_fp.parts[-1]
-                index_f.write(f" <li><a href=./{figure_fn}>{column_label}"
+                index_f.write(f"<li><a href=./{figure_fn}>{column_label}"
                               "</a></li>\n")
             except ValueError as e:
                 # this is a little clunky, but it allows some plots to be
                 # created even if all of the plots can't, and provides detail
                 # to the user on what didn't work.
-                index_f.write(f"Plotting {column_label} failed with error: "
-                              f"{str(e)} <hr>\n")
-        index_f.write('</ul>\n')
-        index_f.write(_interpreting_text)
-        index_f.write('</body></html>')
+                index_f.write(f"<li>Plotting {column_label} failed with "
+                              f"error: {str(e)}</li>\n")
+        index_f.write(_html_foot)
