@@ -121,6 +121,11 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                                  ' column::value pair with a value that was'
                                  ' not found: "%s"' % i)
 
+            # check that reference_level columns are also in the formula
+            if column not in formula_terms:
+                raise ValueError('`reference_levels` column "%s" was not found'
+                                 ' within the `formula` terms.' % column)
+
     else:
         reference_levels = ''
 

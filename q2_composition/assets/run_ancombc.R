@@ -145,7 +145,9 @@ q_val <- fit$res$q_val
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf
 dataloaf_package <- create_package()
-dataloaf_package$descriptor["Columns Used to Calculate Intercept"] <- intercept_columns
+# Dataloaf attribute containing the reference levels
+# Used in the tabulate viz for listing out the intercept columns
+dataloaf_package$metadata <- intercept_columns
 
 dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "lfc_slice", data = lfc)
