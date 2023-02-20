@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 import tempfile
 from pathlib import Path
+import urllib.parse
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Artifact
@@ -26,6 +27,10 @@ class TestBase(TestPluginBase):
 
 class TestDABarplot(TestBase):
 
+    def _get_output_filepath(self, dir, title):
+        safe_title = urllib.parse.quote_plus(title)
+        return dir / f'{safe_title}-ancombc-barplot.html'
+
     def test_basic_dl1(self):
         with tempfile.TemporaryDirectory() as output_dir:
             output_dir = Path(output_dir)
@@ -34,20 +39,21 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon')
             self.assertTrue((output_dir / 'index.html').exists())
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
             self.assertTrue(tongue_path.exists())
 
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
             self.assertTrue(right_palm_path.exists())
 
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
             self.assertTrue(left_palm_path.exists())
 
             # file shouldn't exist for reference column
-            gut_path = \
-                output_dir / 'bodysitegut-ancombc-barplot.html'
+            gut_path = self._get_output_filepath(
+                output_dir, 'bodysitegut')
             self.assertFalse(gut_path.exists())
 
             # spot check for a feature id
@@ -68,25 +74,25 @@ class TestDABarplot(TestBase):
                            self.dataloaf2.view(DataLoafPackageDirFmt))
             self.assertTrue((output_dir / 'index.html').exists())
 
-            feces_path =  \
-                output_dir / 'body_habitatUBERON:feces-ancombc-barplot.html'
+            feces_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:feces')
             self.assertTrue(feces_path.exists())
 
-            oral_cavity_path = output_dir / \
-                'body_habitatUBERON:oral-cavity-ancombc-barplot.html'
+            oral_cavity_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:oral cavity')
             self.assertTrue(oral_cavity_path.exists())
 
-            saliva_path = \
-                output_dir / 'body_habitatUBERON:saliva-ancombc-barplot.html'
+            saliva_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:saliva')
             self.assertTrue(saliva_path.exists())
 
-            vagina_path = \
-                output_dir / 'body_habitatUBERON:vagina-ancombc-barplot.html'
+            vagina_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:vagina')
             self.assertTrue(vagina_path.exists())
 
             # file shouldn't exist for reference column
-            skin_path = \
-                output_dir / 'body_habitatUBERON:skin-ancombc-barplot.html'
+            skin_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:skin')
             self.assertFalse(skin_path.exists())
 
             # spot check for a feature id
@@ -112,11 +118,17 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon',
                            significance_threshold=1.0)
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
+            self.assertTrue(tongue_path.exists())
+
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
+            self.assertTrue(right_palm_path.exists())
+
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
+            self.assertTrue(left_palm_path.exists())
 
             self.assertTrue(
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
@@ -136,11 +148,17 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon',
                            significance_threshold=1e-3)
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
+            self.assertTrue(tongue_path.exists())
+
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
+            self.assertTrue(right_palm_path.exists())
+
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
+            self.assertTrue(left_palm_path.exists())
 
             # this feature is significant at this
             # threshold only in tongue and left palm
@@ -163,11 +181,17 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon',
                            effect_size_threshold=0)
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
+            self.assertTrue(tongue_path.exists())
+
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
+            self.assertTrue(right_palm_path.exists())
+
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
+            self.assertTrue(left_palm_path.exists())
 
             self.assertTrue(
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
@@ -187,11 +211,17 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon',
                            effect_size_threshold=3.5)
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
+            self.assertTrue(tongue_path.exists())
+
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
+            self.assertTrue(right_palm_path.exists())
+
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
+            self.assertTrue(left_palm_path.exists())
 
             # this feature's effect size is greater
             # than the threshold only in tongue and left palm
@@ -217,11 +247,17 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon',
                            feature_ids=None)
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
+            self.assertTrue(tongue_path.exists())
+
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
+            self.assertTrue(right_palm_path.exists())
+
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
+            self.assertTrue(left_palm_path.exists())
 
             self.assertTrue(
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
@@ -241,11 +277,17 @@ class TestDABarplot(TestBase):
                            feature_id_label='taxon',
                            feature_ids=ids_to_keep)
 
-            tongue_path = output_dir / 'bodysitetongue-ancombc-barplot.html'
-            right_palm_path = \
-                output_dir / 'bodysiteright-palm-ancombc-barplot.html'
-            left_palm_path = \
-                output_dir / 'bodysiteleft-palm-ancombc-barplot.html'
+            tongue_path = self._get_output_filepath(
+                output_dir, 'bodysitetongue')
+            self.assertTrue(tongue_path.exists())
+
+            right_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteright palm')
+            self.assertTrue(right_palm_path.exists())
+
+            left_palm_path = self._get_output_filepath(
+                output_dir, 'bodysiteleft palm')
+            self.assertTrue(left_palm_path.exists())
 
             # feature ids expected to be absent are absent
             self.assertFalse(

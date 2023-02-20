@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 from pathlib import Path
 from collections import OrderedDict
+import urllib.parse
 
 import altair as alt
 import pandas as pd
@@ -91,8 +92,9 @@ def _plot_differentials(
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    fig_fn = '-'.join(f'{title}-ancombc-barplot.html'.split())
-    fig_fp = output_dir / Path(fig_fn)
+    safe_title = urllib.parse.quote_plus(title)
+    fig_fn = Path(f'{safe_title}-ancombc-barplot.html')
+    fig_fp = output_dir / fig_fn
 
     # For readability, only the most specific named taxonomy will be
     # included in the y-axis label. The full taxonomy text will be in
