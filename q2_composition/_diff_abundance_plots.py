@@ -16,6 +16,42 @@ import qiime2
 from q2_composition import DataLoafPackageDirFmt
 
 
+_html_head = """
+<head>
+<style>
+    body {
+        padding: 20px;
+        font-family: Verdana, sans-serif;
+    }
+    div {
+        width: 60%;
+    }
+</style>
+<meta charset="UTF-8">
+</head>
+"""
+
+_interpreting_text = """<div>
+<hr>
+<p>Notes on interpreting plots with taxonomic feature identifiers:</p>
+<ul>
+<li>If taxonomic labels are used to identify features, the feature labels
+(y-axis labels) in each plot represent the most specific named taxonomic level
+associated with that feature.</li>
+<li>Hover over the bars in plots to see the full taxonomic label of each
+feature identifier and information about its differential abundance relative
+to the reference.</li>
+<li>Feature identifiers (y-axis labels) that are followed by an asterisk
+(<code>*</code>) represent instances of a duplicated taxonomic name at the
+level displayed in the feature identifier. The number next to the feature
+identifiers in these cases is used only for unique identification in the
+current figure. It is not taxonomically meaningful, and won't be
+consistent across visualizations.</li>
+</ul>
+</div>
+"""
+
+
 def _plot_differentials(
         output_dir,
         df,
@@ -64,7 +100,7 @@ def _plot_differentials(
 
         most_specific = fields[-1]
         if most_specific in y_labels:
-            y_labels[f"{most_specific} ({i})"] = None
+            y_labels[f"{most_specific} ({i})*"] = None
         else:
             y_labels[most_specific] = None
     df['y_label'] = y_labels.keys()
@@ -108,7 +144,6 @@ def _plot_differentials(
         fillColor='#EEEEEE',
         padding=10,
         cornerRadius=10,
-        orient='top-left'
     )
 
     chart.save(fig_fp)
@@ -136,7 +171,9 @@ def da_barplot(output_dir: str,
     index_fp = output_dir / Path('index.html')
 
     with open(index_fp, 'w') as index_f:
-        index_f.write('<html><body>\n')
+        index_f.write(f'<html>\n{_html_head}\n<body>\n')
+        index_f.write('Click link to see figure for specific category:<p>\n')
+        index_f.write('<ul>\n')
         slice_data = {}
         for e in data.data_slices.iter_views(pd.DataFrame):
             slice_data[str(e[0]).replace('_slice.csv', '')] = e[1]
@@ -208,9 +245,14 @@ def da_barplot(output_dir: str,
                     effect_size_threshold=effect_size_threshold,
                     feature_ids=feature_ids)
                 figure_fn = figure_fp.parts[-1]
-                index_f.write(f"<a href=./{figure_fn}>{column_label}"
-                              "</a><hr>\n")
+                index_f.write(f" <li><a href=./{figure_fn}>{column_label}"
+                              "</a></li>\n")
             except ValueError as e:
+                # this is a little clunky, but it allows some plots to be
+                # created even if all of the plots can't, and provides detail
+                # to the user on what didn't work.
                 index_f.write(f"Plotting {column_label} failed with error: "
                               f"{str(e)} <hr>\n")
+        index_f.write('</ul>\n')
+        index_f.write(_interpreting_text)
         index_f.write('</body></html>')
