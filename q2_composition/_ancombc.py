@@ -123,10 +123,10 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
             # check that IDs associated with chosen reference level(s) are
             # present within the input table
-            level_value_idx = meta.index[meta[column] == level_value].tolist()
-            table_idx_list = table.index.tolist()
+            level_value_idx = meta.index[meta[column] == level_value]
+            table_idx = table.index
 
-            if not list(set(level_value_idx) & set(table_idx_list)):
+            if level_value_idx.intersection(table_idx).empty:
                 raise ValueError('Value provided in `reference_levels`'
                                  ' parameter not associated with any IDs'
                                  ' in the feature table. Please make sure'
