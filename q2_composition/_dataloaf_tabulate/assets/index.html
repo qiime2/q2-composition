@@ -89,8 +89,23 @@
       {% set ns.counter = ns.counter + 1 %}
       <label for="{{ name }}" class="label">{{ name }}</label>
       <div class="panel">
+      {% if name == "lfc" %}
+        <h1>Log-Fold Change (LFC)</h1>
+          <h3>Positive numbers indicate enrichment relative to the intercept,
+          negative numbers indicate depletion relative to the intercept.</h3>
+      {% elif name == "p_val" %}
+        <h1>P Values</h1>
+      {% elif name == "q_val" %}
+        <h1>Q Values</h1>
+      {% elif name == "se" %}
+        <h1>Standard Error</h1>
+      {% elif name == "w" %}
+        <h1>W-Scores</h1>
+          <h3>Log-Fold Change divided by the Standard Error</h3>
+      {% else %}
         <h1>{{ name }}</h1>
-          <table class="dataframe table table-striped table-hover" border="0">{{ table }}</table>
+      {% endif %}
+      <table class="dataframe table table-striped table-hover" border="0">{{ table }}</table>
       </div>
     {% endfor %}
   </div>

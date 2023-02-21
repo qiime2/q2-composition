@@ -39,7 +39,6 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
         slice_contents.append(slice_html)
 
     slice_tables = zip(slice_names, slice_contents)
-
     # Filling in the table that will appear on index.html
     context = {
         'tables': slice_tables
