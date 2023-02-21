@@ -129,11 +129,11 @@ fit <- ancombc(data = data, formula = formula, p_adj_method = p_adj_method,
 # delta_wls <- fit$delta_wls
 
 # Re-naming index for each data slice
-colnames(fit$res$lfc)[1]   <- 'id'
-colnames(fit$res$se)[1]    <- 'id'
-colnames(fit$res$W)[1]     <- 'id'
-colnames(fit$res$p_val)[1] <- 'id'
-colnames(fit$res$q_val)[1] <- 'id'
+colnames(fit$res$lfc)[1]   <- "id"
+colnames(fit$res$se)[1]    <- "id"
+colnames(fit$res$W)[1]     <- "id"
+colnames(fit$res$p_val)[1] <- "id"
+colnames(fit$res$q_val)[1] <- "id"
 
 # DataLoafPackageDirFmt slices
 lfc   <- fit$res$lfc
@@ -147,7 +147,7 @@ q_val <- fit$res$q_val
 dataloaf_package <- create_package()
 # Dataloaf attribute containing the reference levels
 # Used in the tabulate viz for listing out the intercept columns
-dataloaf_package$metadata <- intercept_columns
+dataloaf_package$metadata["intercept_columns"] <- intercept_columns
 
 dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "lfc_slice", data = lfc)
