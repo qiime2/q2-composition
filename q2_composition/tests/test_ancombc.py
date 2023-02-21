@@ -74,3 +74,9 @@ class TestANCOMBC(TestBase):
         for _, slice in slices:
             for col in slice.columns:
                 self.assertNotIn('AZcolumnZ', col)
+
+    def test_reference_level_value_in_md_not_table(self):
+        with self.assertRaisesRegex(ValueError, '.*Value not associated with'
+                                    ' any IDs in the table: "toe"'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=['bodysite::toe'])
