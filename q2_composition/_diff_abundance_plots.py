@@ -6,8 +6,8 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 from pathlib import Path
-from collections import OrderedDict
 import urllib.parse
+from collections import Counter
 
 import altair as alt
 import pandas as pd
@@ -49,9 +49,9 @@ feature identifier and information about its differential abundance relative
 to the reference.</li>
 <li>Feature identifiers (y-axis labels) that are followed by an asterisk
 (<code>*</code>) represent instances of a duplicated taxonomic name at the
-level displayed in the feature identifier. The number next to the feature
+level displayed in the feature identifier. The number preceding the feature
 identifiers in these cases is used only for unique identification in the
-current figure. It is not taxonomically meaningful, and won't be
+current figure. It is not taxonomically meaningful, and it won't be
 consistent across visualizations.</li>
 </ul>
 </div>
@@ -99,20 +99,21 @@ def _plot_differentials(
     # For readability, only the most specific named taxonomy will be
     # included in the y-axis label. The full taxonomy text will be in
     # the tool-tip. Because it's possible that the most specific
-    # taxonomic name are not unique, this code simply appends a number
-    # to non-unique names. Providing separate labels for ticks, which
+    # taxonomic name are not unique, this code simply prepends a number
+    # to names. Providing separate labels for ticks, which
     # would avoid this, doesn't seem straight-forward in altair (e.g.,
     # see https://github.com/altair-viz/altair/issues/938).
-    y_labels = OrderedDict()
+    y_labels = []
+    seen = Counter()
     for i, e in enumerate(df[feature_id_label]):
         fields = [field for field in e.split(';') if not field.endswith('__')]
-
         most_specific = fields[-1]
-        if most_specific in y_labels:
-            y_labels[f"{most_specific} ({i})*"] = None
+        if most_specific in seen:
+            y_labels.append(f"{seen[most_specific]}: {most_specific} *")
         else:
-            y_labels[most_specific] = None
-    df['y_label'] = y_labels.keys()
+            y_labels.append(most_specific)
+        seen[most_specific] += 1
+    df['y_label'] = y_labels
 
     df['feature'] = [id_.replace(';', ' ') for id_ in df[feature_id_label]]
     df['enriched'] = ["enriched" if x else "depleted"
