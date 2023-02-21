@@ -8,66 +8,15 @@
 from pathlib import Path
 import urllib.parse
 from collections import Counter
+import pkg_resources
 
 import altair as alt
 import pandas as pd
 import numpy as np
-import jinja2
 
 import qiime2
 from q2_composition import DataLoafPackageDirFmt
-
-_index_template = """<html>
-<head>
-<style>
-    body {
-        padding: 20px;
-        font-family: Verdana, sans-serif;
-    }
-    div {
-        width: 60%;
-    }
-</style>
-<meta charset="UTF-8">
-</head>
-
-<body>
-    <p>Click a link to see the differential abundance bar plot for the specified category:
-    </p>
-    <ul id="figures">
-        {% for item in figures %}
-            {% if item[0] %}
-                <li><a href="./{{ item[1] }}">{{ item[2] }}</a></li>
-            {% else %}
-                <li>Couldn't generate plot for {{ item[2] }}: {{ item[3] }}
-            {% endif %}
-        {% endfor %}
-    </ul>
-
-    <div>
-        <hr>
-        <p>Notes on interpreting plots with taxonomic feature identifiers:</p>
-        <ul>
-            <li>If taxonomic labels are used to identify features, the feature labels
-            (y-axis labels) in each plot represent the most specific named taxonomic level
-            associated with that feature.</li>
-
-            <li>Hover over the bars in plots to see the full taxonomic label of each
-            feature identifier and information about its differential abundance relative
-            to the reference.</li>
-
-            <li>Feature identifiers (y-axis labels) that are followed by an asterisk
-            (<code>*</code>) represent instances of a duplicated taxonomic name at the
-            level displayed in the feature identifier. The number preceding the feature
-            identifiers in these cases is used only for unique identification in the
-            current figure. It is not taxonomically meaningful, and it won't be
-            consistent across visualizations.</li>
-        </ul>
-    </div>
-
-</body>
-</html>
-"""
+import q2templates
 
 
 def _plot_differentials(
@@ -179,20 +128,15 @@ def da_barplot(output_dir: str,
                effect_size_threshold: float = 0.0,
                feature_ids: qiime2.Metadata = None):
 
-    # jinja_env = jinja2.Environment(loader=jinja2.PackageLoader(
-    #     'q2_composition', 'assets', 'diff_abundance_plots'))
-    # index_template = jinja_env.get_template('index.html')
-    jinja_env = jinja2.Environment()
-    index_template = jinja_env.from_string(_index_template)
+    # setup for the index.html page
+    ASSETS = pkg_resources.resource_filename('q2_composition',
+                                             'assets')
+    index = Path(ASSETS, 'diff_abundance_plots', 'index.html')
 
     # collect the user-provided labels for validation
     provided_slice_labels = set([effect_size_label,
                                  significance_label,
                                  error_label])
-
-    output_dir = Path(output_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    index_fp = output_dir / Path('index.html')
 
     slice_data = {}
     for e in data.data_slices.iter_views(pd.DataFrame):
@@ -230,12 +174,11 @@ def da_barplot(output_dir: str,
     # f1 0.9 0.01
     # f2 0.05 0.8
     #
-    # figure_data will look like:
-    # figure_data[0] (i.e., skin)
+    # figure_data for a specific category will look like:
     # feature-id lfc q_value
     # f1 0.2 0.9
     # f2 1.2 0.05
-    # figure_data[1] (i.e., gut)
+    # or:
     # feature-id lfc q_value
     # f1 5.4 0.01
     # f2 0.1 0.8
@@ -267,5 +210,8 @@ def da_barplot(output_dir: str,
             figure_data.append((True, figure_fn, column_label, None))
         except ValueError as e:
             figure_data.append((False, None, column_label, str(e)))
-    with open(index_fp, 'w') as index_f:
-        index_f.write(index_template.render(figures=figure_data))
+
+    context = {
+        'figures': figure_data
+    }
+    q2templates.render(str(index), output_dir, context=context)

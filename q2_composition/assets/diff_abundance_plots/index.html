@@ -1,0 +1,50 @@
+<html>
+<head>
+<style>
+    body {
+        padding: 20px;
+        font-family: Verdana, sans-serif;
+    }
+    div {
+        width: 60%;
+    }
+</style>
+<meta charset="UTF-8">
+</head>
+
+<body>
+    <p>Click a link to see the differential abundance bar plot for the specified category:
+    </p>
+    <ul id="figures">
+        {% for item in figures %}
+            {% if item[0] %}
+                <li><a href="./{{ item[1] }}">{{ item[2] }}</a></li>
+            {% else %}
+                <li>Couldn't generate plot for {{ item[2] }}: {{ item[3] }}
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div>
+        <hr>
+        <p>Notes on interpreting plots with taxonomic feature identifiers:</p>
+        <ul>
+            <li>If taxonomic labels are used to identify features, the feature labels
+            (y-axis labels) in each plot represent the most specific named taxonomic level
+            associated with that feature.</li>
+
+            <li>Hover over the bars in plots to see the full taxonomic label of each
+            feature identifier and information about its differential abundance relative
+            to the reference.</li>
+
+            <li>Feature identifiers (y-axis labels) that are followed by an asterisk
+            (<code>*</code>) represent instances of a duplicated taxonomic name at the
+            level displayed in the feature identifier. The number preceding the feature
+            identifiers in these cases is used only for unique identification in the
+            current figure. It is not taxonomically meaningful, and it won't be
+            consistent across visualizations.</li>
+        </ul>
+    </div>
+
+</body>
+</html>
