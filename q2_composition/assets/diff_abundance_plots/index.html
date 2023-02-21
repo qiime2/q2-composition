@@ -18,7 +18,7 @@
     <ul id="figures">
         {% for item in figures %}
             {% if item[0] %}
-                <li><a href="./{{ item[1] }}">{{ item[2] }}</a></li>
+                <li><a href="./{{ item[1] | urlencode }}">{{ item[2] }}</a></li>
             {% else %}
                 <li>Couldn't generate plot for {{ item[2] }}: {{ item[3] }}
             {% endif %}
