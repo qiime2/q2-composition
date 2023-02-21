@@ -13,6 +13,7 @@ import os
 import q2templates
 
 from q2_composition._format import (DataLoafPackageDirFmt,
+                                    DataPackageSchemaFileFormat,
                                     FrictionlessCSVFileFormat)
 
 
@@ -24,6 +25,8 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
 
     # restructuring input data
     slices = data.data_slices.iter_views(FrictionlessCSVFileFormat)
+    slice_md = data.nutrition_facts.view(DataPackageSchemaFileFormat)
+    slice_md_json = pd.read_json(str(slice_md))
 
     slice_names = []
     slice_contents = []
@@ -41,6 +44,7 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
     slice_tables = zip(slice_names, slice_contents)
     # Filling in the table that will appear on index.html
     context = {
+        'intercept': slice_md_json.metadata[0],
         'tables': slice_tables
     }
 
