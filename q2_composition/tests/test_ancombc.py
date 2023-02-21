@@ -107,3 +107,9 @@ class TestANCOMBC(TestBase):
             ancombc(table=self.table, metadata=self.md,
                     formula='bodysite + month',
                     reference_levels=['bodysite::tongue', 'animal::dog'])
+
+    def test_ref_level_value_in_md_not_table(self):
+        with self.assertRaisesRegex(ValueError, '.*Value not associated with'
+                                    ' any IDs in the table: "toe"'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=['bodysite::toe'])
