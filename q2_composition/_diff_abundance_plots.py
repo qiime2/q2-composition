@@ -12,11 +12,12 @@ from collections import Counter
 import altair as alt
 import pandas as pd
 import numpy as np
+import jinja2
 
 import qiime2
 from q2_composition import DataLoafPackageDirFmt
 
-_html_head = """<html>
+_index_template = """<html>
 <head>
 <style>
     body {
@@ -29,32 +30,41 @@ _html_head = """<html>
 </style>
 <meta charset="UTF-8">
 </head>
-<body>
-<p>Click a link to see the differential abundance bar plot for the specified
-   category:
-</p>
-<ul>
-"""
 
-_html_foot = """</ul>
-<div>
-<hr>
-<p>Notes on interpreting plots with taxonomic feature identifiers:</p>
-<ul>
-<li>If taxonomic labels are used to identify features, the feature labels
-(y-axis labels) in each plot represent the most specific named taxonomic level
-associated with that feature.</li>
-<li>Hover over the bars in plots to see the full taxonomic label of each
-feature identifier and information about its differential abundance relative
-to the reference.</li>
-<li>Feature identifiers (y-axis labels) that are followed by an asterisk
-(<code>*</code>) represent instances of a duplicated taxonomic name at the
-level displayed in the feature identifier. The number preceding the feature
-identifiers in these cases is used only for unique identification in the
-current figure. It is not taxonomically meaningful, and it won't be
-consistent across visualizations.</li>
-</ul>
-</div>
+<body>
+    <p>Click a link to see the differential abundance bar plot for the specified category:
+    </p>
+    <ul id="figures">
+        {% for item in figures %}
+            {% if item[0] %}
+                <li><a href="./{{ item[1] }}">{{ item[2] }}</a></li>
+            {% else %}
+                <li>Couldn't generate plot for {{ item[2] }}: {{ item[3] }}
+            {% endif %}
+        {% endfor %}
+    </ul>
+
+    <div>
+        <hr>
+        <p>Notes on interpreting plots with taxonomic feature identifiers:</p>
+        <ul>
+            <li>If taxonomic labels are used to identify features, the feature labels
+            (y-axis labels) in each plot represent the most specific named taxonomic level
+            associated with that feature.</li>
+
+            <li>Hover over the bars in plots to see the full taxonomic label of each
+            feature identifier and information about its differential abundance relative
+            to the reference.</li>
+
+            <li>Feature identifiers (y-axis labels) that are followed by an asterisk
+            (<code>*</code>) represent instances of a duplicated taxonomic name at the
+            level displayed in the feature identifier. The number preceding the feature
+            identifiers in these cases is used only for unique identification in the
+            current figure. It is not taxonomically meaningful, and it won't be
+            consistent across visualizations.</li>
+        </ul>
+    </div>
+
 </body>
 </html>
 """
@@ -169,6 +179,12 @@ def da_barplot(output_dir: str,
                effect_size_threshold: float = 0.0,
                feature_ids: qiime2.Metadata = None):
 
+    # jinja_env = jinja2.Environment(loader=jinja2.PackageLoader(
+    #     'q2_composition', 'assets', 'diff_abundance_plots'))
+    # index_template = jinja_env.get_template('index.html')
+    jinja_env = jinja2.Environment()
+    index_template = jinja_env.from_string(_index_template)
+
     # collect the user-provided labels for validation
     provided_slice_labels = set([effect_size_label,
                                  significance_label,
@@ -176,88 +192,80 @@ def da_barplot(output_dir: str,
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-
     index_fp = output_dir / Path('index.html')
 
+    slice_data = {}
+    for e in data.data_slices.iter_views(pd.DataFrame):
+        slice_data[str(e[0]).replace('_slice.csv', '')] = e[1]
+
+    observed_slice_labels = set(slice_data.keys())
+    missing_slice_labels = provided_slice_labels - observed_slice_labels
+    if len(missing_slice_labels) > 0:
+        raise KeyError(
+            f"Provide label(s) ({' '.join(missing_slice_labels)}) "
+            "are not present in input. Available options are: "
+            f"{' '.join(observed_slice_labels)}.")
+
+    # exclude the Intercept column from plots
+    column_labels = [e for e in slice_data[effect_size_label].columns
+                     if e not in '(Intercept)']
+
+    if feature_id_label not in column_labels:
+        raise KeyError(f"Feature id header \"{feature_id_label}\" is not "
+                       "present in input. Available options are: "
+                       f"{' '.join(column_labels)}.")
+
+    # create figure_data, which contains the cross-slice data for each
+    # column of the input dataloaf. some of this logic likely makes sense
+    # to move into a transformer which handles the arrangement of data
+    # into a multi-index dataframe.
+    #
+    # if the input dataloaf looks like:
+    # slice1: lfc
+    # feature-id skin gut
+    # f1 0.2 5.4
+    # f2 1.2 0.1
+    # slice2: q_value
+    # feature-id skin gut
+    # f1 0.9 0.01
+    # f2 0.05 0.8
+    #
+    # figure_data will look like:
+    # figure_data[0] (i.e., skin)
+    # feature-id lfc q_value
+    # f1 0.2 0.9
+    # f2 1.2 0.05
+    # figure_data[1] (i.e., gut)
+    # feature-id lfc q_value
+    # f1 5.4 0.01
+    # f2 0.1 0.8
+    figure_data = []
+    for column_label in column_labels:
+        if column_label == feature_id_label:
+            continue
+        df = pd.concat(
+            [slice_data[effect_size_label][feature_id_label],
+             slice_data[effect_size_label][column_label],
+             slice_data[error_label][column_label],
+             slice_data[significance_label][column_label]],
+            keys=[feature_id_label, effect_size_label,
+                  error_label, significance_label],
+            axis=1)
+
+        try:
+            figure_fp = _plot_differentials(
+                output_dir, df,
+                title=column_label,
+                effect_size_label=effect_size_label,
+                feature_id_label=feature_id_label,
+                error_label=error_label,
+                significance_label=significance_label,
+                significance_threshold=significance_threshold,
+                effect_size_threshold=effect_size_threshold,
+                feature_ids=feature_ids)
+            figure_fn = figure_fp.parts[-1]
+            figure_data.append((True, figure_fn, column_label, None))
+        except ValueError as e:
+            figure_data.append((False, None, column_label, str(e)))
     with open(index_fp, 'w') as index_f:
-        index_f.write(_html_head)
-        slice_data = {}
-        for e in data.data_slices.iter_views(pd.DataFrame):
-            slice_data[str(e[0]).replace('_slice.csv', '')] = e[1]
-
-        observed_slice_labels = set(slice_data.keys())
-        missing_slice_labels = provided_slice_labels - observed_slice_labels
-        if len(missing_slice_labels) > 0:
-            raise KeyError(
-                f"Provide label(s) ({' '.join(missing_slice_labels)}) "
-                "are not present in input. Available options are: "
-                f"{' '.join(observed_slice_labels)}.")
-
-        # exclude the Intercept column from plots
-        column_labels = [e for e in slice_data[effect_size_label].columns
-                         if e not in '(Intercept)']
-
-        if feature_id_label not in column_labels:
-            raise KeyError(f"Feature id header \"{feature_id_label}\" is not "
-                           "present in input. Available options are: "
-                           f"{' '.join(column_labels)}.")
-
-        # create figure_data, which contains the cross-slice data for each
-        # column of the input dataloaf. some of this logic likely makes sense
-        # to move into a transformer which handles the arrangement of data
-        # into a multi-index dataframe.
-        #
-        # if the input dataloaf looks like:
-        # slice1: lfc
-        # feature-id skin gut
-        # f1 0.2 5.4
-        # f2 1.2 0.1
-        # slice2: q_value
-        # feature-id skin gut
-        # f1 0.9 0.01
-        # f2 0.05 0.8
-        #
-        # figure_data will look like:
-        # figure_data[0] (i.e., skin)
-        # feature-id lfc q_value
-        # f1 0.2 0.9
-        # f2 1.2 0.05
-        # figure_data[1] (i.e., gut)
-        # feature-id lfc q_value
-        # f1 5.4 0.01
-        # f2 0.1 0.8
-        figure_data = []
-        for column_label in column_labels:
-            if column_label == feature_id_label:
-                continue
-            df = pd.concat(
-                [slice_data[effect_size_label][feature_id_label],
-                 slice_data[effect_size_label][column_label],
-                 slice_data[error_label][column_label],
-                 slice_data[significance_label][column_label]],
-                keys=[feature_id_label, effect_size_label,
-                      error_label, significance_label],
-                axis=1)
-            figure_data.append((column_label, df))
-
-            try:
-                figure_fp = _plot_differentials(
-                    output_dir, df,
-                    title=column_label,
-                    effect_size_label=effect_size_label,
-                    feature_id_label=feature_id_label,
-                    error_label=error_label,
-                    significance_label=significance_label,
-                    significance_threshold=significance_threshold,
-                    effect_size_threshold=effect_size_threshold,
-                    feature_ids=feature_ids)
-                figure_fn = figure_fp.parts[-1]
-                index_f.write(f"<li><a href=./{figure_fn}>{column_label}"
-                              "</a></li>\n")
-            except ValueError as e:
-                # this is a little clunky, but it allows some plots to be
-                # created even if all of the plots can't, and provides detail
-                # to the user on what didn't work.
-                index_f.write(f"<li>Plotting {column_label} failed with "
-                              f"error: {str(e)}</li>\n")
-        index_f.write(_html_foot)
+        index_f.write(index_template.render(figures=figure_data))
