@@ -9,6 +9,7 @@
 import pandas as pd
 import pkg_resources
 import os
+import json
 
 import q2templates
 
@@ -26,7 +27,9 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
     # restructuring input data
     slices = data.data_slices.iter_views(FrictionlessCSVFileFormat)
     slice_md = data.nutrition_facts.view(DataPackageSchemaFileFormat)
-    slice_md_json = pd.read_json(str(slice_md))
+
+    with open(str(slice_md)) as fh:
+        slice_md_json = json.load(fh)
 
     slice_names = []
     slice_contents = []
@@ -44,7 +47,7 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
     slice_tables = zip(slice_names, slice_contents)
     # Filling in the table that will appear on index.html
     context = {
-        'intercept': slice_md_json.metadata[0],
+        'intercept': slice_md_json['metadata']['intercept_groups'],
         'tables': slice_tables
     }
 

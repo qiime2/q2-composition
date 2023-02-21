@@ -86,7 +86,7 @@ if (reference_levels == "") {
   reference_levels <- NULL
 }
 
-intercept_columns <- c()
+intercept_groups <- c()
 # split the reference_levels param into each column and associated level order
 if (!is.null(reference_levels)) {
   level_vectors <- unlist(strsplit(reference_levels, ", "))
@@ -97,21 +97,20 @@ if (!is.null(reference_levels)) {
     column <- gsub("\\]", "", column)
     column <- gsub("\\[", "", column)
 
-    intercept_columns <- paste(intercept_columns, column, sep = ", ")
-
     intercept_vector <- unlist(strsplit(i, "::"))[2]
     intercept_vector <- unlist(strsplit(intercept_vector, ","))
     intercept_vector <- gsub("\\'", "", intercept_vector)
     intercept_vector <- gsub("\\]", "", intercept_vector)
     intercept_vector <- gsub("\\[", "", intercept_vector)
 
+    intercept_groups <- append(intercept_groups,
+                               paste(column, intercept_vector, sep = "::"))
+
     # handling formula input(s)
     md[[column]] <- factor(md[[column]])
     md[[column]] <- relevel(md[[column]], ref = intercept_vector)
   }
 }
-
-intercept_columns <- substr(intercept_columns, 3, nchar(intercept_columns))
 
 # create phyloseq object for use in ancombc
 data <- phyloseq(otu, md)
@@ -147,7 +146,7 @@ q_val <- fit$res$q_val
 dataloaf_package <- create_package()
 # Dataloaf attribute containing the reference levels
 # Used in the tabulate viz for listing out the intercept columns
-dataloaf_package$metadata["intercept_columns"] <- intercept_columns
+dataloaf_package$metadata <- list(intercept_groups = intercept_groups)
 
 dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "lfc_slice", data = lfc)

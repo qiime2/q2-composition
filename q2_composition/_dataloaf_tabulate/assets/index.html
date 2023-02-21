@@ -91,20 +91,20 @@
       <div class="panel">
       {% if name == "lfc" %}
         <h1>Log-Fold Change (LFC)</h1>
-          <h4>Positive numbers indicate enrichment relative to the intercept,
-          negative numbers indicate depletion relative to the intercept.</h4>
+          <p>Positive numbers indicate enrichment relative to the intercept,
+          negative numbers indicate depletion relative to the intercept.</p>
       {% elif name == "p_val" %}
-        <h1>P Values</h1>
+        <h1><i>p</i>-Values</h1>
       {% elif name == "q_val" %}
-        <h1>Q Values</h1>
+        <h1><i>q</i>-Values</h1>
       {% elif name == "se" %}
         <h1>Standard Error</h1>
       {% elif name == "w" %}
-        <h1>W-Scores: Log-Fold Change divided by the Standard Error</h1>
+        <h1><i>W</i>-Scores: Log-Fold Change divided by the Standard Error</h1>
       {% else %}
         <h1>{{ name }}</h1>
       {% endif %}
-      <h5>Metadata columns used to calculate the intercept: {{ intercept }}</h5>
+      <p>Groups used to define the intercept: {{ ", ".join(intercept) }} (and any numerical metadata columns)</p>
       <table class="dataframe table table-striped table-hover" border="0">{{ table }}</table>
       </div>
     {% endfor %}
