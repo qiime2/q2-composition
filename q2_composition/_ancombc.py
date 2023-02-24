@@ -12,6 +12,7 @@ import os
 import formulaic
 
 import qiime2
+from qiime2.metadata import NumericMetadataColumn
 
 from ._format import DataLoafPackageDirFmt
 
@@ -71,17 +72,6 @@ def _leaf_collector(term):
     return _leaf_collector(term[1]) + _leaf_collector(term[2])
 
 
-def _column_validation(metadata, parameter, value):
-    if value not in metadata.columns:
-        raise ValueError('Value provided in the `%s` parameter was not found'
-                         ' in any of the metadata columns. Please make sure to'
-                         ' only include values that are present within the'
-                         ' metadata columns.'
-                         ' \n\n'
-                         ' Value that was not found as a metadata column: "%s"'
-                         % (parameter, value))
-
-
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              reference_levels, neg_lb, tol, max_iter, conserve, alpha):
 
@@ -101,7 +91,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     # column validation for the formula parameter
     formula_terms = _parse_terms(formula=formula)
     for term in formula_terms:
-        _column_validation(meta, 'formula', term)
+        metadata.get_column(term)
 
     # column & level validation for the reference_levels parameter
     if reference_levels is not None:
@@ -109,7 +99,17 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
             column = i.split('::')[0]
             level_value = i.split('::')[1]
 
-            _column_validation(meta, 'reference_levels', column)
+            # check that reference_level columns are present in the metadata
+            ref_column = metadata.get_column(column)
+
+            # check that each chosen column contains discrete values
+            if isinstance(ref_column, NumericMetadataColumn):
+                raise TypeError('One of the `reference_levels` columns is not'
+                                ' a categorical Metadata column. Please make'
+                                ' sure that all chosen reference level columns'
+                                ' are categorical, and not numeric.'
+                                ' Non-categorical column selected:'
+                                ' %s' % column)
 
             if level_value not in pd.unique(meta[column].values):
                 raise ValueError('Value provided in `reference_levels`'
@@ -120,6 +120,11 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                                  ' \n\n'
                                  ' column::value pair with a value that was'
                                  ' not found: "%s"' % i)
+
+            # check that reference_level columns are also in the formula
+            if column not in formula_terms:
+                raise ValueError('`reference_levels` column "%s" was not found'
+                                 ' within the `formula` terms.' % column)
 
             # check that IDs associated with chosen reference level(s) are
             # present within the input table

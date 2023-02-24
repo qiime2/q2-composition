@@ -1,4 +1,5 @@
 sample-id	barcode-sequence	bodysite	month	day	subject	animal	testcolumn	singlecolumn	AZcolumn
+#q2:types			categorical
 L1S8	AGCTGACTAGTC	gut	10	28	subject-1	dog	test1	value	A
 L1S57	ACACACTATGGC	gut	1	20	subject-1	dog	test2	value	Z
 L1S76	ACTACGTGTGGT	gut	2	17	subject-1	cow	test1	value	Z

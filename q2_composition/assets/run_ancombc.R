@@ -56,7 +56,7 @@ formula             <- opt$formula
 p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
-reference_levels      <- opt$reference_levels
+reference_levels    <- opt$reference_levels
 neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
@@ -86,10 +86,12 @@ if (reference_levels == "") {
   reference_levels <- NULL
 }
 
+intercept_groups <- c()
 # split the reference_levels param into each column and associated level order
 if (!is.null(reference_levels)) {
-  level_vector <- unlist(strsplit(reference_levels, ", "))
-  for (i in level_vector) {
+  level_vectors <- unlist(strsplit(reference_levels, ", "))
+
+  for (i in level_vectors) {
     column <- unlist(strsplit(i, "::"))[1]
     column <- gsub("\\'", "", column)
     column <- gsub("\\]", "", column)
@@ -101,11 +103,12 @@ if (!is.null(reference_levels)) {
     intercept_vector <- gsub("\\]", "", intercept_vector)
     intercept_vector <- gsub("\\[", "", intercept_vector)
 
+    intercept_groups <- append(intercept_groups,
+                               paste(column, intercept_vector, sep = "::"))
+
     # handling formula input(s)
-    for (j in column) {
-      md[[j]] <- factor(md[[j]])
-      md[[j]] <- relevel(md[[j]], ref = intercept_vector)
-    }
+    md[[column]] <- factor(md[[column]])
+    md[[column]] <- relevel(md[[column]], ref = intercept_vector)
   }
 }
 
@@ -125,11 +128,11 @@ fit <- ancombc(data = data, formula = formula, p_adj_method = p_adj_method,
 # delta_wls <- fit$delta_wls
 
 # Re-naming index for each data slice
-colnames(fit$res$lfc)[1]   <- 'id'
-colnames(fit$res$se)[1]    <- 'id'
-colnames(fit$res$W)[1]     <- 'id'
-colnames(fit$res$p_val)[1] <- 'id'
-colnames(fit$res$q_val)[1] <- 'id'
+colnames(fit$res$lfc)[1]   <- "id"
+colnames(fit$res$se)[1]    <- "id"
+colnames(fit$res$W)[1]     <- "id"
+colnames(fit$res$p_val)[1] <- "id"
+colnames(fit$res$q_val)[1] <- "id"
 
 # DataLoafPackageDirFmt slices
 lfc   <- fit$res$lfc
@@ -141,6 +144,9 @@ q_val <- fit$res$q_val
 # Constructing data slices for each structure in the DataLoaf
 # and saving to the output_loaf
 dataloaf_package <- create_package()
+# Dataloaf attribute containing the reference levels
+# Used in the tabulate viz for listing out the intercept columns
+dataloaf_package$metadata <- list(intercept_groups = intercept_groups)
 
 dataloaf_package <- add_resource(package = dataloaf_package,
                                  resource_name = "lfc_slice", data = lfc)

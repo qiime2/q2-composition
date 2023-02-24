@@ -22,6 +22,8 @@ from q2_composition._format import (FrictionlessCSVFileFormat,
                                     DataLoafPackageDirFmt)
 import q2_composition._examples as ex
 
+citations = Citations.load('citations.bib', package='q2_composition')
+
 plugin = Plugin(
     name='composition',
     version=q2_composition.__version__,
@@ -29,8 +31,7 @@ plugin = Plugin(
     package='q2_composition',
     description=('This QIIME 2 plugin supports methods for '
                  'compositional data analysis.'),
-    short_description='Plugin for compositional data analysis.',
-    citations=Citations.load('citations.bib', package='q2_composition')
+    short_description='Plugin for compositional data analysis.'
 )
 
 plugin.register_formats(FrictionlessCSVFileFormat, DataPackageSchemaFileFormat,
@@ -88,7 +89,8 @@ plugin.visualizers.register_function(
     name='Apply ANCOM to identify features that differ in abundance.',
     description=('Apply Analysis of Composition of Microbiomes (ANCOM) to'
                  ' identify features that are differentially abundant across'
-                 ' groups.')
+                 ' groups.'),
+    citations=[citations['mandal2015ancom']]
 )
 
 plugin.methods.register_function(
@@ -146,6 +148,7 @@ plugin.methods.register_function(
     description=('Apply Analysis of Compositions of Microbiomes with Bias'
                  ' Correction (ANCOM-BC) to identify features that are'
                  ' differentially abundant across groups.'),
+    citations=[citations['lin2020ancombc']],
     examples={
         'ancombc_single_formula': ex.ancombc_single_formula,
         'ancombc_multi_formula_with_reference_levels': (
