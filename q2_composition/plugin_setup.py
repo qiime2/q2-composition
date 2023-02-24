@@ -178,7 +178,7 @@ plugin.visualizers.register_function(
                 'effect_size_threshold': Float % Range(0.0, np.inf,
                                                        inclusive_start=True),
                 'feature_ids': Metadata},
-    input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
+    input_descriptions={'data': 'The ANCOM-BC output to be plotted.'},
     parameter_descriptions={
         'effect_size_label': "Label for effect sizes in `data`.",
         'feature_id_label': "Label for feature ids in `data`.",
