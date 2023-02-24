@@ -33,6 +33,7 @@ setup(
             'assets/ancom/css/*',
             'assets/ancom/js/*',
             'assets/ancom/licenses/*',
+            'assets/diff_abundance_plots/index.html',
         ],
         'q2_composition.tests': ['data/*'],
         'q2_composition._dataloaf_tabulate': ['assets/*']
