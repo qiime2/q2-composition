@@ -4,4 +4,3 @@ notebook
 scikit-bio
 scipy
 bokeh
-altair
