@@ -91,7 +91,7 @@ plugin.visualizers.register_function(
     description=('Apply Analysis of Composition of Microbiomes (ANCOM) to'
                  ' identify features that are differentially abundant across'
                  ' groups.'),
-    citations=[citations['mandal2015analysis']]
+    citations=[citations['mandal2015ancom']]
 )
 
 plugin.methods.register_function(
@@ -149,7 +149,7 @@ plugin.methods.register_function(
     description=('Apply Analysis of Compositions of Microbiomes with Bias'
                  ' Correction (ANCOM-BC) to identify features that are'
                  ' differentially abundant across groups.'),
-    citations=[citations['lin2020analysis']],
+    citations=[citations['lin2020ancombc']],
     examples={
         'ancombc_single_formula': ex.ancombc_single_formula,
         'ancombc_multi_formula_with_reference_levels': (
