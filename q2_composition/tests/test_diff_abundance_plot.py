@@ -36,7 +36,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon')
+                           feature_id_label='id')
             self.assertTrue((output_dir / 'index.html').exists())
 
             tongue_path = self._get_output_filepath(
@@ -115,7 +115,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           feature_id_label='id',
                            significance_threshold=1.0)
 
             tongue_path = self._get_output_filepath(
@@ -145,7 +145,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           feature_id_label='id',
                            significance_threshold=1e-3)
 
             tongue_path = self._get_output_filepath(
@@ -178,7 +178,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           feature_id_label='id',
                            effect_size_threshold=0)
 
             tongue_path = self._get_output_filepath(
@@ -208,7 +208,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           feature_id_label='id',
                            effect_size_threshold=3.5)
 
             tongue_path = self._get_output_filepath(
@@ -244,7 +244,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           feature_id_label='id',
                            feature_ids=None)
 
             tongue_path = self._get_output_filepath(
@@ -274,7 +274,7 @@ class TestDABarplot(TestBase):
             output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           feature_id_label='id',
                            feature_ids=ids_to_keep)
 
             tongue_path = self._get_output_filepath(
@@ -323,13 +323,13 @@ class TestDABarplot(TestBase):
 
     def test_error_on_bad_column_names(self):
         with tempfile.TemporaryDirectory() as output_dir:
-            with self.assertRaisesRegex(KeyError, "ture id .* \"id\" .* not "):
+            with self.assertRaisesRegex(KeyError, "id.*\"taxon\".*not"):
                 da_barplot(output_dir,
-                           self.dataloaf1.view(DataLoafPackageDirFmt))
+                           data=self.dataloaf1.view(DataLoafPackageDirFmt),
+                           feature_id_label='taxon')
 
         with tempfile.TemporaryDirectory() as output_dir:
             with self.assertRaisesRegex(KeyError, "label.*stderr.*not"):
                 da_barplot(output_dir,
-                           self.dataloaf1.view(DataLoafPackageDirFmt),
-                           feature_id_label='taxon',
+                           data=self.dataloaf1.view(DataLoafPackageDirFmt),
                            error_label='stderr')
