@@ -116,10 +116,12 @@ if (!is.null(reference_levels)) {
 data <- phyloseq(otu, md)
 
 # analysis -----------------------
-fit <- ancombc2(data = data, formula = formula, p_adj_method = p_adj_method,
-               prv_cut = prv_cut, lib_cut = lib_cut, neg_lb = neg_lb,
-               tol = tol, max_iter = max_iter, conserve = conserve,
-               alpha = alpha)
+fit <- ancombc2(data = data, fix_formula = formula,
+                p_adj_method = p_adj_method,
+                prv_cut = prv_cut, lib_cut = lib_cut, neg_lb = neg_lb,
+                iter_control = list(tol = tol, max_iter = max_iter, verbose = FALSE),
+                # conserve = conserve,
+                alpha = alpha)
 
 # Diagnostics - we'll deal with these later
 # samp_frac <- fit$samp_frac
