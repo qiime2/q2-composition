@@ -119,7 +119,7 @@ data <- phyloseq(otu, md)
 fit <- ancombc2(data = data, fix_formula = formula,
                 p_adj_method = p_adj_method,
                 prv_cut = prv_cut, lib_cut = lib_cut, neg_lb = neg_lb,
-                iter_control = list(tol = tol, max_iter = max_iter, verbose = FALSE),
+                em_control = list(tol = tol, max_iter = max_iter),
                 # conserve = conserve,
                 alpha = alpha)
 
