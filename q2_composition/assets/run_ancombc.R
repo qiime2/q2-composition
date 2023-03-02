@@ -129,6 +129,15 @@ fit <- ancombc2(data = data, fix_formula = formula,
 # delta_em  <- fit$delta_em
 # delta_wls <- fit$delta_wls
 
+# Print values and classes for debugging
+print(fit$res)
+print(colnames(fit$res$lfc)[1])
+print(colnames(fit$res$se)[1])
+print(colnames(fit$res$W)[1])
+print(colnames(fit$res$p_val)[1])
+print(colnames(fit$res$q_val)[1])
+
+
 # Re-naming index for each data slice
 colnames(fit$res$lfc)[1]   <- "id"
 colnames(fit$res$se)[1]    <- "id"
