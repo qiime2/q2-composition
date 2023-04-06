@@ -92,7 +92,7 @@
       {% if name == "lfc" %}
         <h1>Log-Fold Change (LFC)</h1>
           <p>Positive numbers indicate enrichment relative to the intercept,
-          negative numbers indicate depletion relative to the intercept.</p>
+          negative numbers indicate depletion relative to the intercept.</p><br>
       {% elif name == "p_val" %}
         <h1><i>p</i>-Values</h1>
       {% elif name == "q_val" %}
@@ -105,9 +105,11 @@
         <h1>{{ name }}</h1>
       {% endif %}
       {% if intercept_single %}
-        <p>Groups used to define the intercept: {{ intercept_single }} (and any numerical metadata columns)</p>
+        <p><b>Groups used to define the intercept:</b></p>
+        <p>{{ intercept_single }} (and any numerical metadata columns)</p>
       {% else %}
-        <p>Groups used to define the intercept: {{ ", ".join(intercept_multi) }} (and any numerical metadata columns)</p>
+        <p><b>Groups used to define the intercept:</b></p>
+        <p>{{ ", ".join(intercept_multi) }} (and any numerical metadata columns)</p>
       {% endif %}
       <table class="dataframe table table-striped table-hover" border="0">{{ table }}</table>
       </div>

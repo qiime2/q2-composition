@@ -82,34 +82,28 @@ otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
 
-if (reference_levels == "") {
-  reference_levels <- NULL
-}
-
 intercept_groups <- c()
 # split the reference_levels param into each column and associated level order
-if (!is.null(reference_levels)) {
-  level_vectors <- unlist(strsplit(reference_levels, ", "))
+level_vectors <- unlist(strsplit(reference_levels, ", "))
 
-  for (i in level_vectors) {
-    column <- unlist(strsplit(i, "::"))[1]
-    column <- gsub("\\'", "", column)
-    column <- gsub("\\]", "", column)
-    column <- gsub("\\[", "", column)
+for (i in level_vectors) {
+  column <- unlist(strsplit(i, "::"))[1]
+  column <- gsub("\\'", "", column)
+  column <- gsub("\\]", "", column)
+  column <- gsub("\\[", "", column)
 
-    intercept_vector <- unlist(strsplit(i, "::"))[2]
-    intercept_vector <- unlist(strsplit(intercept_vector, ","))
-    intercept_vector <- gsub("\\'", "", intercept_vector)
-    intercept_vector <- gsub("\\]", "", intercept_vector)
-    intercept_vector <- gsub("\\[", "", intercept_vector)
+  intercept_vector <- unlist(strsplit(i, "::"))[2]
+  intercept_vector <- unlist(strsplit(intercept_vector, ","))
+  intercept_vector <- gsub("\\'", "", intercept_vector)
+  intercept_vector <- gsub("\\]", "", intercept_vector)
+  intercept_vector <- gsub("\\[", "", intercept_vector)
 
-    intercept_groups <- append(intercept_groups,
-                               paste(column, intercept_vector, sep = "::"))
+  intercept_groups <- append(intercept_groups,
+                              paste(column, intercept_vector, sep = "::"))
 
-    # handling formula input(s)
-    md[[column]] <- factor(md[[column]])
-    md[[column]] <- relevel(md[[column]], ref = intercept_vector)
-  }
+  # handling formula input(s)
+  md[[column]] <- factor(md[[column]])
+  md[[column]] <- relevel(md[[column]], ref = intercept_vector)
 }
 
 # create phyloseq object for use in ancombc

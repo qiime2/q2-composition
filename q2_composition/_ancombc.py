@@ -12,7 +12,7 @@ import os
 import formulaic
 
 import qiime2
-from qiime2.metadata import NumericMetadataColumn
+from qiime2.metadata import NumericMetadataColumn, CategoricalMetadataColumn
 
 from ._format import DataLoafPackageDirFmt
 
@@ -93,59 +93,66 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     for term in formula_terms:
         metadata.get_column(term)
 
+    # Pulling default reference levels based on formula terms
+    if reference_levels is None:
+        reference_levels = []
+        for term in formula_terms:
+            if isinstance(metadata.get_column(term),
+                          CategoricalMetadataColumn):
+                term_alpha_value = (metadata.get_column(term).to_dataframe()
+                                    .sort_values(term)[term][0])
+                ref_level_pair = str(term + '::' + str(term_alpha_value))
+                reference_levels.append(ref_level_pair)
+
     # column & level validation for the reference_levels parameter
-    if reference_levels is not None:
-        for i in reference_levels:
-            column = i.split('::')[0]
-            level_value = i.split('::')[1]
+    for i in reference_levels:
+        column = i.split('::')[0]
+        level_value = i.split('::')[1]
 
-            # check that reference_level columns are present in the metadata
-            ref_column = metadata.get_column(column)
+        # check that reference_level columns are present in the metadata
+        ref_column = metadata.get_column(column)
 
-            # check that each chosen column contains discrete values
-            if isinstance(ref_column, NumericMetadataColumn):
-                raise TypeError('One of the `reference_levels` columns is not'
-                                ' a categorical Metadata column. Please make'
-                                ' sure that all chosen reference level columns'
-                                ' are categorical, and not numeric.'
-                                ' Non-categorical column selected:'
-                                ' %s' % column)
+        # check that each chosen column contains discrete values
+        if isinstance(ref_column, NumericMetadataColumn):
+            raise TypeError('One of the `reference_levels` columns is not'
+                            ' a categorical Metadata column. Please make'
+                            ' sure that all chosen reference level columns'
+                            ' are categorical, and not numeric.'
+                            ' Non-categorical column selected:'
+                            ' %s' % column)
 
-            if level_value not in pd.unique(meta[column].values):
-                raise ValueError('Value provided in `reference_levels`'
-                                 ' parameter not found in the associated'
-                                 ' column within the metadata. Please make'
-                                 ' sure each column::value pair is present'
-                                 ' within the metadata file.'
-                                 ' \n\n'
-                                 ' column::value pair with a value that was'
-                                 ' not found: "%s"' % i)
+        if level_value not in pd.unique(meta[column].values):
+            raise ValueError('Value provided in `reference_levels`'
+                             ' parameter not found in the associated'
+                             ' column within the metadata. Please make'
+                             ' sure each column::value pair is present'
+                             ' within the metadata file.'
+                             ' \n\n'
+                             ' column::value pair with a value that was'
+                             ' not found: "%s"' % i)
 
-            # check that reference_level columns are also in the formula
-            if column not in formula_terms:
-                raise ValueError('`reference_levels` column "%s" was not found'
-                                 ' within the `formula` terms.' % column)
+        # check that reference_level columns are also in the formula
+        if column not in formula_terms:
+            raise ValueError('`reference_levels` column "%s" was not found'
+                             ' within the `formula` terms.' % column)
 
-            # check that IDs associated with chosen reference level(s) are
-            # present within the input table
-            level_value_idx = meta.index[meta[column] == level_value]
-            table_idx = table.index
+        # check that IDs associated with chosen reference level(s) are
+        # present within the input table
+        level_value_idx = meta.index[meta[column] == level_value]
+        table_idx = table.index
 
-            if level_value_idx.intersection(table_idx).empty:
-                raise ValueError('Value provided in `reference_levels`'
-                                 ' parameter not associated with any IDs'
-                                 ' in the feature table. Please make sure'
-                                 ' the value(s) selected in each'
-                                 ' column::value pair are associated with'
-                                 ' IDs present in the feature table.'
-                                 ' \n\n'
-                                 ' Value not associated with any IDs in'
-                                 ' the table: "%s"' % level_value,
-                                 ' IDs not found in table:'
-                                 ' "%s"' % level_value_idx)
-
-    else:
-        reference_levels = ''
+        if level_value_idx.intersection(table_idx).empty:
+            raise ValueError('Value provided in `reference_levels`'
+                             ' parameter not associated with any IDs'
+                             ' in the feature table. Please make sure'
+                             ' the value(s) selected in each'
+                             ' column::value pair are associated with'
+                             ' IDs present in the feature table.'
+                             ' \n\n'
+                             ' Value not associated with any IDs in'
+                             ' the table: "%s"' % level_value,
+                             ' IDs not found in table:'
+                             ' "%s"' % level_value_idx)
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
         biom_fp = os.path.join(temp_dir_name, 'input.biom.tsv')
