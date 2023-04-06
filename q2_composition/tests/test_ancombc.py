@@ -53,7 +53,80 @@ class TestANCOMBC(TestBase):
             ancombc(table=self.table, metadata=self.missing_md,
                     formula='bodysite')
 
-    # confirm level ordering behavior
+    # confirm output columns based on formula inputs and ref levels
+    def test_output_cols_single_formula_no_ref_level(self):
+        # should see the alphabetical ref level group removed
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite')
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitegut', col)
+
+    def test_output_cols_single_formula_single_ref_level(self):
+        # should see the chosen ref level group removed
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite',
+                           reference_levels=['bodysite::tongue'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitetongue', col)
+
+    def test_output_cols_single_formula_multi_ref_levels(self):
+        # should see the chosen ref level groups removed
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite',
+                           reference_levels=['bodysite::tongue',
+                                             'bodysite::left palm'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitetongue', col)
+                self.assertNotIn('bodysiteleft palm', col)
+
+    def test_output_cols_multi_formula_no_ref_level(self):
+        # should see each formula term's alphabetical ref level groups removed
+        # TODO: also check that column groups from both formula terms exist
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + animal')
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitegut', col)
+                self.assertNotIn('animalbird', col)
+
+    def test_output_cols_multi_formula_single_ref_level(self):
+        # should see the chosen formula term's ref level group removed
+        # as well as the alphabetical ref level group for any terms left out
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + animal',
+                           reference_levels=['bodysite::tongue'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitetongue', col)
+                self.assertNotIn('animalbird', col)
+
+    def test_output_cols_multi_formula_multi_ref_levels(self):
+        # should see the chosen formula terms ref level groups removed
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + animal',
+                           reference_levels=['bodysite::tongue',
+                                             'animal::dog'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                self.assertNotIn('bodysitetongue', col)
+                self.assertNotIn('animaldog', col)
+
+    # confirm ref level behavior
     def test_ref_levels_behavior_A(self):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + AZcolumn',
