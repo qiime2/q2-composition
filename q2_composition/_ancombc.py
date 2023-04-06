@@ -101,7 +101,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                           CategoricalMetadataColumn):
                 term_alpha_value = (metadata.get_column(term).to_dataframe()
                                     .sort_values(term)[term][0])
-                ref_level_pair = str(term + '::' + str(term_alpha_value))
+                ref_level_pair = term + '::' + str(term_alpha_value)
                 reference_levels.append(ref_level_pair)
 
     # column & level validation for the reference_levels parameter
