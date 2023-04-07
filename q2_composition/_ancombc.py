@@ -105,6 +105,9 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                 ref_level_pair = term + '::' + str(term_alpha_value)
                 reference_levels.append(ref_level_pair)
 
+    if isinstance(reference_levels, str):
+        reference_levels = [reference_levels]
+
     # column & level validation for the reference_levels parameter
     reference_level_columns = []
     for i in reference_levels:
