@@ -99,15 +99,27 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         for term in formula_terms:
             if isinstance(metadata.get_column(term),
                           CategoricalMetadataColumn):
-                term_alpha_value = (metadata.get_column(term).to_dataframe()
+                term_alpha_value = (metadata.get_column(term)
+                                    .to_dataframe()
                                     .sort_values(term)[term][0])
                 ref_level_pair = term + '::' + str(term_alpha_value)
                 reference_levels.append(ref_level_pair)
 
     # column & level validation for the reference_levels parameter
+    reference_level_columns = []
     for i in reference_levels:
         column = i.split('::')[0]
         level_value = i.split('::')[1]
+        # check that multiple values for the same column aren't provided
+        if column in reference_level_columns:
+            raise ValueError('Multiple `reference_level` pairs with the same'
+                             ' column were provided. Please only include one'
+                             ' `reference_level` pair per column from the'
+                             ' terms in the formula. `reference_level` column'
+                             ' with multiple groups that was included:'
+                             ' "%s"' % term)
+        else:
+            reference_level_columns.append(column)
 
         # check that reference_level columns are present in the metadata
         ref_column = metadata.get_column(column)
