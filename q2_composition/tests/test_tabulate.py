@@ -75,24 +75,21 @@ class TestTabulate(TestBase):
                                 ' (and any numerical metadata columns)'
                                 in viz_contents)
 
-    # TODO: modify behavior to grab any formula term's alpha value if that
-    # column isn't included in the ref levels
+    def test_intercept_cols_multi_formula_single_ref_level(self):
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='bodysite + animal',
+                           reference_levels='bodysite::tongue')
 
-    # def test_intercept_cols_multi_formula_single_ref_level(self):
-    #     dataloaf = ancombc(table=self.table, metadata=self.md,
-    #                        formula='bodysite + animal',
-    #                        reference_levels='bodysite::tongue')
+        with tempfile.TemporaryDirectory() as output_dir:
+            tabulate(data=dataloaf, output_dir=output_dir)
+            viz_index_fp = os.path.join(output_dir, 'index.html')
 
-    #     with tempfile.TemporaryDirectory() as output_dir:
-    #         tabulate(data=dataloaf, output_dir=output_dir)
-    #         viz_index_fp = os.path.join(output_dir, 'index.html')
+            with open(viz_index_fp) as fh:
+                viz_contents = fh.read()
 
-    #         with open(viz_index_fp) as fh:
-    #             viz_contents = fh.read()
-
-    #             self.assertTrue('bodysite::tongue, animal::bird'
-    #                             ' (and any numerical metadata columns)'
-    #                             in viz_contents)
+                self.assertTrue('bodysite::tongue, animal::bird'
+                                ' (and any numerical metadata columns)'
+                                in viz_contents)
 
     def test_intercept_cols_multi_formula_multi_ref_levels(self):
         dataloaf = ancombc(table=self.table, metadata=self.md,

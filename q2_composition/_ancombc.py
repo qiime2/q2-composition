@@ -72,6 +72,17 @@ def _leaf_collector(term):
     return _leaf_collector(term[1]) + _leaf_collector(term[2])
 
 
+def _get_ref_level_defaults_from_formula_terms(metadata, term,
+                                               reference_levels):
+    term_alpha_value = (metadata.get_column(term)
+                        .to_dataframe()
+                        .sort_values(term)[term][0])
+    ref_level_pair = term + '::' + str(term_alpha_value)
+    reference_levels.append(ref_level_pair)
+
+    return reference_levels
+
+
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              reference_levels, neg_lb, tol, max_iter, conserve, alpha):
 
@@ -99,11 +110,10 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         for term in formula_terms:
             if isinstance(metadata.get_column(term),
                           CategoricalMetadataColumn):
-                term_alpha_value = (metadata.get_column(term)
-                                    .to_dataframe()
-                                    .sort_values(term)[term][0])
-                ref_level_pair = term + '::' + str(term_alpha_value)
-                reference_levels.append(ref_level_pair)
+                reference_levels = \
+                    _get_ref_level_defaults_from_formula_terms(
+                        metadata=metadata, term=term,
+                        reference_levels=reference_levels)
 
     if isinstance(reference_levels, str):
         reference_levels = [reference_levels]
@@ -168,6 +178,15 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                              ' the table: "%s"' % level_value,
                              ' IDs not found in table:'
                              ' "%s"' % level_value_idx)
+
+    # Adding any column::value defaults from formula terms
+    # if not included in ref_levels param
+    for term in formula_terms:
+        if term not in reference_level_columns:
+            reference_levels = \
+                _get_ref_level_defaults_from_formula_terms(
+                    metadata=metadata, term=term,
+                    reference_levels=reference_levels)
 
     with tempfile.TemporaryDirectory() as temp_dir_name:
         biom_fp = os.path.join(temp_dir_name, 'input.biom.tsv')
