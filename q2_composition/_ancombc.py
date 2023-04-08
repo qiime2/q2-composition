@@ -87,6 +87,12 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              reference_levels, neg_lb, tol, max_iter, conserve, alpha):
 
     meta = metadata.to_dataframe()
+    # TODO: add list of column types for handling in ANCOMBC
+    # so that columns with numbers that are set as categorical
+    # aren't treated as numeric
+    # for k, v in metadata.columns.items():
+    #     print(k)
+    #     print(v[0])
 
     # error on IDs found in table but not in metadata
     missing_ids = table.index.difference(meta.index).values
