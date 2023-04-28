@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import pandas as pd
 import os
+import json
 import formulaic
 
 import qiime2
@@ -87,12 +88,17 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              reference_levels, neg_lb, tol, max_iter, conserve, alpha):
 
     meta = metadata.to_dataframe()
-    # TODO: add list of column types for handling in ANCOMBC
-    # so that columns with numbers that are set as categorical
-    # aren't treated as numeric
-    # for k, v in metadata.columns.items():
-    #     print(k)
-    #     print(v[0])
+
+    md_column_types = {}
+    for name, attrs in metadata.columns.items():
+        if attrs[0] == 'numeric':
+            md_column_types[name] = 'numeric'
+        elif attrs[0] == 'categorical':
+            md_column_types[name] = 'categorical'
+        else:
+            pass
+
+    md_column_types_json = json.dumps(md_column_types)
 
     # error on IDs found in table but not in metadata
     missing_ids = table.index.difference(meta.index).values
@@ -126,9 +132,13 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
     # column & level validation for the reference_levels parameter
     reference_level_columns = []
-    for i in reference_levels:
-        column = i.split('::')[0]
-        level_value = i.split('::')[1]
+    for level in reference_levels:
+        try:
+            column, level_value = level.split('::')
+        except Exception:
+            raise ValueError('Too many column-value pair separators found'
+                             ' (`::`) in the following `reference_level`:'
+                             ' "%s"' % level)
         # check that multiple values for the same column aren't provided
         if column in reference_level_columns:
             raise ValueError('Multiple `reference_level` pairs with the same'
@@ -160,7 +170,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                              ' within the metadata file.'
                              ' \n\n'
                              ' column::value pair with a value that was'
-                             ' not found: "%s"' % i)
+                             ' not found: "%s"' % level)
 
         # check that reference_level columns are also in the formula
         if column not in formula_terms:
@@ -206,6 +216,7 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
         cmd = ['run_ancombc.R',
                '--inp_abundances_path', biom_fp,
                '--inp_metadata_path', meta_fp,
+               '--md_column_types', md_column_types_json,
                '--formula', str(formula),
                '--p_adj_method', p_adj_method,
                '--prv_cut', str(prv_cut),

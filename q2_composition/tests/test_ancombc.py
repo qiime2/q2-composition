@@ -55,9 +55,9 @@ class TestANCOMBC(TestBase):
 
     # confirm output columns based on formula inputs and ref levels
     def test_output_cols_single_formula_no_ref_level(self):
-        exp_col_list = ['id', '(Intercept)', 'bodysiteleft palm',
-                        'bodysiteright palm', 'bodysitetongue']
-        obs_col_list = []
+        exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
+                        'bodysiteright palm', 'bodysitetongue'])
+        obs_cols = set()
 
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite')
@@ -65,15 +65,15 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_col_list.append(col)
+                obs_cols.append(col)
                 self.assertNotIn('bodysitegut', col)
 
-        self.assertEqual(set(exp_col_list), set(obs_col_list))
+        self.assertEqual(exp_cols, obs_cols)
 
     def test_output_cols_single_formula_single_ref_level(self):
-        exp_col_list = ['id', '(Intercept)', 'bodysiteleft palm',
-                        'bodysiteright palm', 'bodysitegut']
-        obs_col_list = []
+        exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
+                       'bodysiteright palm', 'bodysitegut'])
+        obs_cols = set()
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite',
                            reference_levels=['bodysite::tongue'])
@@ -81,16 +81,16 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_col_list.append(col)
+                obs_cols.append(col)
                 self.assertNotIn('bodysitetongue', col)
 
-        self.assertEqual(set(exp_col_list), set(obs_col_list))
+        self.assertEqual(exp_cols, obs_cols)
 
     def test_output_cols_multi_formula_no_ref_level(self):
-        exp_col_list = ['id', '(Intercept)', 'bodysiteleft palm',
+        exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
                         'bodysiteright palm', 'bodysitetongue',
-                        'animalcat', 'animalcow', 'animaldog']
-        obs_col_list = []
+                        'animalcat', 'animalcow', 'animaldog'])
+        obs_cols = set()
 
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + animal')
@@ -98,17 +98,17 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_col_list.append(col)
+                obs_cols.append(col)
                 self.assertNotIn('bodysitegut', col)
                 self.assertNotIn('animalbird', col)
 
-        self.assertEqual(set(exp_col_list), set(obs_col_list))
+        self.assertEqual(exp_cols, obs_cols)
 
     def test_output_cols_multi_formula_single_ref_level(self):
-        exp_col_list = ['id', '(Intercept)', 'bodysiteleft palm',
+        exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
                         'bodysiteright palm', 'bodysitegut',
-                        'animalcat', 'animalcow', 'animaldog']
-        obs_col_list = []
+                        'animalcat', 'animalcow', 'animaldog'])
+        obs_cols = set()
 
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + animal',
@@ -117,17 +117,17 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_col_list.append(col)
+                obs_cols.append(col)
                 self.assertNotIn('bodysitetongue', col)
                 self.assertNotIn('animalbird', col)
 
-        self.assertEqual(set(exp_col_list), set(obs_col_list))
+        self.assertEqual(exp_cols, obs_cols)
 
     def test_output_cols_multi_formula_multi_ref_levels(self):
-        exp_col_list = ['id', '(Intercept)', 'bodysiteleft palm',
+        exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
                         'bodysiteright palm', 'bodysitegut',
-                        'animalcat', 'animalcow', 'animalbird']
-        obs_col_list = []
+                        'animalcat', 'animalcow', 'animalbird'])
+        obs_cols = set()
 
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + animal',
@@ -137,11 +137,11 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_col_list.append(col)
+                obs_cols.append(col)
                 self.assertNotIn('bodysitetongue', col)
                 self.assertNotIn('animaldog', col)
 
-        self.assertEqual(set(exp_col_list), set(obs_col_list))
+        self.assertEqual(exp_cols, obs_cols)
 
     # confirm ref level behavior
     def test_ref_levels_behavior_A(self):
@@ -170,9 +170,9 @@ class TestANCOMBC(TestBase):
                            reference_levels=['bodysite::tongue',
                                              'month::10'])
 
-        exp_col_list = ['id', '(Intercept)', 'bodysitegut',
-                        'bodysiteleft palm', 'bodysiteright palm',
-                        'month1', 'month2', 'month3', 'month4']
+        exp_cols = set('id', '(Intercept)', 'bodysitegut',
+                       'bodysiteleft palm', 'bodysiteright palm',
+                       'month1', 'month2', 'month3', 'month4')
 
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
 
@@ -180,7 +180,7 @@ class TestANCOMBC(TestBase):
             col_list = []
             for col in slice.columns:
                 col_list.append(col)
-                self.assertIn(col, exp_col_list)
+                self.assertIn(col, exp_cols)
 
             self.assertNotIn('bodysitetongue', col_list)
             self.assertNotIn('month10', col_list)
@@ -210,3 +210,9 @@ class TestANCOMBC(TestBase):
                                     ' "bodysite"'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
                     reference_levels=['bodysite::tongue', 'bodysite::toe'])
+
+    def test_extra_col_value_separator_in_ref_level_failure(self):
+        with self.assertRaisesRegex(ValueError, 'Too many column-value pair'
+                                    ' separators found.*"bodysite::tongue::"'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=['bodysite::tongue::'])
