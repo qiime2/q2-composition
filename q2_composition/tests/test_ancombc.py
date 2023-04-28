@@ -65,7 +65,7 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_cols.append(col)
+                obs_cols.add(col)
                 self.assertNotIn('bodysitegut', col)
 
         self.assertEqual(exp_cols, obs_cols)
@@ -81,7 +81,7 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_cols.append(col)
+                obs_cols.add(col)
                 self.assertNotIn('bodysitetongue', col)
 
         self.assertEqual(exp_cols, obs_cols)
@@ -98,7 +98,7 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_cols.append(col)
+                obs_cols.add(col)
                 self.assertNotIn('bodysitegut', col)
                 self.assertNotIn('animalbird', col)
 
@@ -117,7 +117,7 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_cols.append(col)
+                obs_cols.add(col)
                 self.assertNotIn('bodysitetongue', col)
                 self.assertNotIn('animalbird', col)
 
@@ -137,9 +137,26 @@ class TestANCOMBC(TestBase):
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
         for _, slice in slices:
             for col in slice.columns:
-                obs_cols.append(col)
+                obs_cols.add(col)
                 self.assertNotIn('bodysitetongue', col)
                 self.assertNotIn('animaldog', col)
+
+        self.assertEqual(exp_cols, obs_cols)
+
+    # testing type directive in md for categorical columns w/numeric values
+    def test_output_cols_categorical_col_w_numeric_vals_in_formula(self):
+        exp_cols = set(['id', '(Intercept)', 'month1',
+                        'month2', 'month4', 'month10'])
+        obs_cols = set()
+
+        dataloaf = ancombc(table=self.table, metadata=self.md,
+                           formula='month', reference_levels=['month::3'])
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                obs_cols.add(col)
+                self.assertNotIn('month3', col)
 
         self.assertEqual(exp_cols, obs_cols)
 
@@ -170,9 +187,9 @@ class TestANCOMBC(TestBase):
                            reference_levels=['bodysite::tongue',
                                              'month::10'])
 
-        exp_cols = set('id', '(Intercept)', 'bodysitegut',
-                       'bodysiteleft palm', 'bodysiteright palm',
-                       'month1', 'month2', 'month3', 'month4')
+        exp_cols = set(['id', '(Intercept)', 'bodysitegut',
+                        'bodysiteleft palm', 'bodysiteright palm',
+                        'month1', 'month2', 'month3', 'month4'])
 
         slices = dataloaf.data_slices.iter_views(pd.DataFrame)
 

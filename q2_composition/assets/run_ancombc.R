@@ -80,25 +80,25 @@ if (!file.exists(inp_metadata_path)) {
   errQuit("Metadata file path does not exist.")
 } else {
   metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,
-                              fill = TRUE, header = TRUE)
+                              row.names = 1)
   }
 
 # convert column types to numeric/categorical as specified in metadata
+md <- sample_data(metadata_file)
+row.names(md) <- rownames(metadata_file)
 md_column_types <- fromJSON(md_column_types)
 
 for (i in seq(1, length(md_column_types))) {
   if (md_column_types[i] == "numeric") {
-    metadata_file[[names(md_column_types[i])]] <-
-      as.numeric(metadata_file[[names(md_column_types[i])]])
+    md[[names(md_column_types[i])]] <-
+      as.numeric(md[[names(md_column_types[i])]])
   } else if (md_column_types[i] == "categorical") {
-    metadata_file[[names(md_column_types[i])]] <-
-      as.character(metadata_file[[names(md_column_types[i])]])
+    md[[names(md_column_types[i])]] <-
+      as.character(md[[names(md_column_types[i])]])
   }
 }
 
 otu <- otu_table(otu_file, taxa_are_rows = TRUE)
-md <- sample_data(metadata_file)
-row.names(md) <- rownames(metadata_file)
 
 intercept_groups <- c()
 # split the reference_levels param into each column and associated level order
