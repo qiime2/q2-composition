@@ -16,6 +16,7 @@ suppressWarnings(library(tidyverse))
 suppressWarnings(library(ANCOMBC))
 library("optparse")
 library("frictionless")
+library("jsonlite")
 
 # load arguments -----------------
 cat(R.version$version.string, "\n")
@@ -24,6 +25,8 @@ option_list <- list(
   make_option("--inp_abundances_path", action = "store", default = "NULL",
               type = "character"),
   make_option("--inp_metadata_path", action = "store", default = "NULL",
+              type = "character"),
+  make_option("--md_column_types", action = "store", default = "NULL",
               type = "character"),
   make_option("--formula", action = "store", default = "NULL",
               type = "character"),
@@ -52,6 +55,7 @@ opt <- parse_args(OptionParser(option_list = option_list))
 # Assign each arg (in positional order) to an appropriately named R variable
 inp_abundances_path <- opt$inp_abundances_path
 inp_metadata_path   <- opt$inp_metadata_path
+md_column_types     <- opt$md_column_types
 formula             <- opt$formula
 p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
@@ -71,6 +75,7 @@ if (!file.exists(inp_abundances_path)) {
   otu_file <- t(read.delim(inp_abundances_path, check.names = FALSE,
                             row.names = 1))
   }
+
 if (!file.exists(inp_metadata_path)) {
   errQuit("Metadata file path does not exist.")
 } else {
@@ -78,38 +83,45 @@ if (!file.exists(inp_metadata_path)) {
                               row.names = 1)
   }
 
-otu <- otu_table(otu_file, taxa_are_rows = TRUE)
+# convert column types to numeric/categorical as specified in metadata
 md <- sample_data(metadata_file)
 row.names(md) <- rownames(metadata_file)
+md_column_types <- fromJSON(md_column_types)
 
-if (reference_levels == "") {
-  reference_levels <- NULL
+for (i in seq(1, length(md_column_types))) {
+  if (md_column_types[i] == "numeric") {
+    md[[names(md_column_types[i])]] <-
+      as.numeric(md[[names(md_column_types[i])]])
+  } else if (md_column_types[i] == "categorical") {
+    md[[names(md_column_types[i])]] <-
+      as.character(md[[names(md_column_types[i])]])
+  }
 }
+
+otu <- otu_table(otu_file, taxa_are_rows = TRUE)
 
 intercept_groups <- c()
 # split the reference_levels param into each column and associated level order
-if (!is.null(reference_levels)) {
-  level_vectors <- unlist(strsplit(reference_levels, ", "))
+level_vectors <- unlist(strsplit(reference_levels, ", "))
 
-  for (i in level_vectors) {
-    column <- unlist(strsplit(i, "::"))[1]
-    column <- gsub("\\'", "", column)
-    column <- gsub("\\]", "", column)
-    column <- gsub("\\[", "", column)
+for (i in level_vectors) {
+  column <- unlist(strsplit(i, "::"))[1]
+  column <- gsub("\\'", "", column)
+  column <- gsub("\\]", "", column)
+  column <- gsub("\\[", "", column)
 
-    intercept_vector <- unlist(strsplit(i, "::"))[2]
-    intercept_vector <- unlist(strsplit(intercept_vector, ","))
-    intercept_vector <- gsub("\\'", "", intercept_vector)
-    intercept_vector <- gsub("\\]", "", intercept_vector)
-    intercept_vector <- gsub("\\[", "", intercept_vector)
+  intercept_vector <- unlist(strsplit(i, "::"))[2]
+  intercept_vector <- unlist(strsplit(intercept_vector, ","))
+  intercept_vector <- gsub("\\'", "", intercept_vector)
+  intercept_vector <- gsub("\\]", "", intercept_vector)
+  intercept_vector <- gsub("\\[", "", intercept_vector)
 
-    intercept_groups <- append(intercept_groups,
-                               paste(column, intercept_vector, sep = "::"))
+  intercept_groups <- append(intercept_groups,
+                              paste(column, intercept_vector, sep = "::"))
 
-    # handling formula input(s)
-    md[[column]] <- factor(md[[column]])
-    md[[column]] <- relevel(md[[column]], ref = intercept_vector)
-  }
+  # handling formula input(s)
+  md[[column]] <- factor(md[[column]])
+  md[[column]] <- relevel(md[[column]], ref = intercept_vector)
 }
 
 # create phyloseq object for use in ancombc

@@ -45,11 +45,21 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
         slice_contents.append(slice_html)
 
     slice_tables = zip(slice_names, slice_contents)
-    # Filling in the table that will appear on index.html
-    context = {
-        'intercept': slice_md_json['metadata']['intercept_groups'],
-        'tables': slice_tables
-    }
 
+    # Filling in the table that will appear on index.html
+    intercept = slice_md_json['metadata']['intercept_groups']
+    if isinstance(intercept, str):
+        intercept = [intercept]
+
+    if len(intercept) == 1:
+        context = {
+            'intercept_single': intercept[0],
+            'tables': slice_tables
+        }
+    else:
+        context = {
+            'intercept_multi': intercept,
+            'tables': slice_tables
+        }
     # Render the results using q2templates
     q2templates.render(index, output_dir, context=context)
