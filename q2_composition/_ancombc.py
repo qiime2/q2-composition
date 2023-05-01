@@ -91,12 +91,16 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
 
     md_column_types = {}
     for name, attrs in metadata.columns.items():
+        # MetadataColumn type
         if attrs[0] == 'numeric':
             md_column_types[name] = 'numeric'
         elif attrs[0] == 'categorical':
             md_column_types[name] = 'categorical'
+        # deadman switch in case we ever add any other md column types
         else:
-            pass
+            raise TypeError('Unexpected MetadataColumn type: "%s"'
+                            ' Expected types are either "categorical" or'
+                            ' "numeric".' % attrs[0])
 
     md_column_types_json = json.dumps(md_column_types)
 
