@@ -45,9 +45,6 @@ class TestDABarplot(TestBase):
 
             right_palm_path = self._get_output_filepath(
                 output_dir, 'bodysiteright palm')
-            print(self._get_output_filepath(
-                output_dir, 'bodysiteright palm'))
-            print(right_palm_path.exists())
             self.assertTrue(right_palm_path.exists())
 
             left_palm_path = self._get_output_filepath(
