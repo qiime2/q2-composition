@@ -51,7 +51,7 @@ def _plot_differentials(
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    safe_title = urllib.parse.quote_plus(title)
+    safe_title = urllib.parse.quote(title)
     fig_fn = Path(f'{safe_title}-ancombc-barplot.html')
     fig_fp = output_dir / fig_fn
 

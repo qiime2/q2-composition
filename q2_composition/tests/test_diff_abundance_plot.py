@@ -28,7 +28,7 @@ class TestBase(TestPluginBase):
 class TestDABarplot(TestBase):
 
     def _get_output_filepath(self, dir, title):
-        safe_title = urllib.parse.quote_plus(title)
+        safe_title = urllib.parse.quote(title)
         return dir / f'{safe_title}-ancombc-barplot.html'
 
     def test_basic_dl1(self):
@@ -45,6 +45,9 @@ class TestDABarplot(TestBase):
 
             right_palm_path = self._get_output_filepath(
                 output_dir, 'bodysiteright palm')
+            print(self._get_output_filepath(
+                output_dir, 'bodysiteright palm'))
+            print(right_palm_path.exists())
             self.assertTrue(right_palm_path.exists())
 
             left_palm_path = self._get_output_filepath(
