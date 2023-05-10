@@ -51,11 +51,11 @@ class TestDABarplot(TestBase):
                 output_dir, 'bodysiteleft palm')
             self.assertTrue(left_palm_path.exists())
 
-            #checking that spaces are converted to %20
+            # checking that spaces are converted to %20
             left_palm_path = self._get_output_filepath(
                     output_dir, 'bodysiteleft palm')
             fp = str(left_palm_path)
-            expected_fp_segment="bodysiteleft%20palm-ancombc-barplot.html"
+            expected_fp_segment = "bodysiteleft%20palm-ancombc-barplot.html"
             self.assertIn(expected_fp_segment, fp)
 
             # file shouldn't exist for reference column
@@ -73,7 +73,6 @@ class TestDABarplot(TestBase):
             self.assertTrue(
                 'd29fe3c70564fc0f69f2c03e0d1e5561' in
                 open(left_palm_path).read())
-
 
     def test_basic_dl2(self):
         with tempfile.TemporaryDirectory() as output_dir:
