@@ -28,7 +28,7 @@ class TestBase(TestPluginBase):
 class TestDABarplot(TestBase):
 
     def _get_output_filepath(self, dir, title):
-        safe_title = urllib.parse.quote_plus(title)
+        safe_title = urllib.parse.quote(title)
         return dir / f'{safe_title}-ancombc-barplot.html'
 
     def test_basic_dl1(self):
@@ -50,6 +50,13 @@ class TestDABarplot(TestBase):
             left_palm_path = self._get_output_filepath(
                 output_dir, 'bodysiteleft palm')
             self.assertTrue(left_palm_path.exists())
+
+            # checking that spaces are converted to %20
+            left_palm_path = self._get_output_filepath(
+                    output_dir, 'bodysiteleft palm')
+            fp = str(left_palm_path)
+            expected_fp_segment = "bodysiteleft%20palm-ancombc-barplot.html"
+            self.assertIn(expected_fp_segment, fp)
 
             # file shouldn't exist for reference column
             gut_path = self._get_output_filepath(
