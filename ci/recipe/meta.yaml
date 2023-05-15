@@ -34,8 +34,6 @@ requirements:
     - altair
 
 test:
-  commands:
-    - py.test --pyargs q2_composition
   requires:
     - qiime2 >={{ qiime2 }}
     - q2templates >={{ q2templates }}
@@ -45,6 +43,9 @@ test:
   imports:
     - q2_composition
     - qiime2.plugins.composition
+
+  commands:
+    - py.test --pyargs q2_composition
 
 about:
   home: https://qiime2.org
