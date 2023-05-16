@@ -139,10 +139,19 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     for level in reference_levels:
         try:
             column, level_value = level.split('::')
-        except Exception:
-            raise ValueError('Too many column-value pair separators found'
+        except ValueError as e:
+            # More than one ::
+            if 'too many' in str(e):
+                message = 'many'
+            # Zero ::
+            elif 'not enough' in str(e):
+                message = 'few'
+            # Who knows what happened
+            else:
+                raise e
+            raise ValueError('Too %s column-value pair separators found'
                              ' (`::`) in the following `reference_level`:'
-                             ' "%s"' % level)
+                             ' "%s"' % (message, level)) from e
         # check that multiple values for the same column aren't provided
         if column in reference_level_columns:
             raise ValueError('Multiple `reference_level` pairs with the same'

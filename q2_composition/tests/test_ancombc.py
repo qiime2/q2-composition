@@ -233,3 +233,9 @@ class TestANCOMBC(TestBase):
                                     ' separators found.*"bodysite::tongue::"'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
                     reference_levels=['bodysite::tongue::'])
+
+    def test_no_col_value_separator_in_ref_level_failure(self):
+        with self.assertRaisesRegex(ValueError, 'Too few column-value pair'
+                                    ' separators found.*"bodysite:tongue"'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=['bodysite:tongue'])
