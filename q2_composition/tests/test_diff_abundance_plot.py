@@ -340,3 +340,156 @@ class TestDABarplot(TestBase):
                 da_barplot(output_dir,
                            data=self.dataloaf1.view(DataLoafPackageDirFmt),
                            error_label='stderr')
+
+    def test_toggle_level_delimiter(self):
+        # no delimiter
+        with tempfile.TemporaryDirectory() as output_dir:
+            output_dir = Path(output_dir)
+            _ = da_barplot(output_dir,
+                           self.dataloaf2.view(DataLoafPackageDirFmt))
+
+            feces_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:feces')
+            self.assertTrue(feces_path.exists())
+
+            oral_cavity_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:oral cavity')
+            self.assertTrue(oral_cavity_path.exists())
+
+            saliva_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:saliva')
+            self.assertTrue(saliva_path.exists())
+
+            vagina_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:vagina')
+            self.assertTrue(vagina_path.exists())
+
+            # multi-level information should be present as y-label
+            self.assertTrue(
+                '"y_label": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(feces_path).read())
+            self.assertTrue(
+                '"y_label": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(oral_cavity_path).read())
+            self.assertTrue(
+                '"y_label": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(saliva_path).read())
+            self.assertTrue(
+                '"y_label": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(vagina_path).read())
+
+            # same labels should be present as 'feature'
+            self.assertTrue(
+                '"feature": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(feces_path).read())
+            self.assertTrue(
+                '"feature": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(oral_cavity_path).read())
+            self.assertTrue(
+                '"feature": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(saliva_path).read())
+            self.assertTrue(
+                '"feature": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
+                in open(vagina_path).read())
+
+        # typical delimiter: ;
+        with tempfile.TemporaryDirectory() as output_dir:
+            output_dir = Path(output_dir)
+            _ = da_barplot(output_dir,
+                           self.dataloaf2.view(DataLoafPackageDirFmt),
+                           level_delimiter=';')
+
+            feces_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:feces')
+            self.assertTrue(feces_path.exists())
+
+            oral_cavity_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:oral cavity')
+            self.assertTrue(oral_cavity_path.exists())
+
+            saliva_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:saliva')
+            self.assertTrue(saliva_path.exists())
+
+            vagina_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:vagina')
+            self.assertTrue(vagina_path.exists())
+
+            # single-level information should be present as 'y-label'
+            self.assertTrue(
+                '"y_label": "g__Staphylococcus' in
+                open(feces_path).read())
+            self.assertTrue(
+                '"y_label": "g__Staphylococcus' in
+                open(oral_cavity_path).read())
+            self.assertTrue(
+                '"y_label": "g__Staphylococcus' in
+                open(saliva_path).read())
+            self.assertTrue(
+                '"y_label": "g__Staphylococcus' in
+                open(vagina_path).read())
+
+            # space delimited labels should be present as 'feature'
+            self.assertTrue(
+                '"feature": "d__Bacteria p__Firmicutes c__Bacilli o__Staphylococcales f__Staphylococcaceae g__Staphylococcus"'  # noqa: E501
+                in open(feces_path).read())
+            self.assertTrue(
+                '"feature": "d__Bacteria p__Firmicutes c__Bacilli o__Staphylococcales f__Staphylococcaceae g__Staphylococcus"'  # noqa: E501
+                in open(oral_cavity_path).read())
+            self.assertTrue(
+                '"feature": "d__Bacteria p__Firmicutes c__Bacilli o__Staphylococcales f__Staphylococcaceae g__Staphylococcus"'  # noqa: E501
+                in open(saliva_path).read())
+            self.assertTrue(
+                '"feature": "d__Bacteria p__Firmicutes c__Bacilli o__Staphylococcales f__Staphylococcaceae g__Staphylococcus"'  # noqa: E501
+                in open(vagina_path).read())
+
+        # weird delimiter: __
+        with tempfile.TemporaryDirectory() as output_dir:
+            output_dir = Path(output_dir)
+            _ = da_barplot(output_dir,
+                           self.dataloaf2.view(DataLoafPackageDirFmt),
+                           level_delimiter='__')
+
+            feces_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:feces')
+            self.assertTrue(feces_path.exists())
+
+            oral_cavity_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:oral cavity')
+            self.assertTrue(oral_cavity_path.exists())
+
+            saliva_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:saliva')
+            self.assertTrue(saliva_path.exists())
+
+            vagina_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:vagina')
+            self.assertTrue(vagina_path.exists())
+
+            # single-level information should be present as 'y-label'
+            self.assertTrue(
+                '"y_label": "Staphylococcus' in
+                open(feces_path).read())
+            self.assertTrue(
+                '"y_label": "Staphylococcus' in
+                open(oral_cavity_path).read())
+            self.assertTrue(
+                '"y_label": "Staphylococcus' in
+                open(saliva_path).read())
+            self.assertTrue(
+                '"y_label": "Staphylococcus' in
+                open(vagina_path).read())
+
+            # space delimited labels should be present as 'feature'
+            self.assertTrue(
+                '"feature": "d Bacteria;p Firmicutes;c Bacilli;o Staphylococcales;f Staphylococcaceae;g Staphylococcus"'  # noqa: E501
+                in open(feces_path).read())
+            self.assertTrue(
+                '"feature": "d Bacteria;p Firmicutes;c Bacilli;o Staphylococcales;f Staphylococcaceae;g Staphylococcus"'  # noqa: E501
+                in open(oral_cavity_path).read())
+            self.assertTrue(
+                '"feature": "d Bacteria;p Firmicutes;c Bacilli;o Staphylococcales;f Staphylococcaceae;g Staphylococcus"'  # noqa: E501
+                in open(saliva_path).read())
+            self.assertTrue(
+                '"feature": "d Bacteria;p Firmicutes;c Bacilli;o Staphylococcales;f Staphylococcaceae;g Staphylococcus"'  # noqa: E501
+                in open(vagina_path).read())
