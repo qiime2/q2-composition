@@ -196,7 +196,7 @@ plugin.visualizers.register_function(
                                   "of effect size less than this threshold."),
         'feature_ids': ("Exclude features if their ids are not included in "
                         "this index."),
-        'level_delimiter': ("If feature ids encode heirarchical information, "
+        'level_delimiter': ("If feature ids encode hierarchical information, "
                             "split the levels when generating feature labels "
                             "in the visualization using this delimiter.")},
     name='Differential abundance bar plots',
