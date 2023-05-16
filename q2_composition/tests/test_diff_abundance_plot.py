@@ -364,7 +364,7 @@ class TestDABarplot(TestBase):
                 output_dir, 'body_habitatUBERON:vagina')
             self.assertTrue(vagina_path.exists())
 
-            # multi-level information should be present as y-label
+            # multi-level information should be present as 'y-label'
             self.assertTrue(
                 '"y_label": "d__Bacteria;p__Firmicutes;c__Bacilli;o__Staphylococcales;f__Staphylococcaceae;g__Staphylococcus"'  # noqa: E501
                 in open(feces_path).read())
