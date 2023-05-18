@@ -229,8 +229,8 @@ class TestANCOMBC(TestBase):
                     reference_levels=['bodysite::tongue', 'bodysite::toe'])
 
     def test_extra_col_value_separator_in_ref_level_failure(self):
-        with self.assertRaisesRegex(ValueError, 'Too many column-value pair'
-                                    ' separators found.*"bodysite::tongue::"'):
+        with self.assertRaisesRegex(ValueError, '.*tongue::.*\n\nNOTE: Your'
+                                    ' level value appears to contain a `:`.*'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
                     reference_levels=['bodysite::tongue::'])
 
@@ -239,3 +239,15 @@ class TestANCOMBC(TestBase):
                                     ' separators found.*"bodysite:tongue"'):
             ancombc(table=self.table, metadata=self.md, formula='bodysite',
                     reference_levels=['bodysite:tongue'])
+
+    def test_colon_in_not_found_column(self):
+        with self.assertRaisesRegex(ValueError, '.*:bodysite.*\n\nNOTE: Your'
+                                    ' column name appears to contain a `:`.*'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=[':bodysite::tongue'])
+
+    def test_colon_in_not_found_level(self):
+        with self.assertRaisesRegex(ValueError, '.*tongue:.*\n\nNOTE: Your'
+                                    ' level value appears to contain a `:`.*'):
+            ancombc(table=self.table, metadata=self.md, formula='bodysite',
+                    reference_levels=['bodysite::tongue:'])
