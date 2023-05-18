@@ -137,12 +137,15 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
     # column & level validation for the reference_levels parameter
     reference_level_columns = []
     for level in reference_levels:
-        try:
-            column, level_value = level.split('::')
-        except Exception:
-            raise ValueError('Too many column-value pair separators found'
+        fields = level.split('::', maxsplit=1)
+
+        if len(fields) == 1:
+            raise ValueError('Too few column-value pair separators found'
                              ' (`::`) in the following `reference_level`:'
-                             ' "%s"' % level)
+                             ' "%s"' % (level))
+
+        column, level_value = fields
+
         # check that multiple values for the same column aren't provided
         if column in reference_level_columns:
             raise ValueError('Multiple `reference_level` pairs with the same'
@@ -155,7 +158,17 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
             reference_level_columns.append(column)
 
         # check that reference_level columns are present in the metadata
-        ref_column = metadata.get_column(column)
+        try:
+            ref_column = metadata.get_column(column)
+        except ValueError as e:
+            message = str(e)
+
+            if ':' in column:
+                message = ('%s\n\nNOTE: Your column name appears to contain a'
+                           ' `:`, which can be a problem for this action.'
+                           % message)
+
+            raise ValueError(message)
 
         # check that each chosen column contains discrete values
         if isinstance(ref_column, NumericMetadataColumn):
@@ -167,14 +180,18 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                             ' %s' % column)
 
         if level_value not in pd.unique(meta[column].values):
-            raise ValueError('Value provided in `reference_levels`'
-                             ' parameter not found in the associated'
-                             ' column within the metadata. Please make'
-                             ' sure each column::value pair is present'
-                             ' within the metadata file.'
-                             ' \n\n'
-                             ' column::value pair with a value that was'
-                             ' not found: "%s"' % level)
+            message = ('Value provided in `reference_levels` parameter not'
+                       ' found in the associated column within the metadata.'
+                       ' Please make sure each column::value pair is present'
+                       ' within the metadata file.\n\n column::value pair with'
+                       ' a value that was not found: "%s"' % level)
+
+            if ':' in level_value:
+                message = ('%s\n\nNOTE: Your level value appears to contain a'
+                           ' `:`, which can be a problem for this action.'
+                           % message)
+
+            raise ValueError(message)
 
         # check that reference_level columns are also in the formula
         if column not in formula_terms:
