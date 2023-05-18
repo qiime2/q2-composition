@@ -67,8 +67,13 @@ def _plot_differentials(
         y_labels = []
         seen = Counter()
         for i, e in enumerate(df[feature_id_label]):
-            fields = [field for field in e.split(level_delimiter)
-                      if not field.endswith('__')]
+            if level_delimiter in e:
+                fields = [field for field in e.split(level_delimiter)
+                          if not field.endswith('__')]
+            else:
+                # this is necessary to handle a case where the delimiter
+                # isn't found and the e ends with '__'
+                fields = [e]
             most_specific = fields[-1]
             if most_specific in seen:
                 y_labels.append(f"{seen[most_specific]}: {most_specific} *")
