@@ -180,7 +180,8 @@ plugin.visualizers.register_function(
                                                         inclusive_end=True),
                 'effect_size_threshold': Float % Range(0.0, np.inf,
                                                        inclusive_start=True),
-                'feature_ids': Metadata},
+                'feature_ids': Metadata,
+                'level_delimiter': Str},
     input_descriptions={'data': 'The ANCOM-BC output to be plotted.'},
     parameter_descriptions={
         'effect_size_label': "Label for effect sizes in `data`.",
@@ -194,7 +195,10 @@ plugin.visualizers.register_function(
         'effect_size_threshold': ("Exclude features with an absolute value "
                                   "of effect size less than this threshold."),
         'feature_ids': ("Exclude features if their ids are not included in "
-                        "this index.")},
+                        "this index."),
+        'level_delimiter': ("If feature ids encode hierarchical information, "
+                            "split the levels when generating feature labels "
+                            "in the visualization using this delimiter.")},
     name='Differential abundance bar plots',
     description=('Generate bar plot views of ANCOM-BC output. One plot will '
                  'be present per column in the ANCOM-BC output. The '

@@ -29,7 +29,8 @@ def _plot_differentials(
         error_label,
         feature_ids,
         effect_size_threshold,
-        significance_threshold):
+        significance_threshold,
+        level_delimiter):
 
     if len(df) == 0:
         raise ValueError("No features present in input.")
@@ -55,26 +56,36 @@ def _plot_differentials(
     fig_fn = Path(f'{safe_title}-ancombc-barplot.html')
     fig_fp = output_dir / fig_fn
 
-    # For readability, only the most specific named taxonomy will be
-    # included in the y-axis label. The full taxonomy text will be in
-    # the tool-tip. Because it's possible that the most specific
-    # taxonomic name are not unique, this code simply prepends a number
-    # to names. Providing separate labels for ticks, which
-    # would avoid this, doesn't seem straight-forward in altair (e.g.,
-    # see https://github.com/altair-viz/altair/issues/938).
-    y_labels = []
-    seen = Counter()
-    for i, e in enumerate(df[feature_id_label]):
-        fields = [field for field in e.split(';') if not field.endswith('__')]
-        most_specific = fields[-1]
-        if most_specific in seen:
-            y_labels.append(f"{seen[most_specific]}: {most_specific} *")
-        else:
-            y_labels.append(most_specific)
-        seen[most_specific] += 1
-    df['y_label'] = y_labels
+    if level_delimiter is not None:
+        # For readability, only the most specific named taxonomy will be
+        # included in the y-axis label. The full taxonomy text will be in
+        # the tool-tip. Because it's possible that the most specific
+        # taxonomic name are not unique, this code simply prepends a number
+        # to names. Providing separate labels for ticks, which
+        # would avoid this, doesn't seem straight-forward in altair (e.g.,
+        # see https://github.com/altair-viz/altair/issues/938).
+        y_labels = []
+        seen = Counter()
+        for i, e in enumerate(df[feature_id_label]):
+            if level_delimiter in e:
+                fields = [field for field in e.split(level_delimiter)
+                          if not field.endswith('__')]
+            else:
+                # this is necessary to handle a case where the delimiter
+                # isn't found and the e ends with '__'
+                fields = [e]
+            most_specific = fields[-1]
+            if most_specific in seen:
+                y_labels.append(f"{seen[most_specific]}: {most_specific} *")
+            else:
+                y_labels.append(most_specific)
+            seen[most_specific] += 1
+        df['y_label'] = y_labels
+        df['feature'] = [id_.replace(level_delimiter, ' ')
+                         for id_ in df[feature_id_label]]
+    else:
+        df['y_label'] = df['feature'] = df[feature_id_label]
 
-    df['feature'] = [id_.replace(';', ' ') for id_ in df[feature_id_label]]
     df['enriched'] = ["enriched" if x else "depleted"
                       for x in df[effect_size_label] > 0]
 
@@ -126,7 +137,8 @@ def da_barplot(output_dir: str,
                significance_label: str = 'q_val',
                significance_threshold: float = 1.0,
                effect_size_threshold: float = 0.0,
-               feature_ids: qiime2.Metadata = None):
+               feature_ids: qiime2.Metadata = None,
+               level_delimiter: str = None):
 
     # setup for the index.html page
     ASSETS = pkg_resources.resource_filename('q2_composition',
@@ -205,7 +217,8 @@ def da_barplot(output_dir: str,
                 significance_label=significance_label,
                 significance_threshold=significance_threshold,
                 effect_size_threshold=effect_size_threshold,
-                feature_ids=feature_ids)
+                feature_ids=feature_ids,
+                level_delimiter=level_delimiter)
             figure_fn = figure_fp.parts[-1]
             figure_data.append((True, figure_fn, column_label, None))
         except ValueError as e:
