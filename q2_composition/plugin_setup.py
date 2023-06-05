@@ -47,7 +47,7 @@ plugin.methods.register_function(
     parameters={'pseudocount': Int},
     outputs=[('composition_table', FeatureTable[Composition])],
     input_descriptions={
-        'table': 'The feature table to which pseudocounts should be added.'
+        'table': 'The feature table which pseudocounts should be added to.'
     },
     parameter_descriptions={
         'pseudocount': 'The value to add to all counts in the feature table.'
