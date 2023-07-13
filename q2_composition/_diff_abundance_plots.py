@@ -13,6 +13,7 @@ import pkg_resources
 import altair as alt
 import pandas as pd
 import numpy as np
+from typing import Optional
 
 import qiime2
 from q2_composition import DataLoafPackageDirFmt
@@ -30,7 +31,8 @@ def _plot_differentials(
         feature_ids,
         effect_size_threshold,
         significance_threshold,
-        level_delimiter):
+        level_delimiter,
+        label_limit):
 
     if len(df) == 0:
         raise ValueError("No features present in input.")
@@ -112,6 +114,7 @@ def _plot_differentials(
                         sort="descending")
     )
 
+
     error = alt.Chart(df).mark_rule(color='black').encode(
         x='error-lower',
         x2='error-upper',
@@ -124,6 +127,11 @@ def _plot_differentials(
         padding=10,
         cornerRadius=10,
     )
+
+    chart = chart.configure_axisY(titleAlign='left', titleY=-10, titleAngle=0)
+
+    if label_limit is not None:
+      chart = chart.configure_axis(labelLimit=label_limit)
 
     chart.save(fig_fp)
     return fig_fp
@@ -138,7 +146,8 @@ def da_barplot(output_dir: str,
                significance_threshold: float = 1.0,
                effect_size_threshold: float = 0.0,
                feature_ids: qiime2.Metadata = None,
-               level_delimiter: str = None):
+               level_delimiter: str = None,
+               label_limit: Optional[int] = None):
 
     # setup for the index.html page
     ASSETS = pkg_resources.resource_filename('q2_composition',
@@ -218,7 +227,8 @@ def da_barplot(output_dir: str,
                 significance_threshold=significance_threshold,
                 effect_size_threshold=effect_size_threshold,
                 feature_ids=feature_ids,
-                level_delimiter=level_delimiter)
+                level_delimiter=level_delimiter,
+                label_limit=label_limit)
             figure_fn = figure_fp.parts[-1]
             figure_data.append((True, figure_fn, column_label, None))
         except ValueError as e:
