@@ -13,7 +13,6 @@ import pkg_resources
 import altair as alt
 import pandas as pd
 import numpy as np
-from typing import Optional
 
 import qiime2
 from q2_composition import DataLoafPackageDirFmt
@@ -114,7 +113,6 @@ def _plot_differentials(
                         sort="descending")
     )
 
-
     error = alt.Chart(df).mark_rule(color='black').encode(
         x='error-lower',
         x2='error-upper',
@@ -128,10 +126,13 @@ def _plot_differentials(
         cornerRadius=10,
     )
 
-    chart = chart.configure_axisY(titleAlign='left', titleY=-10, titleAngle=0)
-
     if label_limit is not None:
-      chart = chart.configure_axis(labelLimit=label_limit)
+        chart = chart.configure_axis(labelLimit=label_limit)
+        # When increasing the label limit, the y-axis title will be covered
+        # by the y-axis labels. This moves the title to the top, making the
+        # title visible.
+        chart = chart.configure_axisY(titleAlign='left',
+                                      titleY=-10, titleAngle=0)
 
     chart.save(fig_fp)
     return fig_fp
@@ -147,7 +148,7 @@ def da_barplot(output_dir: str,
                effect_size_threshold: float = 0.0,
                feature_ids: qiime2.Metadata = None,
                level_delimiter: str = None,
-               label_limit: Optional[int] = None):
+               label_limit: int = None):
 
     # setup for the index.html page
     ASSETS = pkg_resources.resource_filename('q2_composition',

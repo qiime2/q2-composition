@@ -200,7 +200,9 @@ plugin.visualizers.register_function(
         'level_delimiter': ("If feature ids encode hierarchical information, "
                             "split the levels when generating feature labels "
                             "in the visualization using this delimiter."),
-        'label_limit': ("Set labelLimit for y-axis labels")},
+        'label_limit': ("Set the maximum length that will be viewable for "
+                        "axis labels. You can set this parameter if your "
+                        "axis labels are being cut off.")},
     name='Differential abundance bar plots',
     description=('Generate bar plot views of ANCOM-BC output. One plot will '
                  'be present per column in the ANCOM-BC output. The '
