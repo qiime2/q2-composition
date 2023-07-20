@@ -99,7 +99,7 @@ def _plot_differentials(
     # As far as I can tell, I can only do this by creating two separate charts,
     # so this shared y-axis will be used for both of those.
     shared_y = alt.Y("y_label",
-                     title="Feature ID (most specific, if taxonomic)",
+                     title="Feature ID",
                      sort=alt.EncodingSortField(field=effect_size_label,
                                                 op="min", order="descending"))
 
@@ -126,13 +126,12 @@ def _plot_differentials(
         cornerRadius=10,
     )
 
+    # Moves the y-axis title to the top-left, making it more apparent when
+    # there are a lot of features.
+    chart = chart.configure_axisY(titleAlign='left',
+                                  titleY=-10, titleAngle=0)
     if label_limit is not None:
         chart = chart.configure_axis(labelLimit=label_limit)
-        # When increasing the label limit, the y-axis title will be covered
-        # by the y-axis labels. This moves the title to the top, making the
-        # title visible.
-        chart = chart.configure_axisY(titleAlign='left',
-                                      titleY=-10, titleAngle=0)
 
     chart.save(fig_fp)
     return fig_fp
