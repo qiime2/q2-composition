@@ -126,14 +126,15 @@ class TestDABarplot(TestBase):
                 output_dir, 'body_habitatUBERON:feces')
             self.assertTrue('{"labelLimit": 4242}' in open(feces_path).read())
 
-        with tempfile.TemporaryDirectory() as output_dir_none:
+        with tempfile.TemporaryDirectory() as output_dir:
+            output_dir = Path(output_dir)
             _ = da_barplot(output_dir,
                            self.dataloaf2.view(DataLoafPackageDirFmt),
                            label_limit=None)
             feces_path = self._get_output_filepath(
                 output_dir, 'body_habitatUBERON:feces')
             self.assertFalse('labelLimit' in open(feces_path).read())
-            
+
     def test_filter_on_significance(self):
         # confirm feature presence when not filtering
         with tempfile.TemporaryDirectory() as output_dir:
