@@ -116,6 +116,24 @@ class TestDABarplot(TestBase):
                 'g__Staphylococcus' in
                 open(vagina_path).read())
 
+    def test_label_limit(self):
+        with tempfile.TemporaryDirectory() as output_dir:
+            output_dir = Path(output_dir)
+            _ = da_barplot(output_dir,
+                           self.dataloaf2.view(DataLoafPackageDirFmt),
+                           label_limit=4242)
+            feces_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:feces')
+            self.assertTrue('{"labelLimit": 4242}' in open(feces_path).read())
+
+        with tempfile.TemporaryDirectory() as output_dir_none:
+            _ = da_barplot(output_dir,
+                           self.dataloaf2.view(DataLoafPackageDirFmt),
+                           label_limit=None)
+            feces_path = self._get_output_filepath(
+                output_dir, 'body_habitatUBERON:feces')
+            self.assertFalse('labelLimit' in open(feces_path).read())
+            
     def test_filter_on_significance(self):
         # confirm feature presence when not filtering
         with tempfile.TemporaryDirectory() as output_dir:
@@ -124,7 +142,6 @@ class TestDABarplot(TestBase):
                            self.dataloaf1.view(DataLoafPackageDirFmt),
                            feature_id_label='id',
                            significance_threshold=1.0)
-
             tongue_path = self._get_output_filepath(
                 output_dir, 'bodysitetongue')
             self.assertTrue(tongue_path.exists())
