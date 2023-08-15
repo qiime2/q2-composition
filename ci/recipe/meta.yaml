@@ -44,6 +44,9 @@ test:
     - q2_composition
     - qiime2.plugins.composition
 
+  commands:
+    - py.test --pyargs q2_composition
+
 about:
   home: https://qiime2.org
   license: BSD-3-Clause
