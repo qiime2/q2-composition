@@ -106,7 +106,6 @@ plugin.methods.register_function(
         'prv_cut': Float,
         'lib_cut': Int,
         'reference_levels': List[Str],
-        'neg_lb': Bool,
         'tol': Float,
         'max_iter': Int,
         'conserve': Bool,
@@ -132,8 +131,6 @@ plugin.methods.register_function(
                             ' relative to the reference(s) provided.'
                             ' The syntax is as follows:'
                             ' "column_name::column_value"',
-        'neg_lb': 'Whether to classify a taxon as a structural zero using its'
-                  ' asymptotic lower bound.',
         'tol': 'The iteration convergence tolerance for the E-M algorithm.',
         'max_iter': 'The maximum number of iterations for the E-M algorithm.',
         'conserve': 'Whether to use a conservative variance estimator for the'
