@@ -34,7 +34,7 @@ def run_commands(cmds, verbose=True):
 
 def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
             p_adj_method: str = 'holm', prv_cut: float = 0.1, lib_cut: int = 0,
-            reference_levels: str = None, neg_lb: bool = False,
+            reference_levels: str = None,
             tol: float = 1e-05, max_iter: int = 100, conserve: bool = False,
             alpha: float = 0.05) -> DataLoafPackageDirFmt:
 
@@ -46,7 +46,6 @@ def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,
         prv_cut=prv_cut,
         lib_cut=lib_cut,
         reference_levels=reference_levels,
-        neg_lb=neg_lb,
         tol=tol,
         max_iter=max_iter,
         conserve=conserve,
@@ -85,7 +84,7 @@ def _get_ref_level_defaults_from_formula_terms(metadata, term,
 
 
 def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
-             reference_levels, neg_lb, tol, max_iter, conserve, alpha):
+             reference_levels, tol, max_iter, conserve, alpha):
 
     meta = metadata.to_dataframe()
 
@@ -243,7 +242,6 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
                '--prv_cut', str(prv_cut),
                '--lib_cut', str(lib_cut),
                '--reference_levels', str(reference_levels),
-               '--neg_lb', str(neg_lb),
                '--tol', str(tol),
                '--max_iter', str(max_iter),
                '--conserve', str(conserve),

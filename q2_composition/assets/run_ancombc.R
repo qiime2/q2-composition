@@ -38,8 +38,6 @@ option_list <- list(
               type = "character"),
   make_option("--reference_levels", action = "store", default = "NULL",
               type = "character"),
-  make_option("--neg_lb", action = "store", default = "NULL",
-              type = "character"),
   make_option("--tol", action = "store", default = "NULL", type = "character"),
   make_option("--max_iter", action = "store", default = "NULL",
               type = "character"),
@@ -61,7 +59,6 @@ p_adj_method        <- opt$p_adj_method
 prv_cut             <- as.numeric(opt$prv_cut)
 lib_cut             <- as.numeric(opt$lib_cut)
 reference_levels    <- opt$reference_levels
-neg_lb              <- as.logical(opt$neg_lb)
 tol                 <- as.numeric(opt$tol)
 max_iter            <- as.numeric(opt$max_iter)
 conserve            <- as.logical(opt$conserve)
@@ -129,7 +126,7 @@ data <- phyloseq(otu, md)
 
 # analysis -----------------------
 fit <- ancombc(data = data, formula = formula, p_adj_method = p_adj_method,
-               prv_cut = prv_cut, lib_cut = lib_cut, neg_lb = neg_lb,
+               prv_cut = prv_cut, lib_cut = lib_cut,
                tol = tol, max_iter = max_iter, conserve = conserve,
                alpha = alpha)
 
