@@ -75,7 +75,6 @@ class TestANCOMBC(TestBase):
 
         self.assertEqual(exp_cols, obs_cols)
 
-
     # confirm output columns based on formula inputs and ref levels
     def test_output_cols_single_formula_no_ref_level(self):
         exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
