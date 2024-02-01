@@ -20,13 +20,18 @@ class TestBase(TestPluginBase):
     def setUp(self):
         super().setUp()
 
-        self.md = Metadata.load(self.get_data_path('sample-md-ancombc.tsv'))
-
-        self.missing_md = Metadata.load(self.get_data_path(
+        self.md = Metadata.load(self.get_data_path(
+            'sample-md-ancombc.tsv'))
+        self.md_missing = Metadata.load(self.get_data_path(
             'sample-md-ancombc-missing.tsv'))
+        self.md_IDE = Metadata.load(self.get_data_path(
+            'sample-md-ancombc-IDE.tsv'))
 
         table = Artifact.load(self.get_data_path('table-ancombc.qza'))
         self.table = table.view(pd.DataFrame)
+
+        table_IDE = Artifact.load(self.get_data_path('table-ancombc-IDE.qza'))
+        self.table_IDE = table_IDE.view(pd.DataFrame)
 
 
 class TestANCOMBC(TestBase):
@@ -50,8 +55,26 @@ class TestANCOMBC(TestBase):
         with self.assertRaisesRegex(KeyError, 'Not all samples present within'
                                     ' the table were found in the associated'
                                     ' metadata file.*L6S68'):
-            ancombc(table=self.table, metadata=self.missing_md,
+            ancombc(table=self.table, metadata=self.md_missing_md,
                     formula='bodysite')
+
+    # TODO: IDs with Es that look like scientific notation 004e002
+    def test_ids_in_table_with_es(self):
+        exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
+                        'bodysiteright palm', 'bodysitetongue'])
+        obs_cols = set()
+
+        dataloaf = ancombc(table=self.table_IDE, metadata=self.md_IDE,
+                           formula='bodysite')
+
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+        for _, slice in slices:
+            for col in slice.columns:
+                obs_cols.add(col)
+                self.assertNotIn('bodysitegut', col)
+
+        self.assertEqual(exp_cols, obs_cols)
+
 
     # confirm output columns based on formula inputs and ref levels
     def test_output_cols_single_formula_no_ref_level(self):

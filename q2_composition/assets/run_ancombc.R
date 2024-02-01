@@ -69,8 +69,9 @@ output_loaf         <- opt$output_loaf
 if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
-  otu_file <- t(read.delim(inp_abundances_path, check.names = TRUE,
-                            row.names = 1, colClasses = c(X = "character")))
+  # This is the old code, which should fail with the new test data
+  otu_file <- t(read.delim(inp_abundances_path, check.names = False, # True,
+                            row.names = 1)) #, colClasses = c(X = "character")))
   }
 
 if (!file.exists(inp_metadata_path)) {

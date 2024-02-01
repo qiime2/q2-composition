@@ -1,0 +1,39 @@
+sample-id	barcode-sequence	bodysite	month	day	subject	animal	testcolumn	singlecolumn	AZcolumn	sample-IDE
+#q2:types			categorical
+001e002	AGCTGACTAGTC	gut	10	28	subject-1	dog	test1	value	A	001e002
+002e002	ACACACTATGGC	gut	1	20	subject-1	dog	test2	value	Z	002e002
+003e002	ACTACGTGTGGT	gut	2	17	subject-1	cow	test1	value	Z	003e002
+004e002	AGTGCGATGCGT	gut	3	17	subject-1	cat	test2	value	A	004e002
+005e002	ACGATGCGACCA	left palm	1	20	subject-1	cat	test1	value	A	005e002
+006e002	AGCTATCCACGA	left palm	2	17	subject-1	cat	test2	value	A	006e002
+007e002	ATGCAGCTCAGT	left palm	3	17	subject-1	bird	test1	value	Z	007e002
+008e002	CACGTGACATGT	left palm	4	14	subject-1	cow	test2	value	Z	008e002
+009e002	ACAGTTGCGCGA	right palm	10	28	subject-1	bird	test1	value	A	009e002
+0010e002	CACGACAGGCTA	right palm	1	20	subject-1	dog	test2	value	Z	0010e002
+0011e002	AGTGTCACGGTG	right palm	2	17	subject-1	dog	test1	value	Z	0011e002
+0012e002	CAAGTGAGAGAG	right palm	3	17	subject-1	cat	test2	value	Z	0012e002
+0013e002	CATCGTATCAAC	right palm	4	14	subject-1	cat	test1	value	A	0013e002
+0014e002	CAGTGTCAGGAC	tongue	10	28	subject-1	bird	test2	value	A	0014e002
+0015e002	ATCTTAGACTGC	tongue	1	20	subject-1	cow	test1	value	Z	0015e002
+0016e002	CAGACATTGCGT	tongue	2	17	subject-1	dog	test2	value	A	0016e002
+0017e002	CGATGCACCAGA	tongue	3	17	subject-1	cat	test1	value	Z	0017e002
+0018e002	CTAGAGACTCTT	tongue	4	14	subject-1	bird	test2	value	Z	0018e002
+0019e002	ATGGCAGCTCTA	gut	10	28	subject-2	dog	test1	value	Z	0019e002
+0020e002	CTGAGATACGCG	gut	1	20	subject-2	dog	test2	value	A	0020e002
+0021e002	CCGACTGAGATG	gut	3	17	subject-2	dog	test1	value	A	0021e002
+0022e002	CCTCTCGTGATC	gut	4	14	subject-2	cat	test2	value	Z	0022e002
+0023e002	CATATCGCAGTT	left palm	10	28	subject-2	cat	test1	value	A	0023e002
+0024e002	CGTGCATTATCA	left palm	1	20	subject-2	cat	test2	value	A	0024e002
+0025e002	CTAACGCAGTCA	left palm	3	17	subject-2	bird	test1	value	Z	0025e002
+0026e002	CTCAATGACTCA	left palm	4	14	subject-2	bird	test2	value	A	0026e002
+0027e002	ATCGATCTGTGG	right palm	10	28	subject-2	cow	test1	value	Z	0027e002
+0028e002	CTCGTGGAGTAG	right palm	1	20	subject-2	dog	test2	value	Z	0028e002
+0029e002	GCGTTACACACA	right palm	3	17	subject-2	cat	test1	value	A	0029e002
+0030e002	GAACTGTATCTC	right palm	4	14	subject-2	bird	test2	value	A	0030e002
+0031e002	CTGGACTCATAG	tongue	10	28	subject-2	dog	test1	value	A	0031e002
+0032e002	GCGTTACACACA	tongue	3	17	subject-2	dog	test1	value	Z	0032e002
+0033e002	GAACTGTATCTC	tongue	4	14	subject-2	bird	test2	value	Z	0033e002
+0034e002	CTGGACTCATAG	gut	10	28	subject-2	cow	test1	value	Z	0034e002
+0035e002	GCGTTACACACA	toe	3	17	subject-2	dog	test1	value		0035e002
+0036e002	GAACTGTATCTC	toe	4	14	subject-2	bird	test2	value		0036e002
+0037e002	CTGGACTCATAG	toe	10	28	subject-2	cow	test1	value		0037e002
