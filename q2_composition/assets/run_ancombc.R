@@ -70,7 +70,7 @@ if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
   # This is the old code, which should fail with the new test data
-  otu_file <- t(read.delim(inp_abundances_path, check.names = False, # True,
+  otu_file <- t(read.delim(inp_abundances_path, check.names = FALSE, # TRUE,
                             row.names = 1)) #, colClasses = c(X = "character")))
   }
 
