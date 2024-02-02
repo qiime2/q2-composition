@@ -77,6 +77,12 @@ class TestANCOMBC(TestBase):
 
     #     self.assertEqual(exp_cols, obs_cols)
 
+    # Right now these two tests just return the dataloaf wholesale.
+    # This was just a proof of concept to make sure we could get ancombc to
+    # fail in the way we expected it to. We can add in the column validation
+    # that's in the other tests to make these more comprehensive though, and
+    # just notate these tests that they are confirming Es won't get converted
+    # to scientific notation with the code changes that go along with them.
     def test_ids_in_table_with_upper_Es(self):
         md = Metadata(pd.DataFrame(
             index=pd.Index(['33001E607', '33002E607', '33003E607',
