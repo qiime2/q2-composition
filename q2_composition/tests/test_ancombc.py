@@ -60,23 +60,6 @@ class TestANCOMBC(TestBase):
             ancombc(table=self.table, metadata=self.md_missing,
                     formula='bodysite')
 
-    # TODO: IDs with Es that look like scientific notation 004e002
-    # def test_ids_in_table_with_es(self):
-    #     exp_cols = set(['id', '(Intercept)', 'bodysiteleft palm',
-    #                     'bodysiteright palm', 'bodysitetongue'])
-    #     obs_cols = set()
-
-    #     dataloaf = ancombc(table=self.table_IDE, metadata=self.md_IDE,
-    #                        formula='bodysite')
-
-    #     slices = dataloaf.data_slices.iter_views(pd.DataFrame)
-    #     for _, slice in slices:
-    #         for col in slice.columns:
-    #             obs_cols.add(col)
-    #             self.assertNotIn('bodysitegut', col)
-
-    #     self.assertEqual(exp_cols, obs_cols)
-
     # Right now these two tests just return the dataloaf wholesale.
     # This was just a proof of concept to make sure we could get ancombc to
     # fail in the way we expected it to. We can add in the column validation
