@@ -69,21 +69,27 @@ output_loaf         <- opt$output_loaf
 if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
-  # This is the old code, which should fail with the new test data
-  otu_file <- t(read.delim(inp_abundances_path, check.names = FALSE, # TRUE,
-                            row.names = 1)) #, colClasses = c(X = "character")))
+  otu_file <- t(read.delim(inp_abundances_path,
+                           check.names = TRUE, row.names = 1,
+                           colClasses = list(X = "character")))
+  # The sample IDs are in the first column, but this column has no name.
+  # The empty name is changed to X by check.names = T
+  # Then, we say to treat column X (sample IDs) as strings
   }
 
 if (!file.exists(inp_metadata_path)) {
   errQuit("Metadata file path does not exist.")
 } else {
-  metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,
-                              row.names = 1)
+  md_file <- read.delim(inp_metadata_path,
+                        check.names = FALSE, row.names = 1,
+                        colClasses = list(`sample-id` = "character"))
+  # We need to make sure sample IDs are strings
+  # For now, this only works with a column called .$`sample-id`
   }
 
 # convert column types to numeric/categorical as specified in metadata
-md <- sample_data(metadata_file)
-row.names(md) <- rownames(metadata_file)
+md <- sample_data(md_file)
+row.names(md) <- rownames(md_file)
 md_column_types <- fromJSON(md_column_types)
 
 for (i in seq(1, length(md_column_types))) {
