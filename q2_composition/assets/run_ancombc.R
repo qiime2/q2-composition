@@ -69,12 +69,22 @@ output_loaf         <- opt$output_loaf
 if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
-  otu_file <- t(read.delim(inp_abundances_path,
-                           check.names = TRUE, row.names = 1,
-                           colClasses = list(X = "character")))
-  # The sample IDs are in the first column, but this column has no name.
-  # The empty name is changed to X by check.names = T
-  # Then, we say to treat column X (sample IDs) as strings
+  # Base R
+  # otu_file <- t(read.delim(inp_abundances_path,
+  #                          check.names = TRUE, row.names = 1,
+  #                          colClasses = list(X = "character")))
+  # # The sample IDs are in the first column, but this column has no name.
+  # # The empty name is changed to X by check.names = T
+  # # Then, we say to treat column X (sample IDs) as strings
+
+  # Tidyverse
+  otu_file <- inp_abundances_path |>
+    # The sample IDs are in the first column, which we treat as characters.
+    # All other columns are feature frequencies as doubles
+    read_tsv(col_names = T, col_types = cols("character", .default = col_double())) |>
+    # The first column is called "...1" during import, then we convert it to row names.
+    column_to_rownames("...1") |>
+    t()
   }
 
 if (!file.exists(inp_metadata_path)) {
