@@ -94,7 +94,18 @@ if (!file.exists(inp_metadata_path)) {
                         check.names = FALSE, row.names = 1,
                         colClasses = list(`sample-id` = "character"))
   # We need to make sure sample IDs are strings
-  # For now, this only works with a column called .$`sample-id`
+  # For now, this only works with a column called `sample-id`
+
+  # # Tidyverse
+  # md_file <- inp_metadata_path |>
+  #   read_tsv(col_names = T, col_types = cols("character", .default = col_guess()), comment="#") |>
+  #   data.frame()
+  # # Instead of selecting the sample-id column by name, we get it by index
+  # row.names(md_file) <- md_file[[1]]
+  # # Then we drop this sample id colun
+  # md_file <- md_file[-1]
+  # # It's surprisingly hard to do this by index alone with the Tidyverse!
+  # # Tidyverse Tibbles don't like indexes or rownames
   }
 
 # convert column types to numeric/categorical as specified in metadata
