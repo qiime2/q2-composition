@@ -93,8 +93,7 @@ if (!file.exists(inp_metadata_path)) {
   md_file <- read.delim(inp_metadata_path,
                         check.names = FALSE, row.names = 1,
                         colClasses = list(`sample-id` = "character"))
-  # We need to make sure sample IDs are strings
-  # For now, this only works with a column called `sample-id`
+  # We inforce meta.index being `sample-id` in _ancombc.py
 
   # # Tidyverse
   # md_file <- inp_metadata_path |>
