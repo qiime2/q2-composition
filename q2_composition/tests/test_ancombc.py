@@ -7,6 +7,8 @@
 # ----------------------------------------------------------------------------
 
 import pandas as pd
+import numpy as np
+from biom.table import Table
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Metadata, Artifact
@@ -20,13 +22,18 @@ class TestBase(TestPluginBase):
     def setUp(self):
         super().setUp()
 
-        self.md = Metadata.load(self.get_data_path('sample-md-ancombc.tsv'))
-
-        self.missing_md = Metadata.load(self.get_data_path(
+        self.md = Metadata.load(self.get_data_path(
+            'sample-md-ancombc.tsv'))
+        self.md_missing = Metadata.load(self.get_data_path(
             'sample-md-ancombc-missing.tsv'))
+        # self.md_IDE = Metadata.load(self.get_data_path(
+        #     'sample-md-ancombc-IDE.tsv'))
 
         table = Artifact.load(self.get_data_path('table-ancombc.qza'))
         self.table = table.view(pd.DataFrame)
+
+    # table_IDE = Artifact.load(self.get_data_path('table-ancombc-IDE.qza'))
+        # self.table_IDE = table_IDE.view(pd.DataFrame)
 
 
 class TestANCOMBC(TestBase):
@@ -50,8 +57,60 @@ class TestANCOMBC(TestBase):
         with self.assertRaisesRegex(KeyError, 'Not all samples present within'
                                     ' the table were found in the associated'
                                     ' metadata file.*L6S68'):
-            ancombc(table=self.table, metadata=self.missing_md,
+            ancombc(table=self.table, metadata=self.md_missing,
                     formula='bodysite')
+
+    # Right now these two tests just return the dataloaf wholesale.
+    # This was just a proof of concept to make sure we could get ancombc to
+    # fail in the way we expected it to. We can add in the column validation
+    # that's in the other tests to make these more comprehensive though, and
+    # just notate these tests that they are confirming Es won't get converted
+    # to scientific notation with the code changes that go along with them.
+    def test_ids_in_table_with_upper_Es(self):
+        md = Metadata(pd.DataFrame(
+            index=pd.Index(['33001E607', '33002E607', '33003E607',
+                            '33004E607', '33005E607', '33006E607'],
+                           name='sample-id'),
+            columns=['bodysite', 'animal'],
+            data=np.array([['gut', 'dog'], ['right palm', 'cat'],
+                           ['gut', 'bird'], ['left palm', 'cow'],
+                           ['left palm', 'cat'], ['tongue', 'bird']])
+        ))
+        table = Table(np.array([[5, 1, 4, 2, 6, 3],
+                                [3, 2, 1, 1, 5, 4],
+                                [1, 4, 2, 4, 5, 6],
+                                [3, 2, 5, 1, 2, 4],
+                                [5, 6, 2, 3, 1, 1],
+                                [1, 1, 4, 2, 3, 6]]),
+                      ['33001E607', '33002E607', '33003E607',
+                       '33004E607', '33005E607', '33006E607'],
+                      ['O1', 'O2', '03', '04', '05', '06']).to_dataframe()
+
+        dataloaf = ancombc(table=table, metadata=md, formula='bodysite')
+        return dataloaf
+
+    def test_ids_in_table_with_lower_Es(self):
+        md = Metadata(pd.DataFrame(
+            index=pd.Index(['33001e607', '33002e607', '33003e607',
+                            '33004e607', '33005e607', '33006e607'],
+                           name='sample-id'),
+            columns=['bodysite', 'animal'],
+            data=np.array([['gut', 'dog'], ['right palm', 'cat'],
+                           ['gut', 'bird'], ['left palm', 'cow'],
+                           ['left palm', 'cat'], ['tongue', 'bird']])
+        ))
+        table = Table(np.array([[5, 1, 4, 2, 6, 3],
+                                [3, 2, 1, 1, 5, 4],
+                                [1, 4, 2, 4, 5, 6],
+                                [3, 2, 5, 1, 2, 4],
+                                [5, 6, 2, 3, 1, 1],
+                                [1, 1, 4, 2, 3, 6]]),
+                      ['33001e607', '33002e607', '33003e607',
+                       '33004e607', '33005e607', '33006e607'],
+                      ['O1', 'O2', '03', '04', '05', '06']).to_dataframe()
+
+        dataloaf = ancombc(table=table, metadata=md, formula='bodysite')
+        return dataloaf
 
     # confirm output columns based on formula inputs and ref levels
     def test_output_cols_single_formula_no_ref_level(self):
