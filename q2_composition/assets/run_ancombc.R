@@ -69,14 +69,6 @@ output_loaf         <- opt$output_loaf
 if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
-  # Base R
-  # otu_file <- t(read.delim(inp_abundances_path,
-  #                          check.names = TRUE, row.names = 1,
-  #                          colClasses = list(X = "character")))
-  # # The sample IDs are in the first column, but this column has no name.
-  # # The empty name is changed to X by check.names = T
-  # # Then, we say to treat column X (sample IDs) as strings
-
   # Tidyverse
   otu_file <- inp_abundances_path |>
     # The sample IDs are in the first column, which we treat as characters.
@@ -94,17 +86,6 @@ if (!file.exists(inp_metadata_path)) {
                         check.names = FALSE, row.names = 1,
                         colClasses = list(`sample-id` = "character"))
   # We inforce meta.index being `sample-id` in _ancombc.py
-
-  # # Tidyverse
-  # md_file <- inp_metadata_path |>
-  #   read_tsv(col_names = T, col_types = cols("character", .default = col_guess()), comment="#") |>
-  #   data.frame()
-  # # Instead of selecting the sample-id column by name, we get it by index
-  # row.names(md_file) <- md_file[[1]]
-  # # Then we drop this sample id colun
-  # md_file <- md_file[-1]
-  # # It's surprisingly hard to do this by index alone with the Tidyverse!
-  # # Tidyverse Tibbles don't like indexes or rownames
   }
 
 # convert column types to numeric/categorical as specified in metadata
