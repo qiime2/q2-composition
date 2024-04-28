@@ -1,4 +1,4 @@
-#Sample ID	barcode-sequence	bodysite	month	day	subject	animal	testcolumn	singlecolumn	AZcolumn	sample-IDE
+#Sample ID	barcode-sequence	bodysite	month	day	subject	animal	testcolumn	singlecolumn	AZcolumn	sample-IDs_with_Es
 #q2:types			categorical
 001e002	AGCTGACTAGTC	gut	10	28	subject-1	dog	test1	value	A	001e002
 002e002	ACACACTATGGC	gut	1	20	subject-1	dog	test2	value	Z	002e002

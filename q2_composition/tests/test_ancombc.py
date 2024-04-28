@@ -26,14 +26,15 @@ class TestBase(TestPluginBase):
             'sample-md-ancombc.tsv'))
         self.md_missing = Metadata.load(self.get_data_path(
             'sample-md-ancombc-missing.tsv'))
-        # self.md_IDE = Metadata.load(self.get_data_path(
-        #     'sample-md-ancombc-IDE.tsv'))
+        # self.md_IDs_with_Es = Metadata.load(self.get_data_path(
+        #     'sample-md-ancombc-IDs-with-Es.tsv'))
 
         table = Artifact.load(self.get_data_path('table-ancombc.qza'))
         self.table = table.view(pd.DataFrame)
 
-    # table_IDE = Artifact.load(self.get_data_path('table-ancombc-IDE.qza'))
-        # self.table_IDE = table_IDE.view(pd.DataFrame)
+    # table_IDs_with_Es = Artifact.load(self.get_data_path(
+        # 'table-ancombc-IDs-with-Es.qza'))
+        # self.table_IDs_with_Es = table_IDs_with_Es.view(pd.DataFrame)
 
 
 class TestANCOMBC(TestBase):
