@@ -26,15 +26,9 @@ class TestBase(TestPluginBase):
             'sample-md-ancombc.tsv'))
         self.md_missing = Metadata.load(self.get_data_path(
             'sample-md-ancombc-missing.tsv'))
-        # self.md_IDs_with_Es = Metadata.load(self.get_data_path(
-        #     'sample-md-ancombc-IDs-with-Es.tsv'))
 
         table = Artifact.load(self.get_data_path('table-ancombc.qza'))
         self.table = table.view(pd.DataFrame)
-
-    # table_IDs_with_Es = Artifact.load(self.get_data_path(
-        # 'table-ancombc-IDs-with-Es.qza'))
-        # self.table_IDs_with_Es = table_IDs_with_Es.view(pd.DataFrame)
 
 
 class TestANCOMBC(TestBase):
@@ -61,13 +55,10 @@ class TestANCOMBC(TestBase):
             ancombc(table=self.table, metadata=self.md_missing,
                     formula='bodysite')
 
-    # Right now these two tests just return the dataloaf wholesale.
-    # This was just a proof of concept to make sure we could get ancombc to
-    # fail in the way we expected it to. We can add in the column validation
-    # that's in the other tests to make these more comprehensive though, and
-    # just notate these tests that they are confirming Es won't get converted
-    # to scientific notation with the code changes that go along with them.
+    # testing behavior for IDs with scientific notation
     def test_ids_in_table_with_upper_Es(self):
+        exp_ids = ['33001E607', '33002E607', '33003E607',
+                   '33004E607', '33005E607', '33006E607']
         md = Metadata(pd.DataFrame(
             index=pd.Index(['33001E607', '33002E607', '33003E607',
                             '33004E607', '33005E607', '33006E607'],
@@ -85,12 +76,19 @@ class TestANCOMBC(TestBase):
                                 [1, 1, 4, 2, 3, 6]]),
                       ['33001E607', '33002E607', '33003E607',
                        '33004E607', '33005E607', '33006E607'],
-                      ['O1', 'O2', '03', '04', '05', '06']).to_dataframe()
+                      ['33001E607', '33002E607', '33003E607',
+                       '33004E607', '33005E607', '33006E607']).to_dataframe()
 
         dataloaf = ancombc(table=table, metadata=md, formula='bodysite')
-        return dataloaf
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+
+        for _, slice in slices:
+            obs_ids = list(slice['id'].values)
+            self.assertListEqual(exp_ids, obs_ids)
 
     def test_ids_in_table_with_lower_Es(self):
+        exp_ids = ['33001e607', '33002e607', '33003e607',
+                   '33004e607', '33005e607', '33006e607']
         md = Metadata(pd.DataFrame(
             index=pd.Index(['33001e607', '33002e607', '33003e607',
                             '33004e607', '33005e607', '33006e607'],
@@ -108,10 +106,15 @@ class TestANCOMBC(TestBase):
                                 [1, 1, 4, 2, 3, 6]]),
                       ['33001e607', '33002e607', '33003e607',
                        '33004e607', '33005e607', '33006e607'],
-                      ['O1', 'O2', '03', '04', '05', '06']).to_dataframe()
+                      ['33001e607', '33002e607', '33003e607',
+                       '33004e607', '33005e607', '33006e607']).to_dataframe()
 
         dataloaf = ancombc(table=table, metadata=md, formula='bodysite')
-        return dataloaf
+        slices = dataloaf.data_slices.iter_views(pd.DataFrame)
+
+        for _, slice in slices:
+            obs_ids = list(slice['id'].values)
+            self.assertListEqual(exp_ids, obs_ids)
 
     # confirm output columns based on formula inputs and ref levels
     def test_output_cols_single_formula_no_ref_level(self):
