@@ -73,7 +73,7 @@ if (!file.exists(inp_abundances_path)) {
   otu_file <- inp_abundances_path |>
     # The sample IDs are in the first column, which we treat as characters.
     # All other columns are feature frequencies as doubles
-    read_tsv(col_names = T, col_types = cols("character", .default = col_double())) |>
+    read_tsv(col_names = TRUE, col_types = cols("character", .default = col_double())) |>
     # The first column is called "...1" during import, then we convert it to row names.
     column_to_rownames("...1") |>
     t()
