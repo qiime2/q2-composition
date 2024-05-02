@@ -56,6 +56,7 @@ class TestANCOMBC(TestBase):
                     formula='bodysite')
 
     # testing behavior for IDs with scientific notation
+    # issue ref: https://github.com/qiime2/q2-composition/issues/130
     def test_ids_in_table_with_upper_Es(self):
         exp_ids = ['33001E607', '33002E607', '33003E607',
                    '33004E607', '33005E607', '33006E607']
