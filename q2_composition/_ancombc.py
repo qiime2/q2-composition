@@ -87,6 +87,8 @@ def _ancombc(table, metadata, formula, p_adj_method, prv_cut, lib_cut,
              reference_levels, tol, max_iter, conserve, alpha):
 
     meta = metadata.to_dataframe()
+    # rename index to sample-id before export to R
+    meta = meta.rename_axis('sample-id', axis=0)
 
     md_column_types = {}
     for name, attrs in metadata.columns.items():

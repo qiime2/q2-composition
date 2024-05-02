@@ -69,20 +69,31 @@ output_loaf         <- opt$output_loaf
 if (!file.exists(inp_abundances_path)) {
   errQuit("Input file path does not exist.")
 } else {
-  otu_file <- t(read.delim(inp_abundances_path, check.names = FALSE,
-                            row.names = 1))
+  # Tidyverse
+    # The sample IDs are in the first column, which we treat as characters.
+    # All other columns are feature frequencies as doubles
+  otu_file <- read_tsv(inp_abundances_path,
+                       col_names = TRUE,
+                       col_types = cols("character",
+                                        .default = col_double())) |>
+    # The first column is called "...1" during import, then we convert it to row names.
+    column_to_rownames("...1") |>
+    t()
   }
 
 if (!file.exists(inp_metadata_path)) {
   errQuit("Metadata file path does not exist.")
 } else {
-  metadata_file <- read.delim(inp_metadata_path, check.names = FALSE,
-                              row.names = 1)
+  md_file <- read_tsv(inp_metadata_path,
+                       col_names = TRUE,
+                       col_types = cols(`sample-id` = col_character())) |>
+    # We enforce meta.index being `sample-id` in _ancombc.py
+    column_to_rownames("sample-id")
   }
 
 # convert column types to numeric/categorical as specified in metadata
-md <- sample_data(metadata_file)
-row.names(md) <- rownames(metadata_file)
+md <- sample_data(md_file)
+row.names(md) <- rownames(md_file)
 md_column_types <- fromJSON(md_column_types)
 
 for (i in seq(1, length(md_column_types))) {
