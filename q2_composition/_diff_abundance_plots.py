@@ -110,6 +110,9 @@ def _plot_differentials(
                              significance_label, error_label,
                              "error-lower", "error-upper"]),
         color=alt.Color('enriched', title="Relative to reference",
+                        scale=alt.Scale(
+                            domain=["enriched", "depleted"],
+                            range=["#4c78a8", "#f58518"]),
                         sort="descending")
     )
 
