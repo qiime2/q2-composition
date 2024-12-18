@@ -1,0 +1,12 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+_commit: dfb0404
+_src_path: https://github.com/qiime2/q2-setup-template.git
+module_name: composition
+plugin_name: q2_composition
+plugin_scripts: q2_composition/assets/run_ancombc.R
+project_author_email: jamietmorton@gmail.com
+project_author_name: Jamie Morton
+project_description: Compositional statistics plugin for QIIME2.
+project_name: q2-composition
+project_urls_homepage: https://qiime2.org
+project_urls_repository: https://github.com/qiime2/q2-composition

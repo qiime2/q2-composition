@@ -6,7 +6,6 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-from ._version import get_versions
 
 from ._format import (FrictionlessCSVFileFormat,
                       DataPackageSchemaFileFormat,
@@ -19,8 +18,10 @@ from ._ancombc import ancombc
 from ._dataloaf_tabulate import tabulate
 from ._diff_abundance_plots import da_barplot
 
-__version__ = get_versions()['version']
-del get_versions
+try:
+    from ._version import __version__
+except ModuleNotFoundError:
+    __version__ = '0.0.0+notfound'
 
 __all__ = ['FrictionlessCSVFileFormat', 'DataPackageSchemaFileFormat',
            'DataLoafPackageDirFmt', 'DifferentialAbundance', 'add_pseudocount',
