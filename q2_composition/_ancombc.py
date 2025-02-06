@@ -14,7 +14,7 @@ import formulaic
 
 import qiime2
 from qiime2.metadata import NumericMetadataColumn, CategoricalMetadataColumn
-from qiime2.sdk.util import run_commands
+from qiime2.plugin.util import run_commands
 
 from ._format import DataLoafPackageDirFmt
 
