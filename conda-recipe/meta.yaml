@@ -20,6 +20,7 @@ requirements:
   - formulaic
   - bioconductor-phyloseq
   - bioconductor-ancombc
+  - bioconductor-microbiome
   - r-tidyverse
   - r-optparse
   - r-frictionless
@@ -28,6 +29,7 @@ requirements:
   - q2-types {{ qiime2_epoch }}.*
   - altair
   build:
+  - python {{ python }}
   - setuptools
   - versioningit
 test:
