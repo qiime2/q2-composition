@@ -6,15 +6,15 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import os
-import pkg_resources
+import importlib.resources
 
 import qiime2
 
 
 def _get_data_from_tests(path):
-    return pkg_resources.resource_filename('q2_composition.tests',
-                                           os.path.join('data', path))
+    return (
+        importlib.resources.files('q2_composition') / 'tests' / 'data' / path
+    )
 
 
 def ancombc_md_factory():

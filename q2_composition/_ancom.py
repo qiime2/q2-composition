@@ -6,9 +6,9 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import importlib.resources
 import json
 import os
-import pkg_resources
 from distutils.dir_util import copy_tree
 
 import qiime2
@@ -27,7 +27,7 @@ _transform_functions = {'sqrt': sqrt,
                         'log': log,
                         'clr': clr}
 
-TEMPLATES = pkg_resources.resource_filename('q2_composition', 'assets')
+TEMPLATES = importlib.resources.files('q2_composition') / 'assets'
 
 
 def difference_functions():
