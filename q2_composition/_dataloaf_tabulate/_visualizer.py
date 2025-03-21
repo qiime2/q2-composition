@@ -7,7 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import pandas as pd
-import pkg_resources
+import importlib.resources
 import os
 import json
 
@@ -20,8 +20,7 @@ from q2_composition._format import (DataLoafPackageDirFmt,
 
 def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
     # setup for the index.html page
-    ASSETS = pkg_resources.resource_filename('q2_composition',
-                                             '_dataloaf_tabulate')
+    ASSETS = importlib.resources.files('q2_composition') / '_dataloaf_tabulate'
     index = os.path.join(ASSETS, 'assets', 'index.html')
 
     # restructuring input data
