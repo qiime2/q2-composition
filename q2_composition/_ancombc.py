@@ -14,22 +14,9 @@ import formulaic
 
 import qiime2
 from qiime2.metadata import NumericMetadataColumn, CategoricalMetadataColumn
+from qiime2.plugin.util import run_commands
 
 from ._format import DataLoafPackageDirFmt
-
-
-def run_commands(cmds, verbose=True):
-    if verbose:
-        print('Running external command line application(s). This may print'
-              ' messages to stdout and/or stderr.')
-        print('The command(s) being run are below. These commands cannot be'
-              ' manually re-run as they will depend on temporary files that no'
-              ' longer exist.')
-    for cmd in cmds:
-        if verbose:
-            print('\nCommand:', end=' ')
-            print(' '.join(cmd), end='\n\n')
-        subprocess.run(cmd, check=True)
 
 
 def ancombc(table: pd.DataFrame, metadata: qiime2.Metadata, formula: str,

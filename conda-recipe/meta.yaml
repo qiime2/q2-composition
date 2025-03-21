@@ -12,25 +12,27 @@ requirements:
     - versioningit
     - wheel
   run:
-    - python {{ python }}
-    - scikit-bio {{ scikit_bio }}
-    - biom-format {{ biom_format }}
-    - scipy {{ scipy }}
-    - pandas {{ pandas }}
-    - formulaic
-    - bioconductor-phyloseq
-    - bioconductor-ancombc
-    - r-tidyverse
-    - r-optparse
-    - r-frictionless
-    - qiime2 {{ qiime2_epoch }}.*
-    - q2templates {{ qiime2_epoch }}.*
-    - q2-types {{ qiime2_epoch }}.*
-    - altair
-    - rpy2 {{ rpy2 }}
+  - python {{ python }}
+  - scikit-bio {{ scikit_bio }}
+  - biom-format {{ biom_format }}
+  - scipy {{ scipy }}
+  - pandas {{ pandas }}
+  - formulaic
+  - bioconductor-phyloseq
+  - bioconductor-ancombc
+  - bioconductor-microbiome
+  - r-tidyverse
+  - r-optparse
+  - r-frictionless
+  - qiime2 {{ qiime2_epoch }}.*
+  - q2templates {{ qiime2_epoch }}.*
+  - q2-types {{ qiime2_epoch }}.*
+  - altair
+  - rpy2 {{ rpy2 }}
   build:
-    - setuptools
-    - versioningit
+  - python {{ python }}
+  - setuptools
+  - versioningit
 test:
   requires:
     - qiime2 >={{ qiime2 }}

@@ -5,10 +5,10 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
+import importlib.resources
 from pathlib import Path
 import urllib.parse
 from collections import Counter
-import pkg_resources
 
 import altair as alt
 import pandas as pd
@@ -153,8 +153,7 @@ def da_barplot(output_dir: str,
                label_limit: int = None):
 
     # setup for the index.html page
-    ASSETS = pkg_resources.resource_filename('q2_composition',
-                                             'assets')
+    ASSETS = importlib.resources.files('q2_composition') / 'assets'
     index = Path(ASSETS, 'diff_abundance_plots', 'index.html')
 
     # collect the user-provided labels for validation
