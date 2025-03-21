@@ -1,16 +1,16 @@
 package:
   name: q2-composition
-  version: { { PLUGIN_VERSION } }
+  version: {{ PLUGIN_VERSION }}
 source:
   path: ..
 build:
   script: make install
 requirements:
   host:
-    - python {{ python }}
-    - setuptools
-    - versioningit
-    - wheel
+  - python {{ python }}
+  - setuptools
+  - versioningit
+  - wheel
   run:
   - python {{ python }}
   - scikit-bio {{ scikit_bio }}
@@ -35,15 +35,15 @@ requirements:
   - versioningit
 test:
   requires:
-    - qiime2 >={{ qiime2 }}
-    - q2templates >={{ q2templates }}
-    - q2-types >={{ q2_types }}
-    - pytest
+  - qiime2 >={{ qiime2 }}
+  - q2templates >={{ q2templates }}
+  - q2-types >={{ q2_types }}
+  - pytest
   imports:
-    - q2_composition
-    - qiime2.plugins.composition
+  - q2_composition
+  - qiime2.plugins.composition
   commands:
-    - py.test --pyargs q2_composition
+  - py.test --pyargs q2_composition
 about:
   home: https://qiime2.org
   license: BSD-3-Clause
