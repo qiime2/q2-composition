@@ -294,7 +294,7 @@ def _create_phyloseq_object(
     metadata : qiime2.Metadata
         The metadata to be wrapped in a phyloseq object.
     reference_levels : list[str] or None
-        The desried reference levels of each of the categorical metadata
+        The desired reference levels of each of the categorical metadata
         variables included in the ANCOMBC2 formula. Specified as a list of
         "column_name::column_value" where "column_value" is the desired
         reference level of the "column_name" column.
