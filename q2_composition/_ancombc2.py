@@ -748,7 +748,7 @@ def _process_structural_zeros(
 ) -> pd.DataFrame:
     '''
     Reformats the column names in the structural zeros output in a similiar
-    fashion to how column names are reformated during the slice splitting
+    fashion to how column names are reformatted during the slice splitting
     of the model statistics.
 
     Incoming column names look like:
