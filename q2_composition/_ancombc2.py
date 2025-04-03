@@ -554,7 +554,7 @@ def _process_categorical_variables(
 ) -> ANCOMBC2SliceMapping:
     '''
     Renames categorical variable columns in each slice in order to make the
-    distinction between a metadata variable and it's given level clear, by
+    distinction between a metadata variable and its given level clear, by
     separating the two as follows: 'some-variable::some-level'.
 
     Each column is also annotated with its variable, level, and reference
