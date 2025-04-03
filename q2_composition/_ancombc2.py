@@ -657,7 +657,8 @@ def _parse_variable_and_level(
     ValueError
         If `column` does not refer to categorical variable.
     ValueError
-        If the categorical variable
+        If the categorical variable referenced by `column`
+        was not found in the metadata.
     '''
     # reverse sort to handle md columns that are prefixes of other md columns
     for md_column in sorted(metadata.columns, reverse=True):
