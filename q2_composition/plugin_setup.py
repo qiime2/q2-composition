@@ -195,7 +195,7 @@ plugin.methods.register_function(
         'table': 'The feature table to be used for ANCOM-BC2 computation.'
     },
     parameter_descriptions={
-        'metadata': 'Your per-sample metadata.',
+        'metadata': 'The per-sample metadata.',
         'fixed_effects_formula': (
             'A formula that expresses how the feature absolute abundances in '
             'the feature table depend on the fixed effects of variables '
