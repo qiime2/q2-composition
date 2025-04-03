@@ -192,7 +192,7 @@ plugin.methods.register_function(
         ('ancombc2_output', FeatureData[ANCOMBC2Output])
     ],
     input_descriptions={
-        'table': 'Your feature table.'
+        'table': 'The feature table to be used for ANCOM-BC2 computation.'
     },
     parameter_descriptions={
         'metadata': 'Your per-sample metadata.',
