@@ -752,7 +752,7 @@ def _process_structural_zeros(
     of the model statistics.
 
     Incoming column names look like:
-        strcutural_zero (some-variable-name = some-level-name)
+        structural_zero (some-variable-name = some-level-name)
 
     and are reformatted to:
         some-variable-namesome-level-name
