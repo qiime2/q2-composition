@@ -254,7 +254,7 @@ plugin.methods.register_function(
         'ancombc2_output': (
             'The estimated log fold changes and their standard errors for '
             'the variables included in the mixed effects model. Also includes '
-            'the structural zero designations if the structural zeros '
+            'the structural zero designations if the `structural_zeros` '
             'parameter is passed.'
         )
     },
