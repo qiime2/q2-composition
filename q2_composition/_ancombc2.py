@@ -294,7 +294,7 @@ def _create_phyloseq_object(
     metadata : qiime2.Metadata
         The metadata to be wrapped in a phyloseq object.
     reference_levels : list[str] or None
-        The desried reference levels of each of the categorical metadata
+        The desired reference levels of each of the categorical metadata
         variables included in the ANCOMBC2 formula. Specified as a list of
         "column_name::column_value" where "column_value" is the desired
         reference level of the "column_name" column.
@@ -554,7 +554,7 @@ def _process_categorical_variables(
 ) -> ANCOMBC2SliceMapping:
     '''
     Renames categorical variable columns in each slice in order to make the
-    distinction between a metadata variable and it's given level clear, by
+    distinction between a metadata variable and its given level clear, by
     separating the two as follows: 'some-variable::some-level'.
 
     Each column is also annotated with its variable, level, and reference
@@ -658,7 +658,8 @@ def _parse_variable_and_level(
     ValueError
         If `column` does not refer to categorical variable.
     ValueError
-        If the categorical variable
+        If the categorical variable referenced by `column`
+        was not found in the metadata.
     '''
     # reverse sort to handle md columns that are prefixes of other md columns
     for md_column in sorted(metadata.columns, reverse=True):
@@ -767,11 +768,11 @@ def _process_structural_zeros(
 ) -> pd.DataFrame:
     '''
     Reformats the column names in the structural zeros output in a similiar
-    fashion to how column names are reformated during the slice splitting
+    fashion to how column names are reformatted during the slice splitting
     of the model statistics.
 
     Incoming column names look like:
-        strcutural_zero (some-variable-name = some-level-name)
+        structural_zero (some-variable-name = some-level-name)
 
     and are reformatted to:
         some-variable-namesome-level-name

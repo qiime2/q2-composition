@@ -192,10 +192,10 @@ plugin.methods.register_function(
         ('ancombc2_output', FeatureData[ANCOMBC2Output])
     ],
     input_descriptions={
-        'table': 'Your feature table.'
+        'table': 'The feature table to be used for ANCOM-BC2 computation.'
     },
     parameter_descriptions={
-        'metadata': 'Your per-sample metadata.',
+        'metadata': 'The per-sample metadata.',
         'fixed_effects_formula': (
             'A formula that expresses how the feature absolute abundances in '
             'the feature table depend on the fixed effects of variables '
@@ -254,7 +254,7 @@ plugin.methods.register_function(
         'ancombc2_output': (
             'The estimated log fold changes and their standard errors for '
             'the variables included in the mixed effects model. Also includes '
-            'the structural zero designations if the structural zeros '
+            'the structural zero designations if the `structural_zeros` '
             'parameter is passed.'
         )
     },
