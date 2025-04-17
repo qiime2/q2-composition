@@ -5,7 +5,8 @@
 #
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
-from biom import load_table
+import biom
+import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
@@ -31,7 +32,7 @@ class TestANCOMBC2Base(unittest.TestCase):
         cls.test_data_fp = Path(__file__).parent / 'data' / 'ancombc2'
 
         table_fp = cls.test_data_fp / 'feature-table.biom'
-        cls.biom_table = load_table(table_fp)
+        cls.biom_table = biom.load_table(table_fp)
 
         metadata_fp = cls.test_data_fp / 'metadata.tsv'
         cls.metadata = qiime2.Metadata.load(metadata_fp)
@@ -469,7 +470,38 @@ class TestANCOMBC2Helpers(TestANCOMBC2Base):
             'body-site': 'tongue'
         }
 
-        obs = _deduce_reference_levels(slice_df, self.metadata)
+        obs = _deduce_reference_levels(
+            slice_df, self.metadata, self.biom_table
+        )
+
+        self.assertEqual(exp, obs)
+
+    def test_deduce_reference_levels_table_is_subset_of_metadata(self):
+        '''
+        Tests that reference levels of categorical variables can still be
+        deduced even when the levels of the variable represented in the table
+        are a subset of the levels in the metadata.
+        '''
+        slice_df = pd.DataFrame({
+            'taxon': ['feature1', 'feature2', 'feature3'],
+            'body-site::gut': [0.2, 0.9, 0.1],
+            'body-site::left palm': [-0.4, 0.0, -0.3],
+            'year': [0.33, 0.2, 0.8],
+        })
+
+        # the sample ids represent gut, tongue, left palm (no right palm,
+        # which is present in the metadata)
+        table = biom.Table(
+            np.array([[1, 2, 3], [5, 5, 5], [0, 8, 0]]),
+            sample_ids=['L1S8', 'L5S104', 'L2S240'],
+            observation_ids=['feature1', 'feature2', 'feature3']
+        )
+
+        exp = {
+            'body-site': 'tongue'
+        }
+
+        obs = _deduce_reference_levels(slice_df, self.metadata, table)
 
         self.assertEqual(exp, obs)
 
@@ -519,7 +551,9 @@ class TestANCOMBC2Helpers(TestANCOMBC2Base):
                 exp[slice][column].attrs['level'] = level
                 exp[slice][column].attrs['reference'] = 'left palm'
 
-        obs = _process_categorical_variables(slices, self.metadata)
+        obs = _process_categorical_variables(
+            slices, self.metadata, self.biom_table
+        )
 
         # tests variable, level separation
         assert_frame_equal(exp['lfc'], obs['lfc'])

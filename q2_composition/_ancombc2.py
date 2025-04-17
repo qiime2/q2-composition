@@ -123,7 +123,7 @@ def ancombc2(
     slices = _rename_columns(slices, metadata)
 
     # split categorical variables from levels and annotate references
-    slices = _process_categorical_variables(slices, metadata)
+    slices = _process_categorical_variables(slices, metadata, table)
 
     return transform(data=slices, to_type=ANCOMBC2OutputDirFmt)
 
@@ -550,7 +550,7 @@ def _rename_columns(
 
 
 def _process_categorical_variables(
-    slices: ANCOMBC2SliceMapping, metadata: qiime2.Metadata
+    slices: ANCOMBC2SliceMapping, metadata: qiime2.Metadata, table: biom.Table
 ) -> ANCOMBC2SliceMapping:
     '''
     Renames categorical variable columns in each slice in order to make the
@@ -567,6 +567,7 @@ def _process_categorical_variables(
     metadata : qiime2.Metadata
         The per-sample metadata that contains information about each variable
         present in the ANCOMBC2 output.
+    table : The inputted feature table.
 
     Returns
     -------
@@ -589,7 +590,7 @@ def _process_categorical_variables(
 
     # deduce reference level of each categorical variable and annotate columns
     # any slice will do except for structural zeros
-    reference_levels = _deduce_reference_levels(slices['lfc'], metadata)
+    reference_levels = _deduce_reference_levels(slices['lfc'], metadata, table)
     for slice_df in slices.values():
         for column in slice_df.columns:
             if _is_categorical(column, metadata):
@@ -687,7 +688,7 @@ def _parse_variable_and_level(
 
 
 def _deduce_reference_levels(
-    slice_df: pd.DataFrame, metadata: qiime2.Metadata
+    slice_df: pd.DataFrame, metadata: qiime2.Metadata, table: biom.Table
 ) -> dict[str, str]:
     '''
     Determines which reference level was selected for each categorical
@@ -708,11 +709,20 @@ def _deduce_reference_levels(
     metadata : qiime2.Metadata
         The per-sample metadata, used to establish the set of all levels for
         each categorical variable.
+    table : biom.Table
+        The inputted feature table. Used to subset the levels of the
+        categorical variables to those that were processed by ANCOMBC2 (which
+        are those that are represented in the table).
 
     Returns
     -------
     dict[str, str]
         A mapping from variable to its reference level.
+
+    Raises
+    ------
+    ValueError
+        If the number of deduced reference levels is not equal to one.
     '''
     reference_levels_map = {}
     for column in slice_df.columns:
@@ -724,20 +734,29 @@ def _deduce_reference_levels(
             if variable in reference_levels_map:
                 continue
 
-            # find all levels presents in the slice for this variable; the
-            # remaining unseen level is the reference level
+            # find all levels present in the slice for this variable; the
+            # remaining unseen level in the table is the reference level
             non_reference_levels = {
                  _parse_variable_and_level(c, metadata)[1]
                  for c in slice_df.columns if variable in c
             }
 
-            md_column = metadata.get_column(variable)
-            all_levels = set(md_column.to_series().value_counts().index)
+            metadata_df = metadata.to_dataframe()
+            table_levels = metadata_df.loc[
+                metadata_df.index.isin(table.ids())
+            ][variable].unique()
 
-            reference_levels = all_levels - non_reference_levels
-            assert len(reference_levels) == 1
+            reference_levels = set(table_levels) - non_reference_levels
+            if len(reference_levels) != 1:
+                msg = (
+                    'Deduced more than one reference level. The number of '
+                    'variable levels reported by ANCOMBC2 is not exactly one '
+                    'less than the number of levels present in the feature '
+                    'table.'
+                )
+                raise ValueError(msg)
+
             reference_level, = reference_levels
-
             reference_levels_map[variable] = reference_level
 
     return reference_levels_map
