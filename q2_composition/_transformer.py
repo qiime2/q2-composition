@@ -8,6 +8,8 @@
 
 import pandas as pd
 
+from qiime2.sdk import ValidationError
+
 from q2_composition.plugin_setup import plugin
 from q2_composition._format import (
     ANCOMBC2OutputDirFmt,
@@ -49,11 +51,12 @@ def _3(format: ANCOMBC2OutputDirFmt) -> ANCOMBC2SliceMapping:
     '''
     slices = ANCOMBC2SliceMapping()
     for slice_name in format.ALL_SLICES:
+        format_slice = format.__getattribute__(slice_name)
         try:
-            format_slice = format.__getattribute__(slice_name)
             slice_df = format_slice.view(pd.DataFrame)
             slices[slice_name] = slice_df
-        except AttributeError:
+        except ValidationError:
+            # optional structurual_zeros bound file not present on disk
             pass
 
     return slices
