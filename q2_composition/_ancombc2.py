@@ -120,7 +120,7 @@ def ancombc2(
         slices['structural_zeros'] = structural_zeros_df
 
     # rename columns to original names
-    slices = _rename_columns(slices, metadata)
+    slices = _rename_variables_post(slices, metadata)
 
     # split categorical variables from levels and annotate references
     slices = _process_categorical_variables(slices, metadata, table)
@@ -152,8 +152,7 @@ def _process_formula(formula: str, metadata: qiime2.Metadata) -> str:
     ValueError
         If an unexpected token type is encountered while parsing `formula`.
     '''
-    # handle hyphens in formula
-    formula, renamed_variables = _handle_hyphens(formula, metadata)
+    formula = _rename_variables_pre(formula, metadata)
 
     # parse formula into tokens
     parser = formulaic.parser.parser.DefaultFormulaParser(
@@ -162,7 +161,7 @@ def _process_formula(formula: str, metadata: qiime2.Metadata) -> str:
     tokens = list(parser.get_tokens(formula))
 
     # validate formula
-    _validate_formula(tokens, metadata, renamed_variables)
+    _validate_formula(tokens, metadata)
 
     # convert names
     renamed_tokens = []
@@ -181,16 +180,9 @@ def _process_formula(formula: str, metadata: qiime2.Metadata) -> str:
     return processed_formula
 
 
-def _handle_hyphens(
-    formula: str,
-    metadata: qiime2.Metadata
-) -> tuple[str, list[str]]:
+def _rename_variables_pre(formula: str, metadata: qiime2.Metadata) -> str:
     '''
-    Handle hyphens that may be present in metadata variables included in
-    `formula`. Replace all hyphens with periods, and track renamed variables
-    so that they can be searched against metadata properly later on. Note that
-    only variables present in `metadata` are searched for and corrected in
-    `formula`.
+    Renames all variables in the formula to valid R identifiers as necessary.
 
     Parameters
     ----------
@@ -201,25 +193,19 @@ def _handle_hyphens(
 
     Returns
     -------
-    tuple[str, list[str]]
-        A tuple containing the updated formula, and the list of renamed
-        variables.
+    str
+        The formula with renamed variables where necessary.
     '''
-    renamed_variables: list[str] = []
-
     for column in metadata.columns:
-        if '-' in column and column in formula:
-            renamed_variables.append(column)
-            renamed_variable = column.replace('-', '.')
-            formula = formula.replace(column, renamed_variable)
+        r_name = r_base.make_names(column)[0]
+        formula = formula.replace(column, r_name)
 
-    return formula, renamed_variables
+    return formula
 
 
 def _validate_formula(
     tokens: list[Token],
     metadata: qiime2.Metadata,
-    renamed_variables: list[str]
 ) -> None:
     '''
     Asserts that the formula variables in `tokens` are present in the
@@ -232,9 +218,6 @@ def _validate_formula(
         A list of token parsed from the formula.
     metadata : qiime2.Metadata
         The per-sample metadata.
-    renamed_terms : list[str]
-        Terms that have had hyphens replaced with periods. Tracking these
-        allows us to search for the original term in the metadata.
 
     Raises
     ------
@@ -249,7 +232,7 @@ def _validate_formula(
         msg = (
             'A formula was found to be empty. An empty formula, whether for '
             'fixed effects or random effects is not valid. If you do not '
-            'wish to specify a random effects formula simply do not specify '
+            'wish to specify a random effects formula simply do not provide '
             'that parameter.'
         )
         raise ValueError(msg)
@@ -262,14 +245,12 @@ def _validate_formula(
         raise ValueError(msg)
 
     variables = [t for t in tokens if t.kind == Token.Kind.NAME]
+
     unique_variables = list(set(variables))
+
     for variable in unique_variables:
         variable = str(variable)
-
-        # check for original variable name if it had its hyphens replaced
-        if variable.replace('.', '-') in renamed_variables:
-            variable = variable.replace('.', '-')
-
+        variable = _get_original_variable_name(variable, metadata)
         try:
             metadata.get_column(variable)
         except ValueError:
@@ -277,6 +258,32 @@ def _validate_formula(
                 f'The "{variable}" variable was not found in your metadata. '
             )
             raise ValueError(msg)
+
+
+def _get_original_variable_name(
+    variable: str, metadata: qiime2.Metadata
+) -> str:
+    '''
+    Returns the original spelling of `variable` as it exists in the metadata,
+    whether or not it was renamed when it was ensured to be a valid R
+    identifier.
+
+    Parameters
+    ----------
+    variable : str
+        The variable name for which to get the original spelling.
+
+    Returns
+    -------
+    str
+        The original spelling of `variable`.
+    '''
+    for column in metadata.columns:
+        r_name = r_base.make_names(column)[0]
+        if r_name == variable:
+            return column
+
+    return variable
 
 
 def _create_phyloseq_object(
@@ -511,7 +518,7 @@ def _split_into_slices(model_statistics: pd.DataFrame) -> ANCOMBC2SliceMapping:
     return slices
 
 
-def _rename_columns(
+def _rename_variables_post(
     slices: ANCOMBC2SliceMapping, metadata: qiime2.Metadata
 ) -> ANCOMBC2SliceMapping:
     '''

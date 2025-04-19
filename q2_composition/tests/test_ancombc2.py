@@ -19,7 +19,7 @@ from qiime2.plugin.util import transform
 
 from q2_composition._ancombc2 import (
     r_base, ancombc2, _process_formula, _convert_metadata, _split_into_slices,
-    _rename_columns, _is_categorical, _parse_variable_and_level,
+    _rename_variables_post, _is_categorical, _parse_variable_and_level,
     _deduce_reference_levels, _process_categorical_variables,
     _process_structural_zeros,
 )
@@ -66,12 +66,12 @@ class TestANCOMBC2(TestANCOMBC2Base):
         `r-structural-zeros.tsv` files were obtained by running ANCOMBC2 in R
         using the moving pictures tutorial data.
 
-        Note: the `_rename_columns`  and `_process_structural_zeros` functions
-        are patched so that column names are shared between the R output and
-        the wrapper's output. Note also that `_process_categorical_variables`
-        does nothing in this case because columns have not been renamed and are
-        thus not detected as categorical in the metadata. These methods are
-        tested elsewhere.
+        Note: the `_rename_variables_post` and `_process_structural_zeros`
+        functions are patched so that column names are shared between the R
+        output and the wrapper's output. Note also that
+        `_process_categorical_variables` does nothing in this case because
+        columns have not been renamed and are thus not detected as categorical
+        in the metadata. These methods are tested elsewhere.
         '''
         model_stats_fp = self.test_data_fp / 'r-model-statistics.tsv'
         ground_truth_model_stats = pd.read_csv(model_stats_fp, sep='\t')
@@ -79,7 +79,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
         ground_truth_struc_zeros = pd.read_csv(structural_zeros_fp, sep='\t')
 
         with unittest.mock.patch(
-            'q2_composition._ancombc2._rename_columns',
+            'q2_composition._ancombc2._rename_variables_post',
             side_effect=lambda slices, metadata: slices
         ), unittest.mock.patch(
             'q2_composition._ancombc2._process_structural_zeros',
@@ -116,6 +116,26 @@ class TestANCOMBC2(TestANCOMBC2Base):
                 metadata=self.metadata,
                 structural_zeros=True
             )
+
+    def test_spaces_in_metadata_column(self):
+        '''
+        Tests that metadata columns that contain spaces are handled properly.
+        '''
+        output_format = ancombc2(
+            table=self.biom_table,
+            metadata=self.metadata,
+            fixed_effects_formula='Variable with spaces',
+        )
+
+        slices = transform(data=output_format, to_type=ANCOMBC2SliceMapping)
+
+        lfc_slice_columns = list(slices['lfc'].columns)
+        variable_with_spaces_columns = [
+            col for col in lfc_slice_columns if 'Variable with spaces::' in col
+        ]
+
+        # three levels, so one reference and other two in the output
+        self.assertEqual(len(variable_with_spaces_columns), 2)
 
 
 class TestFormulaProcessing(TestANCOMBC2Base):
@@ -335,7 +355,7 @@ class TestANCOMBC2Helpers(TestANCOMBC2Base):
         assert_frame_equal(exp['p'], obs['p'])
         assert_frame_equal(exp['passed_ss'], obs['passed_ss'])
 
-    def test_rename_columns(self):
+    def test_rename_variables_post(self):
         '''
         Tests that any metadata variables that were renamed to valid R-style
         identifiers are properly renamed to the original identifers.
@@ -355,7 +375,7 @@ class TestANCOMBC2Helpers(TestANCOMBC2Base):
             })
         )
 
-        obs = _rename_columns(slices, self.metadata)
+        obs = _rename_variables_post(slices, self.metadata)
 
         exp = ANCOMBC2SliceMapping(
             lfc=pd.DataFrame({
