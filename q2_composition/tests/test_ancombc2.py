@@ -233,8 +233,8 @@ class TestMetadataConversion(TestANCOMBC2Base):
         the metadata into an R dataframe. These include reference level
         specifications of variables not found in the metadata, reference level
         specifications of numeric metadata variables, multiple reference level
-        specifications for the same column, and improperly formed reference
-        level specifications.
+        specifications for the same column, improperly formed reference
+        level specifications, and nonexistent reference levels.
         '''
         reference_levels = ['body-site::tongue', 'fake::reference']
         with self.assertRaisesRegex(
@@ -271,6 +271,12 @@ class TestMetadataConversion(TestANCOMBC2Base):
         reference_levels = ['body-site']
         with self.assertRaisesRegex(
             ValueError, 'No reference level was detected'
+        ):
+            _convert_metadata(self.metadata, reference_levels)
+
+        reference_levels = ['body-site::fake']
+        with self.assertRaisesRegex(
+            ValueError, 'reference level "fake" was not found'
         ):
             _convert_metadata(self.metadata, reference_levels)
 

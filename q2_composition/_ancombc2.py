@@ -203,10 +203,7 @@ def _rename_variables_pre(formula: str, metadata: qiime2.Metadata) -> str:
     return formula
 
 
-def _validate_formula(
-    tokens: list[Token],
-    metadata: qiime2.Metadata,
-) -> None:
+def _validate_formula(tokens: list[Token], metadata: qiime2.Metadata) -> None:
     '''
     Asserts that the formula variables in `tokens` are present in the
     metadata. Also ensures that a dependent variable is not present in the
@@ -345,8 +342,8 @@ def _convert_metadata(
     metadata : qiime2.Metadata
         The sample metadata.
     reference_levels : list[str] or None
-        The desried reference levels of each of the categorical metadata
-        variables included in the ANCOMBC2 formula. Specified as a list of
+        The desired reference levels of each of the categorical metadata
+        variables included in the model formula. Specified as a list of
         "column_name::column_value" where "column_value" is the desired
         reference level of the "column_name" column.
 
@@ -354,6 +351,15 @@ def _convert_metadata(
     -------
     RS4
         The metadata in an R dataframe.
+
+    Raises
+    ------
+    ValueError
+        Under various conditions: unrecognized qiime2.Metadata column types,
+        nonexistent metadata columns, nonexistent reference levels,
+        specification of a reference level for a non-categorical variable
+        level.
+
     '''
     # convert metadata to R dataframe
     df = metadata.to_dataframe()
@@ -400,6 +406,14 @@ def _convert_metadata(
                 msg = (
                     'Can not specify a reference level for the numeric '
                     f'metadata column {column_name}.'
+                )
+                raise ValueError(msg)
+
+            column_levels = metadata.to_dataframe()[column_name].unique()
+            if reference_level not in column_levels:
+                msg = (
+                    f'The specified reference level "{reference_level}" was '
+                    f'not found in the "{column_name}" metadata column.'
                 )
                 raise ValueError(msg)
 
