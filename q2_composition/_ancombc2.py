@@ -610,16 +610,19 @@ def _process_categorical_variables(
                 )
 
     # deduce reference level of each categorical variable and annotate columns
-    # any slice will do except for structural zeros
     reference_levels = _deduce_reference_levels(slices['lfc'], metadata, table)
-    for slice_df in slices.values():
+
+    for slice_name, slice_df in slices.items():
         for column in slice_df.columns:
             if _is_categorical(column, metadata):
                 variable, level = _parse_variable_and_level(column, metadata)
-                reference_level = reference_levels[variable]
                 slice_df[column].attrs['variable'] = variable
                 slice_df[column].attrs['level'] = level
-                slice_df[column].attrs['reference'] = reference_level
+
+                # the structural zeros slice does not have reference levels
+                if slice_name != 'structural_zeros':
+                    reference_level = reference_levels[variable]
+                    slice_df[column].attrs['reference'] = reference_level
 
     return slices
 
@@ -771,10 +774,10 @@ def _deduce_reference_levels(
             reference_levels = set(table_levels) - non_reference_levels
             if len(reference_levels) != 1:
                 msg = (
-                    'Deduced more than one reference level. The number of '
-                    'variable levels reported by ANCOMBC2 is not exactly one '
-                    'less than the number of levels present in the feature '
-                    'table.'
+                    'Deduced more than one or no reference levels. The number '
+                    'of variable levels reported by ANCOMBC2 is not exactly '
+                    'one less than the number of levels present in the '
+                    'feature table.'
                 )
                 raise ValueError(msg)
 
