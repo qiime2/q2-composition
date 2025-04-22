@@ -85,3 +85,38 @@ def ancombc_tabulate(use):
     )
 
     viz.assert_output_type('Visualization')
+
+
+def ancombc2_single_formula(use):
+    table = use.init_artifact('table', ancombc_table_factory)
+    metadata = use.init_metadata('metadata', ancombc_md_factory)
+
+    abc2_output, = use.action(
+        use.UsageAction('composition', 'ancombc2'),
+        use.UsageInputs(
+            table=table,
+            metadata=metadata,
+            fixed_effects_formula='bodysite'
+        ),
+        use.UsageOutputNames(ancombc2_output='abc2_output')
+    )
+
+    abc2_output.assert_output_type('FeatureData[ANCOMBC2Output]')
+
+
+def ancombc2_multi_formula_with_reference_levels(use):
+    table = use.init_artifact('table', ancombc_table_factory)
+    metadata = use.init_metadata('metadata', ancombc_md_factory)
+
+    abc2_output, = use.action(
+        use.UsageAction('composition', 'ancombc2'),
+        use.UsageInputs(
+            table=table,
+            metadata=metadata,
+            fixed_effects_formula='bodysite + animal',
+            reference_levels=["bodysite::tongue", "animal::dog"]
+        ),
+        use.UsageOutputNames(ancombc2_output='abc2_output')
+    )
+
+    abc2_output.assert_output_type('FeatureData[ANCOMBC2Output]')

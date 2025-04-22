@@ -267,7 +267,11 @@ plugin.methods.register_function(
         'the ANCOM-BC2 publication and source code for details.'
     ),
     citations=[citations['lin2024multigroup']],
-    examples={}
+    examples={
+        'single-variable': ex.ancombc2_single_formula,
+        'mutli-variable-reference':
+            ex.ancombc2_multi_formula_with_reference_levels,
+    }
 )
 
 plugin.visualizers.register_function(
