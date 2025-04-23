@@ -276,7 +276,7 @@ plugin.methods.register_function(
 
 plugin.visualizers.register_function(
     function=q2_composition.tabulate,
-    inputs={'data': FeatureData[DifferentialAbundance]},
+    inputs={'data': FeatureData[DifferentialAbundance | ANCOMBC2Output]},
     parameters={},
     input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
     name=' View tabular output from ANCOM-BC.',

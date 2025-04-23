@@ -12,9 +12,11 @@ import tempfile
 
 from qiime2.plugin.testing import TestPluginBase
 from qiime2 import Artifact, Metadata
+from qiime2.plugin.util import transform
 
 from q2_composition._ancombc import ancombc
 from q2_composition._dataloaf_tabulate._visualizer import tabulate
+from q2_composition._format import ANCOMBC2SliceMapping
 
 
 class TestBase(TestPluginBase):
@@ -32,9 +34,10 @@ class TestTabulate(TestBase):
     def test_intercept_cols_single_formula_no_ref_levels(self):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite')
+        slices = transform(dataloaf, to_type=ANCOMBC2SliceMapping)
 
         with tempfile.TemporaryDirectory() as output_dir:
-            tabulate(data=dataloaf, output_dir=output_dir)
+            tabulate(data=slices, output_dir=output_dir)
             viz_index_fp = os.path.join(output_dir, 'index.html')
 
             with open(viz_index_fp) as fh:
@@ -48,9 +51,10 @@ class TestTabulate(TestBase):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite',
                            reference_levels='bodysite::tongue')
+        slices = transform(dataloaf, to_type=ANCOMBC2SliceMapping)
 
         with tempfile.TemporaryDirectory() as output_dir:
-            tabulate(data=dataloaf, output_dir=output_dir)
+            tabulate(data=slices, output_dir=output_dir)
             viz_index_fp = os.path.join(output_dir, 'index.html')
 
             with open(viz_index_fp) as fh:
@@ -63,9 +67,10 @@ class TestTabulate(TestBase):
     def test_intercept_cols_multi_formula_no_ref_levels(self):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + animal')
+        slices = transform(dataloaf, to_type=ANCOMBC2SliceMapping)
 
         with tempfile.TemporaryDirectory() as output_dir:
-            tabulate(data=dataloaf, output_dir=output_dir)
+            tabulate(data=slices, output_dir=output_dir)
             viz_index_fp = os.path.join(output_dir, 'index.html')
 
             with open(viz_index_fp) as fh:
@@ -79,9 +84,10 @@ class TestTabulate(TestBase):
         dataloaf = ancombc(table=self.table, metadata=self.md,
                            formula='bodysite + animal',
                            reference_levels='bodysite::tongue')
+        slices = transform(dataloaf, to_type=ANCOMBC2SliceMapping)
 
         with tempfile.TemporaryDirectory() as output_dir:
-            tabulate(data=dataloaf, output_dir=output_dir)
+            tabulate(data=slices, output_dir=output_dir)
             viz_index_fp = os.path.join(output_dir, 'index.html')
 
             with open(viz_index_fp) as fh:
@@ -96,9 +102,10 @@ class TestTabulate(TestBase):
                            formula='bodysite + animal',
                            reference_levels=['bodysite::tongue',
                                              'animal::dog'])
+        slices = transform(dataloaf, to_type=ANCOMBC2SliceMapping)
 
         with tempfile.TemporaryDirectory() as output_dir:
-            tabulate(data=dataloaf, output_dir=output_dir)
+            tabulate(data=slices, output_dir=output_dir)
             viz_index_fp = os.path.join(output_dir, 'index.html')
 
             with open(viz_index_fp) as fh:
