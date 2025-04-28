@@ -531,6 +531,37 @@ class TestANCOMBC2Helpers(TestANCOMBC2Base):
 
         self.assertEqual(exp, obs)
 
+    def test_deduce_reference_levels_missing_data(self):
+        '''
+        Tests that missing levels for a categorical variable are ignored when
+        deducing the reference level chosen by ANCOMBC2.
+        '''
+        slice_df = pd.DataFrame({
+            'taxon': ['feature1', 'feature2', 'feature3'],
+            'body-site::gut': [0.2, 0.9, 0.1],
+        })
+
+        table = biom.Table(
+            np.array([[1, 2, 3], [5, 5, 5], [0, 8, 0]]),
+            sample_ids=['S1', 'S2', 'S3'],
+            observation_ids=['feature1', 'feature2', 'feature3']
+        )
+
+        metadata = pd.DataFrame({
+            'sample-id': ['S1', 'S2', 'S3'],
+            'body-site': ['gut', np.nan, 'tongue']
+        })
+        metadata.set_index('sample-id', inplace=True)
+        metadata = qiime2.Metadata(metadata)
+
+        exp = {
+            'body-site': 'tongue'
+        }
+
+        obs = _deduce_reference_levels(slice_df, metadata, table)
+
+        self.assertEqual(exp, obs)
+
     def test_process_categorical_variables(self):
         '''
         Tests that columns in the model statistics slices that refer to

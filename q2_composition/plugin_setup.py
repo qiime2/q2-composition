@@ -207,8 +207,9 @@ plugin.methods.register_function(
             'A formula that expresses how the feature absolute abundances in '
             'the feature table depend on the random effects of variables '
             '(columns) in the metadata. Do not include the dependent '
-            'variable. Reference the `lmerTest` R package for a specification '
-            'of valid formulae.'
+            'variable. For example, to specify `MyVariable` as a random '
+            'intercept use the syntax `(1 | MyVariable)`. Reference the '
+            '`lmerTest` R package for a specification of valid formulae.'
         ),
         'reference_levels': (
             'Specify reference levels for one or more categorical metadata '

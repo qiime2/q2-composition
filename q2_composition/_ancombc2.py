@@ -766,10 +766,11 @@ def _deduce_reference_levels(
                  for c in slice_df.columns if variable in c
             }
 
+            # get unique levels of variable represented in table
             metadata_df = metadata.to_dataframe()
             table_levels = metadata_df.loc[
                 metadata_df.index.isin(table.ids())
-            ][variable].unique()
+            ][variable].dropna().unique()
 
             reference_levels = set(table_levels) - non_reference_levels
             if len(reference_levels) != 1:
@@ -777,7 +778,8 @@ def _deduce_reference_levels(
                     'Deduced more than one or no reference levels. The number '
                     'of variable levels reported by ANCOMBC2 is not exactly '
                     'one less than the number of levels present in the '
-                    'feature table.'
+                    'feature table. The deduced reference levels are: '
+                    f'{reference_levels}.'
                 )
                 raise ValueError(msg)
 
