@@ -107,7 +107,7 @@ export class DivergingBarplot {
         // get min and max lfc values
         let [min, max] = d3.extent(this.data.map((f) => f.lfc));
 
-        if (!min || !max) {
+        if (min == undefined || max == undefined) {
             throw new Error("Unable to find min/max of feature lfcs.");
         }
 
