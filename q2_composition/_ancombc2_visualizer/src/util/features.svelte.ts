@@ -187,10 +187,8 @@ export class FeatureRecords {
                 this.viewVariableLevel,
             );
 
-            if (relationship == "gt") return !(variableValue > value);
-            if (relationship == "ge") return !(variableValue >= value);
-            if (relationship == "lt") return !(variableValue < value);
-            if (relationship == "le") return !(variableValue <= value);
+            if (relationship == "gt") return variableValue > value;
+            if (relationship == "lt") return variableValue < value;
 
             throw new Error(`Unexpected relationship ${relationship}.`);
         };

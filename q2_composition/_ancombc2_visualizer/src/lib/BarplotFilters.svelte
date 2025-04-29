@@ -59,9 +59,7 @@
 
     function getSymbol(relationship: string) {
         if (relationship == "gt") return ">";
-        if (relationship == "ge") return ">=";
         if (relationship == "lt") return "<";
-        if (relationship == "le") return "<=";
     }
 
     function remove(slice: string, relationship: string, value: number) {
@@ -74,7 +72,7 @@
     }
 </script>
 
-<ControlContainer title="Filters:">
+<ControlContainer title="Subset features:">
     <div
         class="grid grid-cols-[auto_1fr] gap-2 place-items-baseline"
         transition:slide={{ duration: 200 }}
@@ -102,9 +100,7 @@
                 bind:value={filterInfo.relationship}
             >
                 <option value="gt">greater than</option>
-                <option value="ge">greater than/equal</option>
                 <option value="lt">less than</option>
-                <option value="le">less than/equal</option>
             </select>
         </div>
         <div class="grid grid-cols-subgrid col-span-2">
