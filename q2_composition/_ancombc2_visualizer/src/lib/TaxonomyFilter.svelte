@@ -57,7 +57,7 @@
     }
 </script>
 
-<ControlContainer title="Filter Taxonomy by Feature:">
+<ControlContainer title="Filter Taxonomy by Feature Count:">
     <div class="grid grid-cols-[auto_1fr] gap-4">
         <div class="grid grid-cols-subgrid col-span-2">
             <label for="filter-value">Value:</label>
