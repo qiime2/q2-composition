@@ -2,7 +2,7 @@
 
 PYTHON ?= python
 
-all: ;
+all: ancombc2-visualizer;
 
 lint:
 	q2lint
@@ -23,3 +23,10 @@ dev: all
 clean: distclean
 
 distclean: ;
+
+q2_composition/_ancombc2_visualizer/dist:
+	cd q2_composition/_ancombc2_visualizer/ && \
+	npm install && \
+	npm run build
+
+ancombc2-visualizer: q2_composition/_ancombc2_visualizer/dist
