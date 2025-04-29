@@ -14,7 +14,7 @@ from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata,
                            MetadataColumn, Categorical, Range, Threads)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
-from q2_types.feature_data import FeatureData
+from q2_types.feature_data import FeatureData, Taxonomy
 
 import q2_composition
 from q2_composition._type import DifferentialAbundance, ANCOMBC2Output
@@ -273,6 +273,29 @@ plugin.methods.register_function(
         'mutli-variable-reference':
             ex.ancombc2_multi_formula_with_reference_levels,
     }
+)
+
+plugin.visualizers.register_function(
+    function=q2_composition.ancombc2_visualizer,
+    inputs={
+        'slices': FeatureData[ANCOMBC2Output],
+        'taxonomy': FeatureData[Taxonomy],
+    },
+    parameters={},
+    input_descriptions={
+        'slices': 'The ANCOMBC2 output.',
+        'taxonomy': (
+            'The taxonomy associated with the features present in the '
+            'ANCOMBC2 slices.'
+        )
+    },
+    name='Visualize ANCOMBC2 output.',
+    description=(
+        'Displays ANCOMBC2 Log-Fold Change values in a barplot and allows '
+        'filtering based on p-value and standard error. If a taxonomy is '
+        'provided, features can be filtered by taxonomy using an interactive '
+        'tree.'
+    )
 )
 
 plugin.visualizers.register_function(

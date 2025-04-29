@@ -8,8 +8,11 @@
 import biom
 import formulaic
 from formulaic.parser.types import Token
+import importlib.resources
 import logging
 import pandas as pd
+import os
+from pathlib import Path
 from rpy2.robjects.conversion import Converter
 import rpy2.robjects.conversion as conversion
 from rpy2.robjects.packages import importr
@@ -18,6 +21,7 @@ from rpy2.robjects import pandas2ri, default_converter
 import rpy2.robjects as ro
 from rpy2.rinterface import NULL as RNULL
 from rpy2.rinterface_lib.callbacks import logger as rpy2_logger
+import shutil
 
 import qiime2
 from qiime2.metadata import NumericMetadataColumn, CategoricalMetadataColumn
@@ -826,3 +830,41 @@ def _process_structural_zeros(
         return column
 
     return structural_zeros_df.rename(lambda c: _rename(c), axis='columns')
+
+
+def ancombc2_visualizer(
+    output_dir: str,
+    slices: ANCOMBC2OutputDirFmt,
+    taxonomy: pd.DataFrame = None
+):
+    '''
+
+
+    Parameters
+    ----------
+    output_dir : str
+        The path to the data/ directory in the to-be-created visualization.
+    slices : ANCOMBC2SliceMapping
+        The ancombc2 slice data to visualize
+    taxonomy : pd.DataFrame | None
+        The taxonomy associated with the features present in `slices`.
+        Optional.
+    '''
+    slices_path = Path(output_dir) / 'slices'
+    os.mkdir(slices_path)
+    shutil.copytree(str(slices), slices_path, dirs_exist_ok=True)
+
+    dist_dir = (
+        importlib.resources.files('q2_composition') /
+        '_ancombc2_visualizer' / 'dist'
+    )
+    shutil.copytree(Path(str(dist_dir)), output_dir, dirs_exist_ok=True)
+
+    if taxonomy is not None:
+        # subset taxonomy to only features present in the ancombc2 slices
+        slice_map = transform(data=slices, to_type=ANCOMBC2SliceMapping)
+        slice_feature_ids = slice_map['lfc']['taxon'].unique()
+        taxonomy = taxonomy[taxonomy.index.isin(slice_feature_ids)]
+
+        taxonomy_fp = Path(output_dir) / 'taxonomy.tsv'
+        taxonomy.to_csv(str(taxonomy_fp), sep='\t')
