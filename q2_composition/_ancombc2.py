@@ -868,5 +868,14 @@ def ancombc2_visualizer(
         slice_feature_ids = slice_map['lfc']['taxon'].unique()
         taxonomy = taxonomy[taxonomy.index.isin(slice_feature_ids)]
 
+        if len(taxonomy) == 0:
+            msg = (
+                'No features remained in your taxonomy after intersecting '
+                'it with the features present in your ANCOMBC2 data. Ensure '
+                'that the taxonomy provided contains the features present in '
+                'the ANCOMBC2 slices.'
+            )
+            raise ValueError(msg)
+
         taxonomy_fp = Path(output_dir) / 'taxonomy.tsv'
         taxonomy.to_csv(str(taxonomy_fp), sep='\t')

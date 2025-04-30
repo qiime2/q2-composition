@@ -140,6 +140,9 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
     def test_ancombc2_visualizer(self):
         '''
+        Tests that the visualizer runs successfully, which is essentially a
+        test of whether or not the visualizer got built into the
+        q2_composition/_ancombc2_visualizer/dist/ folder successfully.
         '''
         abc2_output = ancombc2(
             table=self.biom_table,
@@ -151,6 +154,32 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
         with tempfile.TemporaryDirectory() as tempdir:
             ancombc2_visualizer(tempdir, abc2_output)
+
+    def test_ancombc2_visualizer_non_overlapping_taxonomy(self):
+        '''
+        Tests that an error is raised when attempting to visualize ancombc2
+        data with a taxonomy that contains none of the features present in the
+        ancombc2 data.
+        '''
+        abc2_output = ancombc2(
+            table=self.biom_table,
+            metadata=self.metadata,
+            fixed_effects_formula='body-site + year',
+            group='body-site',
+            structural_zeros=True
+        )
+
+        taxonomy_df = pd.DataFrame({
+            'Feature ID': ['feat1', 'feat2'],
+            'Taxon': ['taxon1', 'taxon2'],
+            'Confidence': [0.9, 0.95]
+        })
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            with self.assertRaisesRegex(
+                ValueError, 'No features remained in your taxonomy'
+            ):
+                ancombc2_visualizer(tempdir, abc2_output, taxonomy_df)
 
 
 class TestFormulaProcessing(TestANCOMBC2Base):
