@@ -834,17 +834,19 @@ def _process_structural_zeros(
 
 def ancombc2_visualizer(
     output_dir: str,
-    slices: ANCOMBC2OutputDirFmt,
+    data: ANCOMBC2OutputDirFmt,
     taxonomy: pd.DataFrame = None
 ):
     '''
-
+    Generates a diverging barplot of per-feature log-fold change values. If
+    a taxonomy is provided, an interactive taxonomy tree can be used to subset
+    the features displayed in th barplot.
 
     Parameters
     ----------
     output_dir : str
         The path to the data/ directory in the to-be-created visualization.
-    slices : ANCOMBC2SliceMapping
+    data : ANCOMBC2SliceMapping
         The ancombc2 slice data to visualize
     taxonomy : pd.DataFrame | None
         The taxonomy associated with the features present in `slices`.
@@ -852,7 +854,7 @@ def ancombc2_visualizer(
     '''
     slices_path = Path(output_dir) / 'slices'
     os.mkdir(slices_path)
-    shutil.copytree(str(slices), slices_path, dirs_exist_ok=True)
+    shutil.copytree(str(data), slices_path, dirs_exist_ok=True)
 
     dist_dir = (
         importlib.resources.files('q2_composition') /
@@ -862,7 +864,7 @@ def ancombc2_visualizer(
 
     if taxonomy is not None:
         # subset taxonomy to only features present in the ancombc2 slices
-        slice_map = transform(data=slices, to_type=ANCOMBC2SliceMapping)
+        slice_map = transform(data=data, to_type=ANCOMBC2SliceMapping)
         slice_feature_ids = slice_map['lfc']['taxon'].unique()
         taxonomy = taxonomy[taxonomy.index.isin(slice_feature_ids)]
 

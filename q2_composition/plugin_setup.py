@@ -270,7 +270,7 @@ plugin.methods.register_function(
     citations=[citations['lin2024multigroup']],
     examples={
         'single-variable': ex.ancombc2_single_formula,
-        'mutli-variable-reference':
+        'multi-variable-reference':
             ex.ancombc2_multi_formula_with_reference_levels,
     }
 )
@@ -278,15 +278,15 @@ plugin.methods.register_function(
 plugin.visualizers.register_function(
     function=q2_composition.ancombc2_visualizer,
     inputs={
-        'slices': FeatureData[ANCOMBC2Output],
+        'data': FeatureData[ANCOMBC2Output],
         'taxonomy': FeatureData[Taxonomy],
     },
     parameters={},
     input_descriptions={
-        'slices': 'The ANCOMBC2 output.',
+        'data': 'The ANCOMBC2 output to visualize.',
         'taxonomy': (
             'The taxonomy associated with the features present in the '
-            'ANCOMBC2 slices.'
+            'ANCOMBC2 data.'
         )
     },
     name='Visualize ANCOMBC2 output.',
@@ -295,18 +295,22 @@ plugin.visualizers.register_function(
         'filtering based on p-value and standard error. If a taxonomy is '
         'provided, features can be filtered by taxonomy using an interactive '
         'tree.'
-    )
+    ),
 )
 
 plugin.visualizers.register_function(
     function=q2_composition.tabulate,
     inputs={'data': FeatureData[DifferentialAbundance | ANCOMBC2Output]},
     parameters={},
-    input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
-    name=' View tabular output from ANCOM-BC.',
-    description='Generate tabular view of ANCOM-BC output, which includes'
-                ' per-page views for the log-fold change (lfc), standard error'
-                ' (se), P values, Q values, and W scores.',
+    input_descriptions={
+        'data': 'The ANCOM-BC or ANCOM-BC2 output to be tabulated.'
+    },
+    name=' View tabular output from ANCOM-BC or ANCOM-BC2.',
+    description=(
+        'Generate tabular view of ANCOM-BC or ANCOM-BC2 output, which includes'
+        ' per-page views for the log-fold change (lfc), standard error'
+        ' (se), P values, Q values, and W scores.'
+    ),
 )
 
 plugin.visualizers.register_function(
