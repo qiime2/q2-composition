@@ -18,10 +18,19 @@
         plot.init(features.view);
         plot.drawPlot(false);
     });
+
+    let referenceLevel = $derived(
+        features.getVariablesWithName(features.viewVariable)[0].reference,
+    );
 </script>
 
 <div class="grid grid-rows-subgrid row-span-2">
     <div id="barplot-svg-container" class="bg-white rounded overflow-scroll">
+        {#if features.viewVariableLevel != ""}
+            <h2 class="text-lg text-center mt-5 -mb-[60px]">
+                Reference Level: {referenceLevel}
+            </h2>
+        {/if}
         <svg></svg>
     </div>
     <div id="sidebar" class="flex w-full min-w-0 gap-1">

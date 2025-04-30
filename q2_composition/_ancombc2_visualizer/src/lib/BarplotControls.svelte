@@ -70,11 +70,11 @@
         <div class="flex gap-4 col-span-2">
             <p class="col-end-1">Bar Thickness:</p>
             <button
-                class="aspect-square"
+                class="aspect-square text-lg"
                 onclick={() => plot.decreaseBarThickness()}>-</button
             >
             <button
-                class="aspect-square"
+                class="aspect-square text-lg"
                 onclick={() => plot.increaseBarThickness()}>+</button
             >
         </div>
