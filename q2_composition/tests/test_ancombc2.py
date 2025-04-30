@@ -12,6 +12,7 @@ from pandas.testing import assert_frame_equal
 
 from pathlib import Path
 import tempfile
+import os
 import unittest
 
 import qiime2
