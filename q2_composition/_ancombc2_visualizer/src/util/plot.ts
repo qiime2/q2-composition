@@ -434,10 +434,26 @@ export class DivergingBarplot {
 
         const drawLabels = (selection: any) => {
             selection
-                .text((d) =>
-                    d.shortClassification ? d.shortClassification : d.featureId,
-                )
-                .attr("x", this.xScale(0))
+                .text((d) => {
+                    let classification = d.shortClassification
+                        ? d.shortClassification
+                        : d.featureId;
+
+                    if (classification.length > 30) {
+                        classification = classification.slice(0, 25) + "(...)";
+                    }
+
+                    return classification;
+                })
+                .attr("x", (d) => {
+                    if (d.lfc > 0) {
+                        return Math.min(
+                            this.xScale(d.lfc - d.se),
+                            this.xScale(0),
+                        );
+                    }
+                    return Math.max(this.xScale(d.lfc + d.se), this.xScale(0));
+                })
                 .attr(
                     "y",
                     (d, i) =>
@@ -445,6 +461,7 @@ export class DivergingBarplot {
                 )
                 .attr("text-anchor", (d) => (d.lfc > 0 ? "end" : "start"))
                 .attr("dx", (d) => (d.lfc > 0 ? -8 : 8))
+                .attr("dy", "1px")
                 .attr("font-size", "12px")
                 .attr("fill", "#474747");
         };
