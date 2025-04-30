@@ -154,6 +154,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
         with tempfile.TemporaryDirectory() as tempdir:
             ancombc2_visualizer(tempdir, abc2_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
 
     def test_ancombc2_visualizer_non_overlapping_taxonomy(self):
         '''
