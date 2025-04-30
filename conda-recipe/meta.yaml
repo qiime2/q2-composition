@@ -33,6 +33,7 @@ requirements:
   - python {{ python }}
   - setuptools
   - versioningit
+  - nodejs
 test:
   requires:
   - qiime2 >={{ qiime2 }}
