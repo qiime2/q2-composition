@@ -12,15 +12,18 @@ import numpy as np
 
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata,
-                           MetadataColumn, Categorical, Range)
+                           MetadataColumn, Categorical, Range, Threads)
 from q2_types.feature_table import FeatureTable, Frequency, Composition
 from q2_types.feature_data import FeatureData
 
 import q2_composition
-from q2_composition._type import DifferentialAbundance
-from q2_composition._format import (FrictionlessCSVFileFormat,
-                                    DataPackageSchemaFileFormat,
-                                    DataLoafPackageDirFmt)
+from q2_composition._type import DifferentialAbundance, ANCOMBC2Output
+from q2_composition._format import (
+    FrictionlessCSVFileFormat,
+    DataPackageSchemaFileFormat,
+    DataLoafPackageDirFmt,
+    ANCOMBC2OutputDirFmt,
+)
 import q2_composition._examples as ex
 
 citations = Citations.load('citations.bib', package='q2_composition')
@@ -35,11 +38,20 @@ plugin = Plugin(
     short_description='Plugin for compositional data analysis.'
 )
 
-plugin.register_formats(FrictionlessCSVFileFormat, DataPackageSchemaFileFormat,
-                        DataLoafPackageDirFmt)
+plugin.register_formats(
+    FrictionlessCSVFileFormat,
+    DataPackageSchemaFileFormat,
+    DataLoafPackageDirFmt,
+    ANCOMBC2OutputDirFmt,
+)
 
-plugin.register_semantic_type_to_format(FeatureData[DifferentialAbundance],
-                                        DataLoafPackageDirFmt)
+plugin.register_semantic_type_to_format(
+    FeatureData[DifferentialAbundance], DataLoafPackageDirFmt
+)
+
+plugin.register_semantic_type_to_format(
+    FeatureData[ANCOMBC2Output], ANCOMBC2OutputDirFmt
+)
 
 plugin.methods.register_function(
     function=q2_composition.add_pseudocount,
@@ -154,9 +166,118 @@ plugin.methods.register_function(
     }
 )
 
+plugin.methods.register_function(
+    function=q2_composition.ancombc2,
+    inputs={
+        'table': FeatureTable[Frequency],
+    },
+    parameters={
+        'metadata': Metadata,
+        'fixed_effects_formula': Str,
+        'random_effects_formula': Str,
+        'reference_levels': List[Str],
+        'p_adjust_method': Str,
+        'prevalence_cutoff': Float % Range(
+            0.0, 1.0, inclusive_start=True, inclusive_end=True
+        ),
+        'group': Str,
+        'structural_zeros': Bool,
+        'asymptotic_cutoff': Bool,
+        'alpha': Float % Range(
+            0.0, 1.0, inclusive_start=False, inclusive_end=True
+        ),
+        'num_processes': Threads,
+    },
+    outputs=[
+        ('ancombc2_output', FeatureData[ANCOMBC2Output])
+    ],
+    input_descriptions={
+        'table': 'The feature table to be used for ANCOM-BC2 computation.'
+    },
+    parameter_descriptions={
+        'metadata': 'The per-sample metadata.',
+        'fixed_effects_formula': (
+            'A formula that expresses how the feature absolute abundances in '
+            'the feature table depend on the fixed effects of variables '
+            '(columns) in the metadata. Do not include the dependent '
+            'variable. Reference the `formula` function in the `stats` R '
+            'package for a specification of valid formulae.'
+        ),
+        'random_effects_formula': (
+            'A formula that expresses how the feature absolute abundances in '
+            'the feature table depend on the random effects of variables '
+            '(columns) in the metadata. Do not include the dependent '
+            'variable. For example, to specify `MyVariable` as a random '
+            'intercept use the syntax `(1 | MyVariable)`. Reference the '
+            '`lmerTest` R package for a specification of valid formulae.'
+        ),
+        'reference_levels': (
+            'Specify reference levels for one or more categorical metadata '
+            'variables (columns). The method of specification is '
+            '"column_name::column_value". E.g. "sex::female" sets the '
+            '"female" category of the "sex" variable to be the reference '
+            'level. Separate multiple specifications by spaces.'
+        ),
+        'p_adjust_method': (
+            'The method used to adjust p-values. Choose from "holm", '
+            '"hochberg", "hommel", "bonferroni",  "BH", "BY", "fdr", "none". '
+            'See the `p.adjust` method in the `stats` R package for '
+            'explanations of each option.'
+        ),
+        'prevalence_cutoff': (
+            'Features with prevalences less than this threshold will be '
+            'excluded from the analysis.'
+        ),
+        'group': (
+            'The name of the group variable in the metadata. The group '
+            'variable must be categorical and is required to detect '
+            'structural zeros.'
+        ),
+        'structural_zeros': (
+            'Whether to detect structurual zeros based on the `group` '
+            'variable. Refer to the ANCOM-BC2 paper for an expalanation of '
+            'the use of structural zeros.'
+        ),
+        'asymptotic_cutoff': (
+            'Whether to classify a taxon as a structural zero using its '
+            'asymptotic lower bound. Generally, it is recommended to set '
+            'this parameter when the sample size per group is relatively '
+            'large (n > 30). When this parameter is not set, a feature is '
+            'classified as a structural zero in a group if its frequency is '
+            'zero in that group. See the ANCOM-BC2 publication for details.'
+        ),
+        'alpha': 'The significance level.',
+        'num_processes': (
+            'The number of processes to create that can be run in parallel.'
+        ),
+    },
+    output_descriptions={
+        'ancombc2_output': (
+            'The estimated log fold changes and their standard errors for '
+            'the variables included in the mixed effects model. Also includes '
+            'the structural zero designations if the `structural_zeros` '
+            'parameter is passed.'
+        )
+    },
+    name=(
+        'ANCOM-BC2: Analysis of Composition of Microbiomes with Bias '
+        'Correction 2.'
+    ),
+    description=(
+        'Calls the `ancombc2` function of the ANCOMBC software package. See '
+        'the ANCOM-BC2 publication and source code for details.'
+    ),
+    citations=[citations['lin2024multigroup']],
+    examples={
+        'single-variable': ex.ancombc2_single_formula,
+        'mutli-variable-reference':
+            ex.ancombc2_multi_formula_with_reference_levels,
+    }
+)
+
 plugin.visualizers.register_function(
     function=q2_composition.tabulate,
-    inputs={'data': FeatureData[DifferentialAbundance]},
+    inputs={'data': FeatureData[DifferentialAbundance | ANCOMBC2Output]},
     parameters={},
     input_descriptions={'data': 'The ANCOM-BC output to be tabulated.'},
     name=' View tabular output from ANCOM-BC.',

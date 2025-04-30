@@ -6,36 +6,24 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
-import pandas as pd
 import importlib.resources
 import os
-import json
 
 import q2templates
 
-from q2_composition._format import (DataLoafPackageDirFmt,
-                                    DataPackageSchemaFileFormat,
-                                    FrictionlessCSVFileFormat)
+from q2_composition._format import ANCOMBC2SliceMapping
 
 
-def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
+def tabulate(output_dir: str, data: ANCOMBC2SliceMapping):
     # setup for the index.html page
     ASSETS = importlib.resources.files('q2_composition') / '_dataloaf_tabulate'
     index = os.path.join(ASSETS, 'assets', 'index.html')
 
     # restructuring input data
-    slices = data.data_slices.iter_views(FrictionlessCSVFileFormat)
-    slice_md = data.nutrition_facts.view(DataPackageSchemaFileFormat)
-
-    with open(str(slice_md)) as fh:
-        slice_md_json = json.load(fh)
-
     slice_names = []
     slice_contents = []
 
-    for slice in slices:
-        slice_name = str(slice[0]).split('_slice')[0]
-        slice_df = slice[1].view(pd.DataFrame)
+    for slice_name, slice_df in data.items():
         idx = str(slice_df.columns[0])
         slice_df = slice_df.set_index(idx)
         slice_html = q2templates.df_to_html(slice_df)
@@ -46,18 +34,14 @@ def tabulate(output_dir: str, data: DataLoafPackageDirFmt):
     slice_tables = zip(slice_names, slice_contents)
 
     # Filling in the table that will appear on index.html
-    intercept = slice_md_json['metadata']['intercept_groups']
-    if isinstance(intercept, str):
-        intercept = [intercept]
-
-    if len(intercept) == 1:
+    if len(data.intercepts) == 1:
         context = {
-            'intercept_single': intercept[0],
+            'intercept_single': data.intercepts[0],
             'tables': slice_tables
         }
     else:
         context = {
-            'intercept_multi': intercept,
+            'intercept_multi': data.intercepts,
             'tables': slice_tables
         }
     # Render the results using q2templates

@@ -9,5 +9,11 @@
 from qiime2.plugin import SemanticType
 from q2_types.feature_data import FeatureData
 
-DifferentialAbundance = SemanticType('DifferentialAbundance',
-                                     variant_of=FeatureData.field['type'])
+
+DifferentialAbundance = SemanticType(
+    'DifferentialAbundance', variant_of=FeatureData.field['type']
+)
+
+ANCOMBC2Output = SemanticType(
+    'ANCOMBC2Output', variant_of=FeatureData.field['type']
+)
