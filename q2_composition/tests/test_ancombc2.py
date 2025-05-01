@@ -11,6 +11,8 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 
 from pathlib import Path
+import tempfile
+import os
 import unittest
 
 import qiime2
@@ -21,7 +23,7 @@ from q2_composition._ancombc2 import (
     r_base, ancombc2, _process_formula, _convert_metadata, _split_into_slices,
     _rename_variables_post, _is_categorical, _parse_variable_and_level,
     _deduce_reference_levels, _process_categorical_variables,
-    _process_structural_zeros,
+    _process_structural_zeros, ancombc2_visualizer
 )
 from q2_composition._format import ANCOMBC2SliceMapping
 
@@ -136,6 +138,50 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
         # three levels, so one reference and other two in the output
         self.assertEqual(len(variable_with_spaces_columns), 2)
+
+    def test_ancombc2_visualizer(self):
+        '''
+        Tests that the visualizer runs successfully, which is essentially a
+        test of whether or not the visualizer got built into the
+        q2_composition/_ancombc2_visualizer/dist/ folder successfully.
+        '''
+        abc2_output = ancombc2(
+            table=self.biom_table,
+            metadata=self.metadata,
+            fixed_effects_formula='body-site + year',
+            group='body-site',
+            structural_zeros=True
+        )
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            ancombc2_visualizer(tempdir, abc2_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
+
+    def test_ancombc2_visualizer_non_overlapping_taxonomy(self):
+        '''
+        Tests that an error is raised when attempting to visualize ancombc2
+        data with a taxonomy that contains none of the features present in the
+        ancombc2 data.
+        '''
+        abc2_output = ancombc2(
+            table=self.biom_table,
+            metadata=self.metadata,
+            fixed_effects_formula='body-site + year',
+            group='body-site',
+            structural_zeros=True
+        )
+
+        taxonomy_df = pd.DataFrame({
+            'Feature ID': ['feat1', 'feat2'],
+            'Taxon': ['taxon1', 'taxon2'],
+            'Confidence': [0.9, 0.95]
+        })
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            with self.assertRaisesRegex(
+                ValueError, 'No features remained in your taxonomy'
+            ):
+                ancombc2_visualizer(tempdir, abc2_output, taxonomy_df)
 
 
 class TestFormulaProcessing(TestANCOMBC2Base):
