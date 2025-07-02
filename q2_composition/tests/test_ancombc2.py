@@ -76,9 +76,13 @@ class TestANCOMBC2(TestANCOMBC2Base):
         in the metadata. These methods are tested elsewhere.
         '''
         model_stats_fp = self.test_data_fp / 'r-model-statistics.tsv'
-        ground_truth_model_stats = pd.read_csv(model_stats_fp, sep='\t')
+        ground_truth_model_stats = pd.read_csv(
+            model_stats_fp, sep='\t', dtype={'taxon': 'string'}
+        )
         structural_zeros_fp = self.test_data_fp / 'r-structural-zeros.tsv'
-        ground_truth_struc_zeros = pd.read_csv(structural_zeros_fp, sep='\t')
+        ground_truth_struc_zeros = pd.read_csv(
+            structural_zeros_fp, sep='\t', dtype={'taxon': 'string'}
+        )
 
         with unittest.mock.patch(
             'q2_composition._ancombc2._rename_variables_post',
