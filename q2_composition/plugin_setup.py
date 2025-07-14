@@ -266,6 +266,15 @@ plugin.methods.register_function(
     description=(
         'Calls the `ancombc2` function of the ANCOMBC software package. See '
         'the ANCOM-BC2 publication and source code for details.'
+        '\n\nSensitivity Analysis for Pseudo-Count Addition: To assess '
+        'robustness, a series of pseudo-counts (0.01 to 0.5, in 0.01 '
+        'increments) is added to zero counts, and a linear model is fitted to '
+        'the bias-corrected log-abundance data for each. A sensitivity score '
+        'is calculated as the proportion of p-values above the specified '
+        'alpha. Taxa with consistent significance across all pseudo-counts, '
+        'and agreement with complete-data results, are flagged as robust '
+        '(diff_robust = TRUE). Note: Results depend on the selected alpha '
+        'value.'
     ),
     citations=[citations['lin2024multigroup']],
     examples={
