@@ -59,9 +59,9 @@ class AncomTests(TestPluginBase):
                           index_col=0, sep='\t')
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 2, 2, 2, 2, 2]),
-             'Reject null hypothesis': np.array([True, True, False, False,
-                                                 False, False, False],
-                                                dtype=bool)},
+             'Signif': np.array(
+                [True, True, False, False, False, False, False],
+                dtype=bool)},
             index=self.example_obs,)
         pdt.assert_frame_equal(res, exp)
 
@@ -94,9 +94,9 @@ class AncomTests(TestPluginBase):
                           index_col=0, sep='\t')
         exp = pd.DataFrame(
             {'W': np.array([5, 5, 3, 3, 2, 2, 2]),
-             'Reject null hypothesis': np.array([True, True, False, False,
-                                                 False, False, False],
-                                                dtype=bool)},
+             'Signif': np.array(
+                 [True, True, False, False, False, False, False],
+                 dtype=bool)},
             index=self.example_obs)
         pdt.assert_frame_equal(res, exp)
 
