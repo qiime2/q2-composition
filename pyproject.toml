@@ -51,3 +51,6 @@ include = ["q2_composition*"]
 
 [tool.setuptools.package-data]
 q2_composition = ["**/*"]
+
+[tool.setuptools.exclude-package-data]
+q2_composition = ["**/node_modules/**"]
