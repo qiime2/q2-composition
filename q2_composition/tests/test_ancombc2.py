@@ -41,6 +41,18 @@ class TestANCOMBC2Base(unittest.TestCase):
 
 
 class TestANCOMBC2(TestANCOMBC2Base):
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        cls.abc2_output = ancombc2(
+            table=cls.biom_table,
+            metadata=cls.metadata,
+            fixed_effects_formula='body-site + year',
+            group='body-site',
+            structural_zeros=True
+        )
+
     def _slices_to_single_df(
         self, slices: ANCOMBC2SliceMapping
     ) -> pd.DataFrame:
@@ -149,16 +161,8 @@ class TestANCOMBC2(TestANCOMBC2Base):
         test of whether or not the visualizer got built into the
         q2_composition/_ancombc2_visualizer/dist/ folder successfully.
         '''
-        abc2_output = ancombc2(
-            table=self.biom_table,
-            metadata=self.metadata,
-            fixed_effects_formula='body-site + year',
-            group='body-site',
-            structural_zeros=True
-        )
-
         with tempfile.TemporaryDirectory() as tempdir:
-            ancombc2_visualizer(tempdir, abc2_output)
+            ancombc2_visualizer(tempdir, self.abc2_output)
             assert os.path.exists(os.path.join(tempdir, 'index.html'))
 
     def test_ancombc2_visualizer_non_overlapping_taxonomy(self):
@@ -167,14 +171,6 @@ class TestANCOMBC2(TestANCOMBC2Base):
         data with a taxonomy that contains none of the features present in the
         ancombc2 data.
         '''
-        abc2_output = ancombc2(
-            table=self.biom_table,
-            metadata=self.metadata,
-            fixed_effects_formula='body-site + year',
-            group='body-site',
-            structural_zeros=True
-        )
-
         taxonomy_df = pd.DataFrame({
             'Feature ID': ['feat1', 'feat2'],
             'Taxon': ['taxon1', 'taxon2'],
@@ -185,7 +181,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
             with self.assertRaisesRegex(
                 ValueError, 'No features remained in your taxonomy'
             ):
-                ancombc2_visualizer(tempdir, abc2_output, taxonomy_df)
+                ancombc2_visualizer(tempdir, self.abc2_output, taxonomy_df)
 
 
 class TestFormulaProcessing(TestANCOMBC2Base):

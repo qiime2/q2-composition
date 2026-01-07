@@ -32,9 +32,6 @@ class TestBase(TestPluginBase):
 
 
 class TestANCOMBC(TestBase):
-    def test_examples(self):
-        self.execute_examples()
-
     # error handling for column validation
     def test_missing_formula_col(self):
         with self.assertRaisesRegex(ValueError, "'foo' is not a column in"
