@@ -63,10 +63,10 @@ def ancom(output_dir: str,
                                 metadata,
                                 significance_test=f_oneway)
     ancom_results[0].sort_values(by='W', ascending=False, inplace=True)
-    ancom_results[0].rename(columns={'reject': 'Reject null hypothesis'},
+    ancom_results[0].rename(columns={'reject': 'Signif'},
                             inplace=True)
     significant_features = ancom_results[0][
-        ancom_results[0]['Reject null hypothesis']]
+        ancom_results[0]['Signif']]
 
     context = dict()
     if not significant_features.empty:
