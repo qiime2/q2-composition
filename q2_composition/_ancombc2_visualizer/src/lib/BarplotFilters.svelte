@@ -60,6 +60,8 @@
     function getSymbol(relationship: string) {
         if (relationship == "gt") return ">";
         if (relationship == "lt") return "<";
+        if (relationship == 'gtabsval') return "> (abs)";
+        if (relationship == 'ltabsval') return "< (abs)";
     }
 
     function remove(slice: string, relationship: string, value: number) {
@@ -101,6 +103,8 @@
             >
                 <option value="gt">greater than</option>
                 <option value="lt">less than</option>
+                <option value='gtabsval'>greater than (absolute value)</option>
+                <option value='ltabsval'>less than (absolute value)</option>
             </select>
         </div>
         <div class="grid grid-cols-subgrid col-span-2">
