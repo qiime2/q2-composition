@@ -189,6 +189,8 @@ export class FeatureRecords {
 
             if (relationship == "gt") return variableValue > value;
             if (relationship == "lt") return variableValue < value;
+            if (relationship == 'gtabsval') return Math.abs(variableValue) > value;
+            if (relationship == 'ltabsval') return Math.abs(variableValue) < value;
 
             throw new Error(`Unexpected relationship ${relationship}.`);
         };
