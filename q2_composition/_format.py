@@ -43,7 +43,7 @@ class DataLoafPackageDirFmt(model.DirectoryFormat):
 
 class ANCOMBC2OutputDirFmt(model.DirectoryFormat):
     '''
-    Stores the model statistics and optionally the structural zeros table=
+    Stores the model statistics and optionally the structural zeros table
     output by the ANCOMBC2 method.
 
     The slices are:
@@ -53,9 +53,12 @@ class ANCOMBC2OutputDirFmt(model.DirectoryFormat):
         - p: p-value
         - q: adjusted p-value
         - diff: differentially abundant boolean (i.e. q < alpha)
+        - diff_robust: robust diff abun boolean (q < alpha AND passed_ss)
         - passed_ss: whether sensitivity analysis was passed
     '''
-    REQUIRED_SLICES = ('lfc', 'se', 'W', 'p', 'q', 'diff', 'passed_ss')
+    REQUIRED_SLICES = (
+        'lfc', 'se', 'W', 'p', 'q', 'diff', 'diff_robust', 'passed_ss'
+    )
     ALL_SLICES = REQUIRED_SLICES + ('structural_zeros',)
 
     # required slices
@@ -65,6 +68,7 @@ class ANCOMBC2OutputDirFmt(model.DirectoryFormat):
     p = model.File('p.jsonl', format=TableJSONLFileFormat)
     q = model.File('q.jsonl', format=TableJSONLFileFormat)
     diff = model.File('diff.jsonl', format=TableJSONLFileFormat)
+    diff_robust = model.File('diff_robust.jsonl', format=TableJSONLFileFormat)
     passed_ss = model.File('passed_ss.jsonl', format=TableJSONLFileFormat)
 
     # optional slice

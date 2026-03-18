@@ -499,10 +499,7 @@ def _get_none_converter() -> Converter:
 def _split_into_slices(model_statistics: pd.DataFrame) -> ANCOMBC2SliceMapping:
     '''
     Splits the single-table model statistics output by ANCOMBC2 into per-slice
-    dataframes. The slices are: lfc (log-fold change), se (standard error),
-    W (lfc / se), p (p-value), q (adjusted p-value), diff (whether
-    differentially abundant given q and alpha), passed_ss (whether sensitivity
-    analysis was passed).
+    dataframes. See the `ANCOMBC2OutputDirFmt` for a description of the slices.
 
     Parameters
     ----------
@@ -515,13 +512,23 @@ def _split_into_slices(model_statistics: pd.DataFrame) -> ANCOMBC2SliceMapping:
     ANCOMBC2SliceMapping
         A dictionary mapping the name of the slice to the slice's columns.
     '''
+    model_statistics = model_statistics.copy(deep=True)
     slices = ANCOMBC2SliceMapping()
-    for slice_name in ANCOMBC2OutputDirFmt.REQUIRED_SLICES:
+
+    # sort slice names by decreasing length so that a slice name that is
+    # a prefix of another can not grab prefix-containing columns
+    slice_names = list(ANCOMBC2OutputDirFmt.REQUIRED_SLICES)
+    slice_names.sort(key=lambda name: len(name), reverse=True)
+
+    for slice_name in slice_names:
         # subset model statistics to columns from slice of interest
         slice_columns = model_statistics.columns[
             model_statistics.columns.str.startswith(f'{slice_name}_')
         ]
         slice_df = model_statistics[slice_columns]
+
+        # remove processsed columns to solve prefix issue
+        model_statistics.drop(slice_columns, axis=1, inplace=True)
 
         # include taxon column in each slice
         slice_df.insert(0, 'taxon', model_statistics['taxon'])
