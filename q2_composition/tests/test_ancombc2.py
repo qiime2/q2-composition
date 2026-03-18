@@ -10,9 +10,10 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-from pathlib import Path
-import tempfile
 import os
+from pathlib import Path
+import subprocess
+import tempfile
 import unittest
 
 import qiime2
@@ -76,9 +77,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
     def test_wrapped_ancombc2(self):
         '''
         Assert that ancombc2 called through qiime2 results in the same output
-        as when it is called in R. The `r-model-statistics.tsv` and
-        `r-structural-zeros.tsv` files were obtained by running ANCOMBC2 in R
-        using the moving pictures tutorial data.
+        as when it is called in R.
 
         Note: the `_rename_variables_post` and `_process_structural_zeros`
         functions are patched so that column names are shared between the R
@@ -87,14 +86,32 @@ class TestANCOMBC2(TestANCOMBC2Base):
         columns have not been renamed and are thus not detected as categorical
         in the metadata. These methods are tested elsewhere.
         '''
-        model_stats_fp = self.test_data_fp / 'r-model-statistics.tsv'
-        ground_truth_model_stats = pd.read_csv(
-            model_stats_fp, sep='\t', dtype={'taxon': 'string'}
-        )
-        structural_zeros_fp = self.test_data_fp / 'r-structural-zeros.tsv'
-        ground_truth_struc_zeros = pd.read_csv(
-            structural_zeros_fp, sep='\t', dtype={'taxon': 'string'}
-        )
+        # generate "ground truth" data
+        with tempfile.TemporaryDirectory() as tempdir:
+            script_fp = self.test_data_fp / 'run_ancombc2.R'
+            metadata_fp = self.test_data_fp / 'metadata.tsv'
+            feature_table_fp = Path(tempdir) / 'feature-table.tsv'
+            output_dir_fp = Path(tempdir)
+
+            df = self.biom_table.to_dataframe()
+            df.to_csv(feature_table_fp, sep='\t')
+
+            subprocess.run([
+                'Rscript',
+                script_fp,
+                feature_table_fp,
+                metadata_fp,
+                output_dir_fp
+            ])
+
+            model_stats_fp = Path(tempdir) / 'abc2-output.tsv'
+            structural_zeros_fp = Path(tempdir) / 'abc2-struc-zeros.tsv'
+            ground_truth_model_stats = pd.read_csv(
+                model_stats_fp, sep='\t', dtype={'taxon': 'string'}
+            )
+            ground_truth_struc_zeros = pd.read_csv(
+                structural_zeros_fp, sep='\t', dtype={'taxon': 'string'}
+            )
 
         with unittest.mock.patch(
             'q2_composition._ancombc2._rename_variables_post',
@@ -116,8 +133,12 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
         struc_zeros = output_format.structural_zeros.view(pd.DataFrame)
 
-        assert_frame_equal(ground_truth_model_stats, model_stats)
-        assert_frame_equal(ground_truth_struc_zeros, struc_zeros)
+        assert_frame_equal(
+            ground_truth_model_stats, model_stats, check_like=True
+        )
+        assert_frame_equal(
+            ground_truth_struc_zeros, struc_zeros, check_like=True
+        )
 
     def test_group_enforced_if_structural_zeros(self):
         '''
