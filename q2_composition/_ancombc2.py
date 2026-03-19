@@ -49,6 +49,7 @@ def ancombc2(
     structural_zeros: bool = False,
     asymptotic_cutoff: bool = False,
     alpha: float = 0.05,
+    diff_robust: bool = False,
     num_processes: int = 1,
 ) -> ANCOMBC2OutputDirFmt:
     '''
@@ -111,7 +112,7 @@ def ancombc2(
             model_statistics
         )
 
-    slices = _split_into_slices(model_statistics_df)
+    slices = _split_into_slices(model_statistics_df, diff_robust)
 
     structural_zeros = output[output.names.index('zero_ind')]
     if structural_zeros != RNULL:
@@ -496,7 +497,9 @@ def _get_none_converter() -> Converter:
     return converter
 
 
-def _split_into_slices(model_statistics: pd.DataFrame) -> ANCOMBC2SliceMapping:
+def _split_into_slices(
+    model_statistics: pd.DataFrame, diff_robust: bool = False
+) -> ANCOMBC2SliceMapping:
     '''
     Splits the single-table model statistics output by ANCOMBC2 into per-slice
     dataframes. See the `ANCOMBC2OutputDirFmt` for a description of the slices.
@@ -506,6 +509,8 @@ def _split_into_slices(model_statistics: pd.DataFrame) -> ANCOMBC2SliceMapping:
     model_statistics : pd.DataFrame
         A dataframe containing all of the above detailed columns for each
         variable in the model.
+    diff_robust : bool
+        Whether to parse the "diff_robust" columns from the ANCOMBC2 output.
 
     Returns
     -------
@@ -514,11 +519,18 @@ def _split_into_slices(model_statistics: pd.DataFrame) -> ANCOMBC2SliceMapping:
     '''
     model_statistics = model_statistics.copy(deep=True)
     slices = ANCOMBC2SliceMapping()
-
-    # sort slice names by decreasing length so that a slice name that is
-    # a prefix of another can not grab prefix-containing columns
     slice_names = list(ANCOMBC2OutputDirFmt.REQUIRED_SLICES)
-    slice_names.sort(key=lambda name: len(name), reverse=True)
+
+    if not diff_robust:
+        diff_robust_columns = model_statistics.columns[
+            model_statistics.columns.str.startswith('diff_robust_')
+        ]
+        model_statistics.drop(diff_robust_columns, axis=1, inplace=True)
+    else:
+        slice_names.append('diff_robust')
+        # sort slice names by decreasing length so that a slice name that is
+        # a prefix of another can not grab prefix-containing columns
+        slice_names.sort(key=lambda name: len(name), reverse=True)
 
     for slice_name in slice_names:
         # subset model statistics to columns from slice of interest

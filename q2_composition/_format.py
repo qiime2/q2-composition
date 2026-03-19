@@ -57,9 +57,9 @@ class ANCOMBC2OutputDirFmt(model.DirectoryFormat):
         - passed_ss: whether sensitivity analysis was passed
     '''
     REQUIRED_SLICES = (
-        'lfc', 'se', 'W', 'p', 'q', 'diff', 'diff_robust', 'passed_ss'
+        'lfc', 'se', 'W', 'p', 'q', 'diff',  'passed_ss'
     )
-    ALL_SLICES = REQUIRED_SLICES + ('structural_zeros',)
+    ALL_SLICES = REQUIRED_SLICES + ('structural_zeros', 'diff_robust')
 
     # required slices
     lfc = model.File('lfc.jsonl', format=TableJSONLFileFormat)
@@ -68,10 +68,12 @@ class ANCOMBC2OutputDirFmt(model.DirectoryFormat):
     p = model.File('p.jsonl', format=TableJSONLFileFormat)
     q = model.File('q.jsonl', format=TableJSONLFileFormat)
     diff = model.File('diff.jsonl', format=TableJSONLFileFormat)
-    diff_robust = model.File('diff_robust.jsonl', format=TableJSONLFileFormat)
     passed_ss = model.File('passed_ss.jsonl', format=TableJSONLFileFormat)
 
-    # optional slice
+    # optional slices
+    diff_robust = model.File(
+        'diff_robust.jsonl', format=TableJSONLFileFormat, optional=True
+    )
     structural_zeros = model.File(
         'structural-zeros.jsonl', format=TableJSONLFileFormat, optional=True
     )
