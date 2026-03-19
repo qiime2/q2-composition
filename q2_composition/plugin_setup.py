@@ -186,6 +186,7 @@ plugin.methods.register_function(
         'alpha': Float % Range(
             0.0, 1.0, inclusive_start=False, inclusive_end=True
         ),
+        'diff_robust': Bool,
         'num_processes': Threads,
     },
     outputs=[
@@ -247,6 +248,11 @@ plugin.methods.register_function(
             'zero in that group. See the ANCOM-BC2 publication for details.'
         ),
         'alpha': 'The significance level.',
+        'diff_robust': (
+            'Whether to include `diff_robust` columns in the output. The '
+            '`diff_robust` values are true where q < alpha AND sensitivity '
+            'analysis was passed, and false otherwise.'
+        ),
         'num_processes': (
             'The number of processes to create that can be run in parallel.'
         ),

@@ -125,7 +125,8 @@ class TestANCOMBC2(TestANCOMBC2Base):
                 metadata=self.metadata,
                 fixed_effects_formula='body-site + year',
                 group='body-site',
-                structural_zeros=True
+                structural_zeros=True,
+                diff_robust=True,
             )
 
         slices = transform(data=output_format, to_type=ANCOMBC2SliceMapping)
@@ -139,6 +140,14 @@ class TestANCOMBC2(TestANCOMBC2Base):
         assert_frame_equal(
             ground_truth_struc_zeros, struc_zeros, check_like=True
         )
+
+    def test_ancombc2_without_diff_robust(self):
+        '''
+        Ensure that the `diff_robust` slice is not present by default in the
+        output format.
+        '''
+        slices = transform(data=self.abc2_output, to_type=ANCOMBC2SliceMapping)
+        self.assertNotIn('diff_robust', slices)
 
     def test_group_enforced_if_structural_zeros(self):
         '''
