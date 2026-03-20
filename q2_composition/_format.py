@@ -57,7 +57,7 @@ class ANCOMBC2OutputDirFmt(model.DirectoryFormat):
         - passed_ss: whether sensitivity analysis was passed
     '''
     REQUIRED_SLICES = (
-        'lfc', 'se', 'W', 'p', 'q', 'diff',  'passed_ss'
+        'lfc', 'se', 'W', 'p', 'q', 'diff', 'passed_ss'
     )
     ALL_SLICES = REQUIRED_SLICES + ('structural_zeros', 'diff_robust')
 
