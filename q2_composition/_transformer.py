@@ -42,7 +42,7 @@ def _12(format: DataLoafPackageDirFmt) -> ANCOMBC2SliceMapping:
 
     slices = ANCOMBC2SliceMapping()
     slices.intercepts = intercepts
-    
+
     name_map = {
         'lfc': 'lfc',
         'se': 'se',
@@ -68,7 +68,7 @@ def _2(slices: ANCOMBC2SliceMapping) -> ANCOMBC2OutputDirFmt:
     for slice_name, slice_df in slices.items():
         format_slice = format.__getattribute__(slice_name)
         format_slice.write_data(slice_df, pd.DataFrame)
-    
+
     extra_files = ['diff', 'passed_ss']
     if not any(file in slices.keys() for file in extra_files):
         header = {
@@ -88,13 +88,12 @@ def _2(slices: ANCOMBC2SliceMapping) -> ANCOMBC2OutputDirFmt:
             "description": "",
             "extra": {}
         }
-        
+
         for file in extra_files:
             output_path = os.path.join(format.path, file + '.jsonl')
             with open(output_path, 'w') as f:
-                f.write(json.dumps(header, separators=(',', ':')) + "\n")    
-            
-        
+                f.write(json.dumps(header, separators=(',', ':')) + "\n")
+
         return format
 
 
@@ -130,67 +129,9 @@ def _3(format: ANCOMBC2OutputDirFmt) -> ANCOMBC2SliceMapping:
 
     return slices
 
+
 @plugin.register_transformer
-def _5(format:DataLoafPackageDirFmt) -> ANCOMBC2OutputDirFmt:
+def _5(format: DataLoafPackageDirFmt) -> ANCOMBC2OutputDirFmt:
     slice_format = _12(format)
     ancombc2_format = _2(slice_format)
     return ancombc2_format
-    
-
-# @plugin.register_transformer
-# def _4(format: DataLoafPackageDirFmt) -> ANCOMBC2OutputDirFmt:
-#     ANCOMBC2_output = ANCOMBC2OutputDirFmt()
-    
-#     header = {
-#         "doctype": {
-#             "name": "table.jsonl",
-#             "format": "application/x-json-lines",
-#             "version": "1.0"
-#         },
-#         "direction": "row",
-#         "style": "key:value",
-#         "fields": [
-#             {"name": "taxon", "type": "string", "missing": False},
-#             {"name": "(Intercept)", "type": "number", "missing": False}
-#         ],
-#         "index": [],
-#         "title": "",
-#         "description": "",
-#         "extra": {}
-#     }
-    
-#     for file in os.listdir(format.path):
-#         if not file.endswith('.csv'):
-#             continue
-        
-#         input_path = os.path.join(format.path, file)
-#         file_name = str(file).replace('_slice.csv', '')
-#         file_name = file_name.replace('_val', '')
-#         if file_name == 'w':
-#             file_name = file_name.upper()
-#         file_name = file_name + '.jsonl'
-#         output_path = os.path.join(ANCOMBC2_output.path, file_name)
-        
-#         df = pd.read_csv(input_path)
-#         json_file = df.to_json(output_path)
-        
-#         json_file = json.load(open(output_path))
-#         n = len(json_file["id"])
-        
-#         with open(output_path, "w") as f:
-#             f.write(json.dumps(header, separators=(',', ':')) + "\n")
-        
-#             for i in range(n):
-#                 row = {
-#                     "taxon": json_file["id"][str(i)],
-#                     "(Intercept)": json_file["(Intercept)"][str(i)]
-#                 }
-#                 f.write(json.dumps(row) + "\n")
-        
-#         extra_files = ['diff.jsonl', 'passed_ss.jsonl']
-#         for file in extra_files:
-#             output_path = os.path.join(ANCOMBC2_output.path, file)
-#             with open(output_path, 'w') as f:
-#                 f.write(json.dumps(header, separators=(',', ':')) + "\n")
-
-#     return ANCOMBC2_output

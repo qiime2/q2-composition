@@ -854,6 +854,7 @@ def _process_structural_zeros(
 
     return structural_zeros_df.rename(lambda c: _rename(c), axis='columns')
 
+
 def ancombc2_visualizer(
     output_dir: str,
     data: Union[ANCOMBC2OutputDirFmt, DataLoafPackageDirFmt],
