@@ -12,9 +12,7 @@
     const fetchPromise = fetch(taxonomyPath);
 
     const taxonomyPromise = fetchPromise.then((response) => {
-        console.log("response", response);
         if (response.ok) {
-            console.log("parsing taxonomy");
             return parseTaxonomy(taxonomyPath);
         } else {
             return Promise.resolve(null);

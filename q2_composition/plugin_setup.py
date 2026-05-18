@@ -6,6 +6,7 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import qiime2
 import importlib
 
 import numpy as np
@@ -293,7 +294,7 @@ plugin.methods.register_function(
 plugin.visualizers.register_function(
     function=q2_composition.ancombc2_visualizer,
     inputs={
-        'data': FeatureData[ANCOMBC2Output],
+        'data': FeatureData[DifferentialAbundance | ANCOMBC2Output],
         'taxonomy': FeatureData[Taxonomy],
     },
     parameters={},

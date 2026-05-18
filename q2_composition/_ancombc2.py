@@ -26,8 +26,12 @@ import shutil
 import qiime2
 from qiime2.metadata import NumericMetadataColumn, CategoricalMetadataColumn
 from qiime2.plugin.util import transform
+from typing import Union
 
-from q2_composition._format import ANCOMBC2OutputDirFmt, ANCOMBC2SliceMapping
+from q2_composition._format import (
+    ANCOMBC2OutputDirFmt, ANCOMBC2SliceMapping, DataLoafPackageDirFmt
+)
+
 
 r_base = importr('base')
 r_stats = importr('stats')
@@ -850,10 +854,9 @@ def _process_structural_zeros(
 
     return structural_zeros_df.rename(lambda c: _rename(c), axis='columns')
 
-
 def ancombc2_visualizer(
     output_dir: str,
-    data: ANCOMBC2OutputDirFmt,
+    data: Union[ANCOMBC2OutputDirFmt, DataLoafPackageDirFmt],
     taxonomy: pd.DataFrame = None
 ):
     '''
@@ -884,7 +887,10 @@ def ancombc2_visualizer(
     if taxonomy is not None:
         # subset taxonomy to only features present in the ancombc2 slices
         slice_map = transform(data=data, to_type=ANCOMBC2SliceMapping)
-        slice_feature_ids = slice_map['lfc']['taxon'].unique()
+        try:
+            slice_feature_ids = slice_map['lfc']['taxon'].unique()
+        except KeyError:
+            slice_feature_ids = slice_map['lfc']['id'].unique()
         taxonomy = taxonomy[taxonomy.index.isin(slice_feature_ids)]
 
         if len(taxonomy) == 0:
