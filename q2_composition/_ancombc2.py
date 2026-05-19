@@ -32,7 +32,6 @@ from q2_composition._format import (
     ANCOMBC2OutputDirFmt, ANCOMBC2SliceMapping, DataLoafPackageDirFmt
 )
 
-
 r_base = importr('base')
 r_stats = importr('stats')
 r_phyloseq = importr('phyloseq')
@@ -855,7 +854,7 @@ def _process_structural_zeros(
     return structural_zeros_df.rename(lambda c: _rename(c), axis='columns')
 
 
-def ancombc2_visualizer(
+def da_barplot(
     output_dir: str,
     data: Union[ANCOMBC2OutputDirFmt, DataLoafPackageDirFmt],
     taxonomy: pd.DataFrame = None
@@ -881,7 +880,7 @@ def ancombc2_visualizer(
 
     dist_dir = (
         importlib.resources.files('q2_composition') /
-        '_ancombc2_visualizer' / 'dist'
+        '_da_barplot' / 'dist'
     )
     shutil.copytree(Path(str(dist_dir)), output_dir, dirs_exist_ok=True)
 

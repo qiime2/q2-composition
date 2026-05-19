@@ -21,14 +21,14 @@ dev: all
 	pip install -e .
 
 clean: distclean
-	rm -rf q2_composition/_ancombc2_visualizer/node_modules
+	rm -rf q2_composition/_da_barplot/node_modules
 
 distclean:
-	rm -rf q2_composition/_ancombc2_visualizer/dist/
+	rm -rf q2_composition/_da_barplot/dist/
 
-q2_composition/_ancombc2_visualizer/dist:
-	cd q2_composition/_ancombc2_visualizer/ && \
+q2_composition/_da_barplot/dist:
+	cd q2_composition/_da_barplot/ && \
 	npm install && \
 	npm run build
 
-ancombc2-visualizer: q2_composition/_ancombc2_visualizer/dist
+ancombc2-visualizer: q2_composition/_da_barplot/dist

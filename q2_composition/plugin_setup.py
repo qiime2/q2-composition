@@ -291,25 +291,24 @@ plugin.methods.register_function(
 )
 
 plugin.visualizers.register_function(
-    function=q2_composition.ancombc2_visualizer,
+    function=q2_composition.da_barplot,
     inputs={
         'data': FeatureData[DifferentialAbundance | ANCOMBC2Output],
         'taxonomy': FeatureData[Taxonomy],
     },
     parameters={},
     input_descriptions={
-        'data': 'The ANCOMBC2 output to visualize.',
+        'data': 'The ANCOMBC or ANCOMBC2 output to visualize.',
         'taxonomy': (
-            'The taxonomy associated with the features present in the '
-            'ANCOMBC2 data.'
+            'The taxonomy associated with the features present in the data.'
         )
     },
-    name='Visualize ANCOMBC2 output.',
+    name='Visualize ANCOMBC/ANCOMBC2 output.',
     description=(
-        'Displays ANCOMBC2 Log-Fold Change values in a barplot and allows '
-        'filtering based on p-value and standard error. If a taxonomy is '
-        'provided, features can be filtered by taxonomy using an interactive '
-        'tree.'
+        'Displays ANCOMBC/ANCOMBC2 Log-Fold Change values in a barplot and ' 
+        'allows filtering based on p-value and standard error. If a taxonomy '
+        'is provided, features can be filtered by taxonomy using an '
+        'interactive tree.'
     ),
 )
 
@@ -326,49 +325,5 @@ plugin.visualizers.register_function(
         ' per-page views for the log-fold change (lfc), standard error'
         ' (se), P values, Q values, and W scores.'
     ),
-)
-
-plugin.visualizers.register_function(
-    function=q2_composition.da_barplot,
-    inputs={'data': FeatureData[DifferentialAbundance]},
-    parameters={'effect_size_label': Str,
-                'feature_id_label': Str,
-                'error_label': Str,
-                'significance_label': Str,
-                'significance_threshold': Float % Range(0.0, 1.0,
-                                                        inclusive_start=True,
-                                                        inclusive_end=True),
-                'effect_size_threshold': Float % Range(0.0, np.inf,
-                                                       inclusive_start=True),
-                'feature_ids': Metadata,
-                'level_delimiter': Str,
-                'label_limit': Int},
-    input_descriptions={'data': 'The ANCOM-BC output to be plotted.'},
-    parameter_descriptions={
-        'effect_size_label': "Label for effect sizes in `data`.",
-        'feature_id_label': "Label for feature ids in `data`.",
-        'error_label': "Label for effect size errors in `data`.",
-        'significance_label': ("Label for statistical significance "
-                               "level in `data`."),
-        'significance_threshold': ("Exclude features with statistical "
-                                   "significance level greater (i.e., less "
-                                   "significant) than this threshold."),
-        'effect_size_threshold': ("Exclude features with an absolute value "
-                                  "of effect size less than this threshold."),
-        'feature_ids': ("Exclude features if their ids are not included in "
-                        "this index."),
-        'level_delimiter': ("If feature ids encode hierarchical information, "
-                            "split the levels when generating feature labels "
-                            "in the visualization using this delimiter."),
-        'label_limit': ("Set the maximum length that will be viewable for "
-                        "axis labels. You can set this parameter if your "
-                        "axis labels are being cut off.")},
-    name='Differential abundance bar plots',
-    description=('Generate bar plot views of ANCOM-BC output. One plot will '
-                 'be present per column in the ANCOM-BC output. The '
-                 '`significance_threshold`, `effect_size_threshold` '
-                 'and `feature_ids` filter results are intersected, '
-                 'such that only features that remain after all three '
-                 'filters have been applied will be present in the output.'),
 )
 importlib.import_module('q2_composition._transformer')

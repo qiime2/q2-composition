@@ -15,9 +15,8 @@ from ._type import DifferentialAbundance
 from ._impute import add_pseudocount
 from ._ancom import ancom
 from ._ancombc import ancombc
-from ._ancombc2 import ancombc2, ancombc2_visualizer
+from ._ancombc2 import ancombc2, da_barplot
 from ._dataloaf_tabulate import tabulate
-from ._diff_abundance_plots import da_barplot
 
 try:
     from ._version import __version__
@@ -27,6 +26,5 @@ except ModuleNotFoundError:
 __all__ = [
     'FrictionlessCSVFileFormat', 'DataPackageSchemaFileFormat',
     'DataLoafPackageDirFmt', 'DifferentialAbundance', 'add_pseudocount',
-    'ancom', 'ancombc', 'ancombc2', 'ancombc2_visualizer', 'tabulate',
-    'da_barplot'
+    'ancom', 'ancombc', 'ancombc2', 'tabulate', 'da_barplot'
 ]
