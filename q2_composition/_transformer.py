@@ -94,7 +94,7 @@ def _2(slices: ANCOMBC2SliceMapping) -> ANCOMBC2OutputDirFmt:
             with open(output_path, 'w') as f:
                 f.write(json.dumps(header, separators=(',', ':')) + "\n")
 
-        return format
+    return format
 
 
 @plugin.register_transformer
