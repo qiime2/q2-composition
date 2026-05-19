@@ -8,8 +8,6 @@
 
 import importlib
 
-import numpy as np
-
 from qiime2.plugin import (Int, Float, Bool, Str, List,
                            Choices, Citations, Plugin, Metadata,
                            MetadataColumn, Categorical, Range, Threads)
@@ -305,7 +303,7 @@ plugin.visualizers.register_function(
     },
     name='Visualize ANCOMBC/ANCOMBC2 output.',
     description=(
-        'Displays ANCOMBC/ANCOMBC2 Log-Fold Change values in a barplot and ' 
+        'Displays ANCOMBC/ANCOMBC2 Log-Fold Change values in a barplot and '
         'allows filtering based on p-value and standard error. If a taxonomy '
         'is provided, features can be filtered by taxonomy using an '
         'interactive tree.'
