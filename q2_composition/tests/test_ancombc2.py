@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -24,7 +23,7 @@ from q2_composition._ancombc2 import (
     r_base, ancombc2, _process_formula, _convert_metadata, _split_into_slices,
     _rename_variables_post, _is_categorical, _parse_variable_and_level,
     _deduce_reference_levels, _process_categorical_variables,
-    _process_structural_zeros, da_barplot
+    _process_structural_zeros
 )
 from q2_composition._format import ANCOMBC2SliceMapping
 
@@ -184,34 +183,6 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
         # three levels, so one reference and other two in the output
         self.assertEqual(len(variable_with_spaces_columns), 2)
-
-    def test_da_barplot(self):
-        '''
-        Tests that the visualizer runs successfully, which is essentially a
-        test of whether or not the visualizer got built into the
-        q2_composition/_da_barplot/dist/ folder successfully.
-        '''
-        with tempfile.TemporaryDirectory() as tempdir:
-            da_barplot(tempdir, self.abc2_output)
-            assert os.path.exists(os.path.join(tempdir, 'index.html'))
-
-    def test_da_barplot_non_overlapping_taxonomy(self):
-        '''
-        Tests that an error is raised when attempting to visualize ancombc2
-        data with a taxonomy that contains none of the features present in the
-        ancombc2 data.
-        '''
-        taxonomy_df = pd.DataFrame({
-            'Feature ID': ['feat1', 'feat2'],
-            'Taxon': ['taxon1', 'taxon2'],
-            'Confidence': [0.9, 0.95]
-        })
-
-        with tempfile.TemporaryDirectory() as tempdir:
-            with self.assertRaisesRegex(
-                ValueError, 'No features remained in your taxonomy'
-            ):
-                da_barplot(tempdir, self.abc2_output, taxonomy_df)
 
 
 class TestFormulaProcessing(TestANCOMBC2Base):

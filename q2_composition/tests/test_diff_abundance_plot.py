@@ -1,0 +1,104 @@
+# ----------------------------------------------------------------------------
+# Copyright (c) 2016-2026, QIIME 2 development team.
+#
+# Distributed under the terms of the Modified BSD License.
+#
+# The full license is in the file LICENSE, distributed with this software.
+# ----------------------------------------------------------------------------
+import unittest
+import qiime2
+import biom
+import os
+import tempfile
+import pandas as pd
+
+from pathlib import Path
+from q2_composition._ancombc2 import da_barplot, ancombc2
+from q2_composition._ancombc import ancombc
+
+
+class TestDiffAbundancePlot(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.test_data_fp = Path(__file__).parent / 'data' / 'ancombc2'
+
+        table_fp = cls.test_data_fp / 'feature-table.biom'
+        cls.biom_table = biom.load_table(table_fp)
+
+        metadata_fp = cls.test_data_fp / 'metadata.tsv'
+        cls.ancombc2_metadata = qiime2.Metadata.load(metadata_fp)
+
+        ancombc_table_fp = Path(__file__).parent / 'data' / 'table-ancombc.qza'
+        ancombc_table = qiime2.Artifact.load(ancombc_table_fp)
+        cls.ancombc_table = ancombc_table.view(pd.DataFrame)
+
+        metadata_fp = Path(__file__).parent / 'data' / 'sample-md-ancombc.tsv'
+        cls.ancombc_metadata = qiime2.Metadata.load(metadata_fp)
+
+        cls.abc2_output = ancombc2(
+            table=cls.biom_table,
+            metadata=cls.ancombc2_metadata,
+            fixed_effects_formula='body-site + year',
+            group='body-site',
+            structural_zeros=True
+        )
+
+        cls.abc_output = ancombc(
+            table=cls.ancombc_table,
+            metadata=cls.ancombc_metadata,
+            formula='bodysite'
+        )
+
+    def test_da_barplot(self):
+        '''
+        Tests that the visualizer runs successfully, which is essentially a
+        test of whether or not the visualizer got built into the
+        q2_composition/_da_barplot/dist/ folder successfully.
+        '''
+        with tempfile.TemporaryDirectory() as tempdir:
+            da_barplot(tempdir, self.abc2_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            da_barplot(tempdir, self.abc_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
+
+    def test_da_barplot_non_overlapping_taxonomy(self):
+        '''
+        Tests that an error is raised when attempting to visualize ancombc2
+        data with a taxonomy that contains none of the features present in the
+        ancombc2 data.
+        '''
+        taxonomy_df = pd.DataFrame({
+            'Feature ID': ['feat1', 'feat2'],
+            'Taxon': ['taxon1', 'taxon2'],
+            'Confidence': [0.9, 0.95]
+        })
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            with self.assertRaisesRegex(
+                ValueError, 'No features remained in your taxonomy'
+            ):
+                da_barplot(tempdir, self.abc2_output, taxonomy_df)
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            with self.assertRaisesRegex(
+                ValueError, 'No features remained in your taxonomy'
+            ):
+                da_barplot(tempdir, self.abc_output, taxonomy_df)
+
+    def test_da_barplot_accepts_ancombc2(self):
+        '''
+        Tests that da_barplot accepts ancombc2 outputs.
+        '''
+        with tempfile.TemporaryDirectory() as tempdir:
+            da_barplot(tempdir, self.abc2_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
+
+    def test_da_barplot_accepts_ancombc(self):
+        '''
+        Tests that da_barplot accepts ancombc outputs.
+        '''
+        with tempfile.TemporaryDirectory() as tempdir:
+            da_barplot(tempdir, self.abc_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
