@@ -15,6 +15,8 @@ import pandas as pd
 from pathlib import Path
 from q2_composition._ancombc2 import da_barplot, ancombc2
 from q2_composition._ancombc import ancombc
+from qiime2.sdk import PluginManager
+from qiime2 import Artifact
 
 
 class TestDiffAbundancePlot(unittest.TestCase):
@@ -101,4 +103,34 @@ class TestDiffAbundancePlot(unittest.TestCase):
         '''
         with tempfile.TemporaryDirectory() as tempdir:
             da_barplot(tempdir, self.abc_output)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
+
+    def test_da_barplot_action_ancombc2(self):
+        pm = PluginManager()
+        da_barplot = pm.plugins['composition'].actions['da_barplot']
+
+        ancombc2_artifact = Artifact.import_data(
+            type='FeatureData[ANCOMBC2Output]', view=self.abc2_output
+        )
+
+        viz = da_barplot(ancombc2_artifact)
+        viz = viz.visualization
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            viz.export_data(tempdir)
+            assert os.path.exists(os.path.join(tempdir, 'index.html'))
+
+    def test_da_barplot_action_ancombc(self):
+        pm = PluginManager()
+        da_barplot = pm.plugins['composition'].actions['da_barplot']
+
+        ancombc_artifact = Artifact.import_data(
+            type='FeatureData[DifferentialAbundance]', view=self.abc_output
+        )
+
+        viz = da_barplot(ancombc_artifact)
+        viz = viz.visualization
+
+        with tempfile.TemporaryDirectory() as tempdir:
+            viz.export_data(tempdir)
             assert os.path.exists(os.path.join(tempdir, 'index.html'))
