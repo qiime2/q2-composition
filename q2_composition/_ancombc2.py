@@ -54,7 +54,7 @@ def ancombc2(
     alpha: float = 0.05,
     diff_robust: bool = False,
     num_processes: int = 1,
-) -> ANCOMBC2SliceMapping:
+) -> ANCOMBC2OutputDirFmt:
     '''
     Wraps the `ancombc2` R function from the ANCOMBC package.
 
@@ -64,8 +64,10 @@ def ancombc2(
 
     Returns
     -------
-    ANCOMBC2SliceMapping
-        A dictionary mapping the name of the slice to the slice's columns.
+    ANCOMBC2OutputDirFmt
+        A directory format containing the ANCOMBC2 model's per-feature
+        statistics and per-feature structural zero designations if
+        `structural_zeros` is set.
     '''
     if structural_zeros and group is None:
         msg = (
@@ -112,8 +114,6 @@ def ancombc2(
         model_statistics_df = ro.conversion.get_conversion().rpy2py(
             model_statistics
         )
-        model_statistics_df['taxon'] = \
-            model_statistics_df['taxon'].astype('string')
 
     slices = _split_into_slices(model_statistics_df, diff_robust)
 
@@ -133,7 +133,7 @@ def ancombc2(
     # split categorical variables from levels and annotate references
     slices = _process_categorical_variables(slices, metadata, table)
 
-    return slices
+    return transform(data=slices, to_type=ANCOMBC2OutputDirFmt)
 
 
 def _process_formula(formula: str, metadata: qiime2.Metadata) -> str:
