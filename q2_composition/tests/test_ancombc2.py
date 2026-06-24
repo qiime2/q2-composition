@@ -132,7 +132,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
         model_stats = self._slices_to_single_df(slices)
 
         struc_zeros = output_format.structural_zeros.view(pd.DataFrame)
-        
+
         assert_frame_equal(
             ground_truth_model_stats, model_stats, check_like=True
         )
