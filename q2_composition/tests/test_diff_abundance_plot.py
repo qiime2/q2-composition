@@ -15,6 +15,7 @@ import pandas as pd
 from pathlib import Path
 from q2_composition._ancombc2 import da_barplot, ancombc2
 from q2_composition._ancombc import ancombc
+from q2_composition._format import ANCOMBC2OutputDirFmt
 from qiime2.sdk import PluginManager
 from qiime2 import Artifact
 
@@ -45,6 +46,12 @@ class TestDiffAbundancePlot(unittest.TestCase):
             structural_zeros=True
         )
 
+        # Use this for raw calls to da_barplot but use the original for when we
+        # load it to an Artifact and invoke the action
+        cls.abc2_output_DirFmt = qiime2.plugin.util.transform(
+            data=cls.abc2_output, to_type=ANCOMBC2OutputDirFmt
+        )
+
         cls.abc_output = ancombc(
             table=cls.ancombc_table,
             metadata=cls.ancombc_metadata,
@@ -58,7 +65,7 @@ class TestDiffAbundancePlot(unittest.TestCase):
         q2_composition/_da_barplot/dist/ folder successfully.
         '''
         with tempfile.TemporaryDirectory() as tempdir:
-            da_barplot(tempdir, self.abc2_output)
+            da_barplot(tempdir, self.abc2_output_DirFmt)
             assert os.path.exists(os.path.join(tempdir, 'index.html'))
 
         with tempfile.TemporaryDirectory() as tempdir:
@@ -81,7 +88,7 @@ class TestDiffAbundancePlot(unittest.TestCase):
             with self.assertRaisesRegex(
                 ValueError, 'No features remained in your taxonomy'
             ):
-                da_barplot(tempdir, self.abc2_output, taxonomy_df)
+                da_barplot(tempdir, self.abc2_output_DirFmt, taxonomy_df)
 
         with tempfile.TemporaryDirectory() as tempdir:
             with self.assertRaisesRegex(
@@ -94,7 +101,7 @@ class TestDiffAbundancePlot(unittest.TestCase):
         Tests that da_barplot accepts ancombc2 outputs.
         '''
         with tempfile.TemporaryDirectory() as tempdir:
-            da_barplot(tempdir, self.abc2_output)
+            da_barplot(tempdir, self.abc2_output_DirFmt)
             assert os.path.exists(os.path.join(tempdir, 'index.html'))
 
     def test_da_barplot_accepts_ancombc(self):
