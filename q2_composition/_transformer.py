@@ -7,6 +7,7 @@
 # ----------------------------------------------------------------------------
 
 import json
+import os
 
 import pandas as pd
 
@@ -42,8 +43,16 @@ def _12(format: DataLoafPackageDirFmt) -> ANCOMBC2SliceMapping:
     slices = ANCOMBC2SliceMapping()
     slices.intercepts = intercepts
 
+    name_map = {
+        'lfc': 'lfc',
+        'se': 'se',
+        'p_val': 'p',
+        'q_val': 'q',
+        'w': 'W',
+    }
     for (slice_path, slice_df) in format.data_slices.iter_views(pd.DataFrame):
-        slice_name = slice_path.name.split('_slice')[0]
+        slice_name = name_map[slice_path.name.split('_slice')[0]]
+        slice_df = slice_df.rename(columns={'id': 'taxon'})
         slices[slice_name] = slice_df
 
     return slices
@@ -59,6 +68,31 @@ def _2(slices: ANCOMBC2SliceMapping) -> ANCOMBC2OutputDirFmt:
     for slice_name, slice_df in slices.items():
         format_slice = format.__getattribute__(slice_name)
         format_slice.write_data(slice_df, pd.DataFrame)
+
+    extra_files = ['diff', 'passed_ss']
+    if not any(file in slices.keys() for file in extra_files):
+        header = {
+            "doctype": {
+                "name": "table.jsonl",
+                "format": "application/x-json-lines",
+                "version": "1.0"
+            },
+            "direction": "row",
+            "style": "key:value",
+            "fields": [
+                {"name": "taxon", "type": "string", "missing": False},
+                {"name": "(Intercept)", "type": "number", "missing": False}
+            ],
+            "index": [],
+            "title": "",
+            "description": "",
+            "extra": {}
+        }
+
+        for file in extra_files:
+            output_path = os.path.join(format.path, file + '.jsonl')
+            with open(output_path, 'w') as f:
+                f.write(json.dumps(header, separators=(',', ':')) + "\n")
 
     return format
 
@@ -94,3 +128,10 @@ def _3(format: ANCOMBC2OutputDirFmt) -> ANCOMBC2SliceMapping:
     slices.intercepts = list(intercepts)
 
     return slices
+
+
+@plugin.register_transformer
+def _5(format: DataLoafPackageDirFmt) -> ANCOMBC2OutputDirFmt:
+    slice_format = _12(format)
+    ancombc2_format = _2(slice_format)
+    return ancombc2_format

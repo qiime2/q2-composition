@@ -10,7 +10,6 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
-import os
 from pathlib import Path
 import subprocess
 import tempfile
@@ -24,9 +23,9 @@ from q2_composition._ancombc2 import (
     r_base, ancombc2, _process_formula, _convert_metadata, _split_into_slices,
     _rename_variables_post, _is_categorical, _parse_variable_and_level,
     _deduce_reference_levels, _process_categorical_variables,
-    _process_structural_zeros, ancombc2_visualizer
+    _process_structural_zeros
 )
-from q2_composition._format import ANCOMBC2SliceMapping
+from q2_composition._format import ANCOMBC2SliceMapping, ANCOMBC2OutputDirFmt
 
 
 class TestANCOMBC2Base(unittest.TestCase):
@@ -120,7 +119,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
             'q2_composition._ancombc2._process_structural_zeros',
             side_effect=lambda structural_zeros: structural_zeros
         ):
-            output_format = ancombc2(
+            slices = ancombc2(
                 table=self.biom_table,
                 metadata=self.metadata,
                 fixed_effects_formula='body-site + year',
@@ -129,7 +128,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
                 diff_robust=True,
             )
 
-        slices = transform(data=output_format, to_type=ANCOMBC2SliceMapping)
+        output_format = transform(data=slices, to_type=ANCOMBC2OutputDirFmt)
         model_stats = self._slices_to_single_df(slices)
 
         struc_zeros = output_format.structural_zeros.view(pd.DataFrame)
@@ -146,8 +145,7 @@ class TestANCOMBC2(TestANCOMBC2Base):
         Ensure that the `diff_robust` slice is not present by default in the
         output format.
         '''
-        slices = transform(data=self.abc2_output, to_type=ANCOMBC2SliceMapping)
-        self.assertNotIn('diff_robust', slices)
+        self.assertNotIn('diff_robust', self.abc2_output)
 
     def test_group_enforced_if_structural_zeros(self):
         '''
@@ -169,13 +167,11 @@ class TestANCOMBC2(TestANCOMBC2Base):
         '''
         Tests that metadata columns that contain spaces are handled properly.
         '''
-        output_format = ancombc2(
+        slices = ancombc2(
             table=self.biom_table,
             metadata=self.metadata,
             fixed_effects_formula='Variable with spaces',
         )
-
-        slices = transform(data=output_format, to_type=ANCOMBC2SliceMapping)
 
         lfc_slice_columns = list(slices['lfc'].columns)
         variable_with_spaces_columns = [
@@ -184,34 +180,6 @@ class TestANCOMBC2(TestANCOMBC2Base):
 
         # three levels, so one reference and other two in the output
         self.assertEqual(len(variable_with_spaces_columns), 2)
-
-    def test_ancombc2_visualizer(self):
-        '''
-        Tests that the visualizer runs successfully, which is essentially a
-        test of whether or not the visualizer got built into the
-        q2_composition/_ancombc2_visualizer/dist/ folder successfully.
-        '''
-        with tempfile.TemporaryDirectory() as tempdir:
-            ancombc2_visualizer(tempdir, self.abc2_output)
-            assert os.path.exists(os.path.join(tempdir, 'index.html'))
-
-    def test_ancombc2_visualizer_non_overlapping_taxonomy(self):
-        '''
-        Tests that an error is raised when attempting to visualize ancombc2
-        data with a taxonomy that contains none of the features present in the
-        ancombc2 data.
-        '''
-        taxonomy_df = pd.DataFrame({
-            'Feature ID': ['feat1', 'feat2'],
-            'Taxon': ['taxon1', 'taxon2'],
-            'Confidence': [0.9, 0.95]
-        })
-
-        with tempfile.TemporaryDirectory() as tempdir:
-            with self.assertRaisesRegex(
-                ValueError, 'No features remained in your taxonomy'
-            ):
-                ancombc2_visualizer(tempdir, self.abc2_output, taxonomy_df)
 
 
 class TestFormulaProcessing(TestANCOMBC2Base):

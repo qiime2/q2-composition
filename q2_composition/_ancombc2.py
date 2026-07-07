@@ -51,7 +51,7 @@ def ancombc2(
     alpha: float = 0.05,
     diff_robust: bool = False,
     num_processes: int = 1,
-) -> ANCOMBC2OutputDirFmt:
+) -> ANCOMBC2SliceMapping:
     '''
     Wraps the `ancombc2` R function from the ANCOMBC package.
 
@@ -61,10 +61,8 @@ def ancombc2(
 
     Returns
     -------
-    ANCOMBC2OutputDirFmt
-        A directory format containing the ANCOMBC2 model's per-feature
-        statistics and per-feature structural zero designations if
-        `structural_zeros` is set.
+    ANCOMBC2SliceMapping
+        A dictionary mapping the name of the slice to the slice's columns.
     '''
     if structural_zeros and group is None:
         msg = (
@@ -111,6 +109,8 @@ def ancombc2(
         model_statistics_df = ro.conversion.get_conversion().rpy2py(
             model_statistics
         )
+        model_statistics_df['taxon'] = \
+            model_statistics_df['taxon'].astype('string')
 
     slices = _split_into_slices(model_statistics_df, diff_robust)
 
@@ -130,7 +130,7 @@ def ancombc2(
     # split categorical variables from levels and annotate references
     slices = _process_categorical_variables(slices, metadata, table)
 
-    return transform(data=slices, to_type=ANCOMBC2OutputDirFmt)
+    return slices
 
 
 def _process_formula(formula: str, metadata: qiime2.Metadata) -> str:
@@ -851,7 +851,7 @@ def _process_structural_zeros(
     return structural_zeros_df.rename(lambda c: _rename(c), axis='columns')
 
 
-def ancombc2_visualizer(
+def da_barplot(
     output_dir: str,
     data: ANCOMBC2OutputDirFmt,
     taxonomy: pd.DataFrame = None
@@ -865,7 +865,7 @@ def ancombc2_visualizer(
     ----------
     output_dir : str
         The path to the data/ directory in the to-be-created visualization.
-    data : ANCOMBC2SliceMapping
+    data : ANCOMBC2OutputDirFmt
         The ancombc2 slice data to visualize
     taxonomy : pd.DataFrame | None
         The taxonomy associated with the features present in `slices`.
@@ -877,14 +877,17 @@ def ancombc2_visualizer(
 
     dist_dir = (
         importlib.resources.files('q2_composition') /
-        '_ancombc2_visualizer' / 'dist'
+        '_da_barplot' / 'dist'
     )
     shutil.copytree(Path(str(dist_dir)), output_dir, dirs_exist_ok=True)
 
     if taxonomy is not None:
         # subset taxonomy to only features present in the ancombc2 slices
         slice_map = transform(data=data, to_type=ANCOMBC2SliceMapping)
-        slice_feature_ids = slice_map['lfc']['taxon'].unique()
+        try:
+            slice_feature_ids = slice_map['lfc']['taxon'].unique()
+        except KeyError:
+            slice_feature_ids = slice_map['lfc']['id'].unique()
         taxonomy = taxonomy[taxonomy.index.isin(slice_feature_ids)]
 
         if len(taxonomy) == 0:
