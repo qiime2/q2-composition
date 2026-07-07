@@ -26,11 +26,8 @@ import shutil
 import qiime2
 from qiime2.metadata import NumericMetadataColumn, CategoricalMetadataColumn
 from qiime2.plugin.util import transform
-from typing import Union
 
-from q2_composition._format import (
-    ANCOMBC2OutputDirFmt, ANCOMBC2SliceMapping, DataLoafPackageDirFmt
-)
+from q2_composition._format import ANCOMBC2OutputDirFmt, ANCOMBC2SliceMapping
 
 r_base = importr('base')
 r_stats = importr('stats')
@@ -856,7 +853,7 @@ def _process_structural_zeros(
 
 def da_barplot(
     output_dir: str,
-    data: Union[ANCOMBC2OutputDirFmt, DataLoafPackageDirFmt],
+    data: ANCOMBC2OutputDirFmt,
     taxonomy: pd.DataFrame = None
 ):
     '''
@@ -868,7 +865,7 @@ def da_barplot(
     ----------
     output_dir : str
         The path to the data/ directory in the to-be-created visualization.
-    data : ANCOMBC2SliceMapping
+    data : ANCOMBC2OutputDirFmt
         The ancombc2 slice data to visualize
     taxonomy : pd.DataFrame | None
         The taxonomy associated with the features present in `slices`.
