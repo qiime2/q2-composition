@@ -77,6 +77,12 @@
                 class="aspect-square text-lg"
                 onclick={() => plot.increaseBarThickness()}>+</button
             >
+            <button
+                class="aspect-sqaure text-lg"
+                onclick={() => plot.downloadSVG()}
+            >
+                Download SVG
+            </button>
         </div>
     </div>
 </ControlContainer>

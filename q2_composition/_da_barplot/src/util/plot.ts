@@ -30,6 +30,21 @@ export class DivergingBarplot {
         this.yAxis = this.createYAxis();
     }
 
+    downloadSVG() {
+        const svgElem = document.querySelector("#barplot-svg-container");
+        const svgData = new XMLSerializer().serializeToString(svgElem as Node);
+
+        const blob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "da-barplot.svg";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
     /**
      */
     createDimensions(): PlotDimensions {
