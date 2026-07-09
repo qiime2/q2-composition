@@ -5,7 +5,7 @@ const DEFAULT_MARGIN = 120;
 const LABEL_ELLIPSIS = "…";
 const LABEL_FONT_SIZE = 12;
 const LABEL_OFFSET = 8;
-const LABEL_OVERFLOW_PADDING = 4;
+const LABEL_OVERFLOW_PADDING = 32;
 
 type PlotDimensions = {
     svgWidth: number;
@@ -62,9 +62,32 @@ export class DivergingBarplot {
 
     downloadSVG() {
         const svgElem = this.getSvg().node()!;
+        const svgClone = svgElem.cloneNode(true) as SVGSVGElement;
+        const title = document
+            .querySelector("#barplot-title")
+            ?.textContent?.trim();
 
-        svgElem.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-        const svgData = new XMLSerializer().serializeToString(svgElem as Node);
+        if (title) {
+            const titleElem = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text",
+            );
+            titleElem.textContent = title;
+            titleElem.setAttribute(
+                "x",
+                String(
+                    this.dimensions.leftMargin + this.dimensions.plotWidth / 2,
+                ),
+            );
+            titleElem.setAttribute("y", "35");
+            titleElem.setAttribute("text-anchor", "middle");
+            titleElem.setAttribute("font-size", "18px");
+            titleElem.setAttribute("fill", "black");
+            svgClone.insertBefore(titleElem, svgClone.firstChild);
+        }
+
+        svgClone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        const svgData = new XMLSerializer().serializeToString(svgClone as Node);
 
         const blob = new Blob([svgData], {
             type: "image/svg+xml;charset=utf-8",
@@ -535,6 +558,11 @@ export class DivergingBarplot {
         this.getSvg()
             .attr("width", this.dimensions.svgWidth)
             .attr("height", this.dimensions.svgHeight)
+            .attr(
+                "viewBox",
+                `0 0 ${this.dimensions.svgWidth} ${this.dimensions.svgHeight}`,
+            )
+            .attr("overflow", "visible")
             .style("width", `${this.dimensions.svgWidth}px`);
 
         d3.select("#barplot-title")
