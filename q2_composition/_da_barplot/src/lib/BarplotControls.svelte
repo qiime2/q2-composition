@@ -36,7 +36,7 @@
 
 <ControlContainer title="Model Variable and Level:">
     <div
-        class="grid gap-x-2 grid-rows-3 grid-cols-[auto_1fr] place-items-baseline"
+        class="grid gap-x-2 gap-y-2 grid-cols-[auto_1fr] place-items-baseline"
     >
         <div class="grid grid-cols-subgrid col-span-2">
             <label for="variable" class="col-end-1">Name:</label>
@@ -67,16 +67,19 @@
                 {/each}
             </select>
         </div>
-        <div class="flex gap-4 col-span-2">
+        <div class="flex items-center gap-4 col-span-2">
             <p class="col-end-1">Bar Thickness:</p>
             <button
-                class="aspect-square text-lg"
                 onclick={() => plot.decreaseBarThickness()}>-</button
             >
             <button
-                class="aspect-square text-lg"
                 onclick={() => plot.increaseBarThickness()}>+</button
             >
+        </div>
+        <div class="col-span-2">
+            <button onclick={() => plot.downloadSVG()}>
+                Download SVG
+            </button>
         </div>
     </div>
 </ControlContainer>
