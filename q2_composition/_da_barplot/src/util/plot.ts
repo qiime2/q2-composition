@@ -537,6 +537,10 @@ export class DivergingBarplot {
             .attr("height", this.dimensions.svgHeight)
             .style("width", `${this.dimensions.svgWidth}px`);
 
+        d3.select("#barplot-title")
+            .style("width", `${this.dimensions.plotWidth}px`)
+            .style("margin-left", `${this.dimensions.leftMargin}px`);
+
         const drawXAxis = (axis: any) => {
             axis.attr("transform", this.getXAxisTranslation()).call(
                 d3.axisBottom(this.xScale),
