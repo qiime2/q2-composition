@@ -32,6 +32,12 @@
         features.render();
         plot.updateData(features.view);
     }
+
+    let showFullLabels = $state(false);
+
+    function handleShowFullLabelsChange() {
+        plot.setShowFullLabels(showFullLabels);
+    }
 </script>
 
 <ControlContainer title="Model Variable and Level:">
@@ -75,6 +81,15 @@
             <button
                 onclick={() => plot.increaseBarThickness()}>+</button
             >
+        </div>
+        <div class="flex items-center gap-2 col-span-2">
+            <input
+                type="checkbox"
+                id="show-full-labels"
+                bind:checked={showFullLabels}
+                onchange={handleShowFullLabelsChange}
+            />
+            <label for="show-full-labels">Show full labels</label>
         </div>
         <div class="col-span-2">
             <button onclick={() => plot.downloadSVG()}>
