@@ -368,7 +368,13 @@ export class DivergingBarplot {
     }
 
     getLabelText(d: ViewRecord, full = this.showFullLabels): string {
-        if (full && d.classification && d.classification != "N/A") {
+        const hasTaxonomy = d.classification && d.classification != "N/A";
+
+        if (!hasTaxonomy) {
+            return d.featureId;
+        }
+
+        if (full) {
             return `(${d.featureId.slice(0, 6)}) ${d.classification}`;
         }
 
