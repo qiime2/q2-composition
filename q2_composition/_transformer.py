@@ -11,6 +11,7 @@ import os
 
 import pandas as pd
 
+from qiime2 import Metadata
 from qiime2.sdk import ValidationError
 
 from q2_composition.plugin_setup import plugin
@@ -61,7 +62,7 @@ def _12(format: DataLoafPackageDirFmt) -> ANCOMBC2SliceMapping:
 @plugin.register_transformer
 def _2(slices: ANCOMBC2SliceMapping) -> ANCOMBC2OutputDirFmt:
     '''
-    Transforms a dataframe of ANCOMBC2 model statistics into the ANCOMBC2
+    Transforms a dictionary of ANCOMBC2 model statistics into the ANCOMBC2
     output directory format.
     '''
     format = ANCOMBC2OutputDirFmt()
@@ -135,3 +136,27 @@ def _5(format: DataLoafPackageDirFmt) -> ANCOMBC2OutputDirFmt:
     slice_format = _12(format)
     ancombc2_format = _2(slice_format)
     return ancombc2_format
+
+
+@plugin.register_transformer
+def _6(format: ANCOMBC2OutputDirFmt) -> Metadata:
+    slices = _3(format)
+    merged = next(iter(slices.values()))
+    merged = merged.set_index(merged['taxon'])
+    merged = merged.drop(columns='taxon')
+    merged.index.name = 'feature-id'
+
+    for slice, df in slices.items():
+        df = df.set_index(df['taxon'])
+        df = df.drop(columns='taxon')
+        df.index.name = 'feature-id'
+        df.columns = str(slice) + '_' + df.columns
+        merged = pd.merge(
+            merged, df, left_index=True,  right_index=True, how='outer'
+        )
+
+    merged = merged.replace({True: 'True', False: 'False'})
+
+    md = Metadata(merged)
+
+    return md

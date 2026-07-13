@@ -6,11 +6,14 @@
 # The full license is in the file LICENSE, distributed with this software.
 # ----------------------------------------------------------------------------
 
+import biom
 import pandas as pd
 
+from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
-
-from q2_composition._format import FrictionlessCSVFileFormat
+from q2_composition._format import (FrictionlessCSVFileFormat)
+from q2_composition._ancombc2 import ancombc2
+from q2_composition._transformer import _2, _6
 
 
 class TestBase(TestPluginBase):
@@ -36,3 +39,28 @@ class TestTransformers(TestBase):
         })
 
         pd.testing.assert_frame_equal(obs, exp)
+
+    def test_ancombc2_to_metadata(self):
+        biom_table_fp = self.get_data_path('ancombc2/feature-table.biom')
+        metadata_fp = self.get_data_path('ancombc2/metadata.tsv')
+        biom_table = biom.load_table(biom_table_fp)
+        metadata = Metadata.load(metadata_fp)
+
+        ancombc2_result = ancombc2(
+            biom_table,
+            metadata,
+            fixed_effects_formula='body-site + year',
+            group='body-site',
+            structural_zeros=True
+        )
+
+        ancombc2_dir_fmt = _2(ancombc2_result)
+        ancombc2_md = _6(ancombc2_dir_fmt)
+        ancombc2_df = ancombc2_md.to_dataframe()
+
+        for slice, df in ancombc2_result.items():
+            df = df.drop(columns='taxon')
+            df.columns = slice + '_' + df.columns
+            obs_columns = list(df.columns)
+            exp_columns = list(ancombc2_df.columns)
+            self.assertTrue(column in exp_columns for column in obs_columns)
