@@ -27,7 +27,7 @@
 <div class="grid grid-rows-subgrid row-span-2">
     <div id="barplot-svg-container" class="bg-white rounded overflow-scroll">
         {#if features.viewVariableLevel != ""}
-            <h2 class="text-lg text-center mt-5 -mb-[60px]">
+            <h2 id="barplot-title" class="text-lg text-center mt-5 -mb-[60px]">
                 Reference Level: {referenceLevel}
             </h2>
         {/if}
@@ -41,7 +41,7 @@
 
 <style>
     svg {
-        width: 100%;
+        min-width: 100%;
         overflow: visible;
     }
 </style>
