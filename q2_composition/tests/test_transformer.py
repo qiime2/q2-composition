@@ -11,7 +11,7 @@ import pandas as pd
 
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
-from q2_composition._format import (FrictionlessCSVFileFormat)
+from q2_composition._format import FrictionlessCSVFileFormat
 from q2_composition._ancombc2 import ancombc2
 from q2_composition._transformer import _2, _6
 
