@@ -299,8 +299,24 @@ export class DivergingBarplot {
     /**
      */
     addHoverHandlers() {
-        // event handlers
-        const handleMouseover = (e: any, d: any) => {
+        let rect: string | null = null;
+
+        const handleClick = (e: any, d: any) => {
+            if (rect === d.featureId) {
+                d3.select(".tooltip")
+                    .transition()
+                    .duration(200)
+                    .style("opacity", 0)
+                    .on("end", () => {
+                        d3.select(".tooltip").style("display", "none")
+                    });
+
+                rect = null;
+                return;
+            }
+
+            rect = d.featureId;
+
             const tooltipData = [
                 `feature ID: ${d.featureId}`,
                 `classification: ${d.classification}`,
@@ -327,23 +343,6 @@ export class DivergingBarplot {
                 .style("opacity", 1);
         };
 
-        const handleMousemove = (e: any, d: any) => {
-            d3.select(".tooltip")
-                .style("left", `${e.clientX + 25}px`)
-                .style("top", `${e.clientY - 10}px`);
-        };
-
-        const handleMouseout = (e: any, d: any) => {
-            d3.select(".tooltip")
-                .transition()
-                .duration(200)
-                .style("opacity", 0)
-                .end()
-                .then(() => {
-                    d3.select(".tooltip").style("display", "none");
-                });
-        };
-
         // create tooltip
         d3.select("body")
             .selectAll(".tooltip")
@@ -361,9 +360,8 @@ export class DivergingBarplot {
         // register event handlers
         this.getSvg()
             .selectAll("rect, .error-bar")
-            .on("mouseover", handleMouseover)
-            .on("mousemove", handleMousemove)
-            .on("mouseout", handleMouseout);
+            .style("cursor", "pointer")
+            .on("click", handleClick);
     }
 
     /**
