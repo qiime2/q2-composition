@@ -13,6 +13,7 @@ import pandas as pd
 
 from qiime2 import Metadata
 from qiime2.sdk import ValidationError
+from rachis.plugin.util import transform
 
 from q2_composition.plugin_setup import plugin
 from q2_composition._format import (
@@ -133,24 +134,24 @@ def _3(format: ANCOMBC2OutputDirFmt) -> ANCOMBC2SliceMapping:
 
 @plugin.register_transformer
 def _5(format: DataLoafPackageDirFmt) -> ANCOMBC2OutputDirFmt:
-    slice_format = _12(format)
-    ancombc2_format = _2(slice_format)
+    slice_format = transform(format, to_type=ANCOMBC2SliceMapping)
+    ancombc2_format = transform(slice_format, to_type=ANCOMBC2OutputDirFmt)
     return ancombc2_format
 
 
 @plugin.register_transformer
 def _6(format: ANCOMBC2OutputDirFmt) -> Metadata:
-    slices = _3(format)
-    merged = next(iter(slices.values()))
-    merged = merged.set_index(merged['taxon'])
-    merged = merged.drop(columns='taxon')
-    merged.index.name = 'feature-id'
+    slices = transform(format, to_type=ANCOMBC2SliceMapping)
 
+    merged = None
     for slice, df in slices.items():
         df = df.set_index(df['taxon'])
         df = df.drop(columns='taxon')
         df.index.name = 'feature-id'
         df.columns = str(slice) + '_' + df.columns
+        if merged is None:
+            merged = df
+            continue
         merged = pd.merge(
             merged, df, left_index=True,  right_index=True, how='outer'
         )

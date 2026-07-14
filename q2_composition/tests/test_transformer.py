@@ -11,9 +11,11 @@ import pandas as pd
 
 from qiime2 import Metadata
 from qiime2.plugin.testing import TestPluginBase
-from q2_composition._format import FrictionlessCSVFileFormat
+from q2_composition._format import (
+    FrictionlessCSVFileFormat, ANCOMBC2OutputDirFmt
+)
 from q2_composition._ancombc2 import ancombc2
-from q2_composition._transformer import _2, _6
+from rachis.plugin.util import transform
 
 
 class TestBase(TestPluginBase):
@@ -54,8 +56,10 @@ class TestTransformers(TestBase):
             structural_zeros=True
         )
 
-        ancombc2_dir_fmt = _2(ancombc2_result)
-        ancombc2_md = _6(ancombc2_dir_fmt)
+        ancombc2_dir_fmt = transform(
+            ancombc2_result, to_type=ANCOMBC2OutputDirFmt
+        )
+        ancombc2_md = transform(ancombc2_dir_fmt, to_type=Metadata)
         ancombc2_df = ancombc2_md.to_dataframe()
 
         for slice, df in ancombc2_result.items():
