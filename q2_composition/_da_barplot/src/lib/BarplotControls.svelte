@@ -32,11 +32,17 @@
         features.render();
         plot.updateData(features.view);
     }
+
+    let showFullLabels = $state(false);
+
+    function handleShowFullLabelsChange() {
+        plot.setShowFullLabels(showFullLabels);
+    }
 </script>
 
 <ControlContainer title="Model Variable and Level:">
     <div
-        class="grid gap-x-2 grid-rows-3 grid-cols-[auto_1fr] place-items-baseline"
+        class="grid gap-x-2 gap-y-2 grid-cols-[auto_1fr] place-items-baseline"
     >
         <div class="grid grid-cols-subgrid col-span-2">
             <label for="variable" class="col-end-1">Name:</label>
@@ -67,16 +73,28 @@
                 {/each}
             </select>
         </div>
-        <div class="flex gap-4 col-span-2">
+        <div class="flex items-center gap-4 col-span-2">
             <p class="col-end-1">Bar Thickness:</p>
             <button
-                class="aspect-square text-lg"
                 onclick={() => plot.decreaseBarThickness()}>-</button
             >
             <button
-                class="aspect-square text-lg"
                 onclick={() => plot.increaseBarThickness()}>+</button
             >
+        </div>
+        <div class="flex items-center gap-2 col-span-2">
+            <input
+                type="checkbox"
+                id="show-full-labels"
+                bind:checked={showFullLabels}
+                onchange={handleShowFullLabelsChange}
+            />
+            <label for="show-full-labels">Show full labels</label>
+        </div>
+        <div class="col-span-2">
+            <button onclick={() => plot.downloadSVG()}>
+                Download SVG
+            </button>
         </div>
     </div>
 </ControlContainer>

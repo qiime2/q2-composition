@@ -1,10 +1,18 @@
 import * as d3 from "d3";
 import { type ViewRecord } from "./features.svelte";
 
+const DEFAULT_MARGIN = 120;
+const LABEL_ELLIPSIS = "…";
+const LABEL_FONT_SIZE = 12;
+const LABEL_OFFSET = 8;
+const LABEL_OVERFLOW_PADDING = 32;
+
 type PlotDimensions = {
     svgWidth: number;
     svgHeight: number;
     margin: number;
+    leftMargin: number;
+    rightMargin: number;
     plotWidth: number;
     plotHeight: number;
     barHeight: number;
@@ -13,11 +21,12 @@ type PlotDimensions = {
 
 export class DivergingBarplot {
     data: ViewRecord[] = [];
-    dimensions: PlotDimensions = {};
+    dimensions = {} as PlotDimensions;
     xScale: d3.ScaleLinear<number, number> = d3.scaleLinear();
     yScale: d3.ScaleBand<any> = d3.scaleBand();
     xAxis: d3.Selection<any, any, any, any> = d3.selection();
     yAxis: d3.Selection<any, any, any, any> = d3.selection();
+    showFullLabels = false;
 
     /**
      */
@@ -30,31 +39,97 @@ export class DivergingBarplot {
         this.yAxis = this.createYAxis();
     }
 
-    /**
-     */
-    createDimensions(): PlotDimensions {
-        const svg = d3.select("svg");
-        let svgWidth: number;
-        if (!svg.empty()) {
-            svgWidth = svg.node()!.getBoundingClientRect().width;
-        } else {
+    getSvg(): d3.Selection<SVGSVGElement, unknown, HTMLElement, any> {
+        const svg = d3.select<SVGSVGElement, unknown>(
+            "#barplot-svg-container svg",
+        );
+        if (svg.empty()) {
             throw new Error(`Svg element not found.`);
         }
 
+        return svg;
+    }
+
+    getContainerWidth(): number {
+        const containerWidth = document
+            .querySelector("#barplot-svg-container")
+            ?.getBoundingClientRect().width;
+
+        return (
+            containerWidth || this.getSvg().node()!.getBoundingClientRect().width
+        );
+    }
+
+    downloadSVG() {
+        const svgElem = this.getSvg().node()!;
+        const svgClone = svgElem.cloneNode(true) as SVGSVGElement;
+        const title = document
+            .querySelector("#barplot-title")
+            ?.textContent?.trim();
+
+        if (title) {
+            const titleElem = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text",
+            );
+            titleElem.textContent = title;
+            titleElem.setAttribute(
+                "x",
+                String(
+                    this.dimensions.leftMargin + this.dimensions.plotWidth / 2,
+                ),
+            );
+            titleElem.setAttribute("y", "35");
+            titleElem.setAttribute("text-anchor", "middle");
+            titleElem.setAttribute("font-size", "18px");
+            titleElem.setAttribute("fill", "black");
+            svgClone.insertBefore(titleElem, svgClone.firstChild);
+        }
+
+        svgClone.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+        const svgData = new XMLSerializer().serializeToString(svgClone as Node);
+
+        const blob = new Blob([svgData], {
+            type: "image/svg+xml;charset=utf-8",
+        });
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "da-barplot.svg";
+        a.click();
+
+        URL.revokeObjectURL(url);
+    }
+
+    setShowFullLabels(showFullLabels: boolean) {
+        this.showFullLabels = showFullLabels;
+
+        if (this.data.length > 0) {
+            this.drawPlot(false);
+        }
+    }
+
+    /**
+     */
+    createDimensions(): PlotDimensions {
+        const containerWidth = this.getContainerWidth();
         const numFeatures = this.data.length;
 
-        const barHeight = 20;
-        const barPadding = 1.25;
+        const margin = this.dimensions.margin ?? DEFAULT_MARGIN;
+        const barHeight = this.dimensions.barHeight ?? 20;
+        const barPadding = this.dimensions.barPadding ?? 1.25;
 
         const plotHeight = numFeatures * barHeight * barPadding;
-
-        const margin = 120;
-        const plotWidth = svgWidth - 2 * margin;
+        const plotWidth = Math.max(containerWidth - 2 * margin, 1);
+        const svgWidth = plotWidth + 2 * margin;
 
         return {
             svgWidth: svgWidth,
             svgHeight: plotHeight + 2 * margin,
             margin,
+            leftMargin: margin,
+            rightMargin: margin,
             plotWidth,
             plotHeight,
             barHeight,
@@ -74,17 +149,6 @@ export class DivergingBarplot {
         } else {
             this.hidePlot();
         }
-    }
-
-    /**
-     */
-    updatePlotHeight() {
-        this.dimensions.plotHeight =
-            this.data.length *
-            this.dimensions.barHeight *
-            this.dimensions.barPadding;
-        this.dimensions.svgHeight =
-            this.dimensions.plotHeight + 2 * this.dimensions.margin;
     }
 
     /**
@@ -135,8 +199,8 @@ export class DivergingBarplot {
      */
     getXRange() {
         return [
-            this.dimensions.margin,
-            this.dimensions.margin + this.dimensions.plotWidth,
+            this.dimensions.leftMargin,
+            this.dimensions.leftMargin + this.dimensions.plotWidth,
         ];
     }
 
@@ -192,7 +256,7 @@ export class DivergingBarplot {
      */
     createXAxis(): d3.Selection<any, any, any, any> {
         let axis = d3
-            .select("svg")
+            .select("#barplot-svg-container svg")
             .append("g")
             .attr("class", "x-axis")
             .attr("transform", this.getXAxisTranslation())
@@ -205,7 +269,10 @@ export class DivergingBarplot {
             .attr("fill", "black")
             .attr("font-size", "18px")
             .attr("id", "xaxis-label")
-            .attr("x", "50%")
+            .attr(
+                "x",
+                this.dimensions.leftMargin + this.dimensions.plotWidth / 2,
+            )
             .attr("y", 60);
 
         return axis;
@@ -215,7 +282,7 @@ export class DivergingBarplot {
      */
     createYAxis(): d3.Selection<any, any, any, any> {
         let axis = d3
-            .select("svg")
+            .select("#barplot-svg-container svg")
             .append("g")
             .attr("class", "y-axis")
             .attr("transform", this.getYAxisTranslation())
@@ -292,7 +359,7 @@ export class DivergingBarplot {
             .style("opacity", 0);
 
         // register event handlers
-        d3.select("svg")
+        this.getSvg()
             .selectAll("rect, .error-bar")
             .on("mouseover", handleMouseover)
             .on("mousemove", handleMousemove)
@@ -323,76 +390,233 @@ export class DivergingBarplot {
         return path;
     }
 
+    getLabelText(d: ViewRecord, full = this.showFullLabels): string {
+        const hasTaxonomy = d.classification && d.classification != "N/A";
+
+        if (!hasTaxonomy) {
+            return d.featureId;
+        }
+
+        if (full) {
+            return `(${d.featureId.slice(0, 6)}) ${d.classification}`;
+        }
+
+        return d.shortClassification ? d.shortClassification : d.featureId;
+    }
+
+    getLabelX(d: ViewRecord): number {
+        if (d.lfc > 0) {
+            return Math.min(this.xScale(d.lfc - d.se), this.xScale(0));
+        }
+
+        return Math.max(this.xScale(d.lfc + d.se), this.xScale(0));
+    }
+
+    getLabelDx(d: ViewRecord): number {
+        return d.lfc > 0 ? -LABEL_OFFSET : LABEL_OFFSET;
+    }
+
+    getAvailableLabelWidth(d: ViewRecord): number {
+        const labelEdge = this.getLabelX(d) + this.getLabelDx(d);
+
+        return d.lfc > 0
+            ? Math.max(labelEdge - LABEL_OVERFLOW_PADDING, 0)
+            : Math.max(
+                  this.dimensions.svgWidth - labelEdge - LABEL_OVERFLOW_PADDING,
+                  0,
+              );
+    }
+
+    getTextLength(label: d3.Selection<any, any, any, any>): number {
+        const node = label.node();
+        if (!node) return 0;
+
+        try {
+            return node.getComputedTextLength();
+        } catch {
+            return (node.textContent ?? "").length * LABEL_FONT_SIZE * 0.6;
+        }
+    }
+
+    /**
+     * Returns the longest prefix of `fullLabel` that fits within `maxWidth`
+     * after appending an ellipsis.
+     *
+     * SVG text does not support CSS-style single-line ellipsis, and character
+     * count is not a reliable proxy for rendered width because glyphs have
+     * different widths. This temporarily writes candidate strings into the
+     * label element so their actual rendered length can be measured. The
+     * binary search keeps the number of DOM measurements low while finding the
+     * longest prefix that fits.
+     */
+    ellipsizeLabel(
+        label: d3.Selection<any, any, any, any>,
+        fullLabel: string,
+        maxWidth: number,
+    ): string {
+        if (maxWidth <= 0) return "";
+
+        label.text(fullLabel);
+        if (this.getTextLength(label) <= maxWidth) {
+            return fullLabel;
+        }
+
+        label.text(LABEL_ELLIPSIS);
+        if (this.getTextLength(label) > maxWidth) {
+            return "";
+        }
+
+        let low = 0;
+        let high = fullLabel.length;
+
+        while (low < high) {
+            const midpoint = Math.ceil((low + high) / 2);
+            label.text(`${fullLabel.slice(0, midpoint)}${LABEL_ELLIPSIS}`);
+
+            if (this.getTextLength(label) <= maxWidth) {
+                low = midpoint;
+            } else {
+                high = midpoint - 1;
+            }
+        }
+
+        return `${fullLabel.slice(0, low)}${LABEL_ELLIPSIS}`;
+    }
+
+    getLabelWidths(): number[] {
+        /**
+         * Add a dummy element to measure rendered label widths. Keep it outside
+         * the SVG viewbox to prevent flashing while labels are being measured.
+         */
+        const measurer = this.getSvg()
+            .append("text")
+            .attr("class", "label-measurer")
+            .attr("font-size", `${LABEL_FONT_SIZE}px`)
+            .attr("visibility", "hidden")
+            .attr("x", -9999)
+            .attr("y", -9999);
+
+        const widths = this.data.map((d) => {
+            measurer.text(this.getLabelText(d));
+            return this.getTextLength(measurer);
+        });
+
+        measurer.remove();
+
+        return widths;
+    }
+
+    expandDimensionsForFullLabels() {
+        const labelWidths = this.getLabelWidths();
+        let extraLeftMargin = 0;
+        let extraRightMargin = 0;
+
+        this.data.forEach((d, i) => {
+            const labelWidth = labelWidths[i] + LABEL_OVERFLOW_PADDING;
+            const labelEdge = this.getLabelX(d) + this.getLabelDx(d);
+
+            if (d.lfc > 0) {
+                extraLeftMargin = Math.max(
+                    extraLeftMargin,
+                    labelWidth - labelEdge,
+                );
+            } else {
+                extraRightMargin = Math.max(
+                    extraRightMargin,
+                    labelEdge + labelWidth - this.dimensions.svgWidth,
+                );
+            }
+        });
+
+        this.dimensions.leftMargin += Math.max(extraLeftMargin, 0);
+        this.dimensions.rightMargin += Math.max(extraRightMargin, 0);
+        this.dimensions.svgWidth =
+            this.dimensions.leftMargin +
+            this.dimensions.plotWidth +
+            this.dimensions.rightMargin;
+    }
+
     /**
      */
     drawPlot(transition: boolean) {
-        const sizeSvg = () => {
-            let svg = d3
-                .select("svg")
-                .attr("width", this.dimensions.svgWidth)
-                .attr("height", this.dimensions.svgHeight);
+        this.dimensions = this.createDimensions();
+
+        // update scales
+        const xDomain = this.getXDomain();
+        const xRange = this.getXRange();
+        const yDomain = this.getYDomain();
+        const yRange = this.getYRange();
+
+        this.xScale.domain(xDomain).range(xRange);
+        this.yScale.domain(yDomain).range(yRange);
+
+        if (this.showFullLabels) {
+            this.expandDimensionsForFullLabels();
+            this.xScale.range(this.getXRange());
+        }
+
+        this.getSvg()
+            .attr("width", this.dimensions.svgWidth)
+            .attr("height", this.dimensions.svgHeight)
+            .attr(
+                "viewBox",
+                `0 0 ${this.dimensions.svgWidth} ${this.dimensions.svgHeight}`,
+            )
+            .attr("overflow", "visible")
+            .style("width", `${this.dimensions.svgWidth}px`);
+
+        d3.select("#barplot-title")
+            .style("width", `${this.dimensions.plotWidth}px`)
+            .style("margin-left", `${this.dimensions.leftMargin}px`);
+
+        const drawXAxis = (axis: any) => {
+            axis.attr("transform", this.getXAxisTranslation()).call(
+                d3.axisBottom(this.xScale),
+            );
         };
 
-        if (!transition) {
-            sizeSvg();
-        }
+        const drawYAxis = (axis: any) => {
+            axis.attr("transform", this.getYAxisTranslation()).call(
+                d3.axisLeft(this.yScale).tickSize(0).tickFormat("" as any),
+            );
+        };
 
         if (transition) {
-            // update plot height
-            this.updatePlotHeight();
-
-            // update scales
-            const xDomain = this.getXDomain();
-            const xRange = this.getXRange();
-            const yDomain = this.getYDomain();
-            const yRange = this.getYRange();
-
-            this.xScale.domain(xDomain).range(xRange);
-            this.yScale.domain(yDomain).range(yRange);
-
-            // resize svg
-            sizeSvg();
-
-            // transition axes
-            this.xAxis
-                .transition()
-                .duration(500)
-                .attr("transform", this.getXAxisTranslation())
-                .call(d3.axisBottom(this.xScale));
-
-            this.xAxis.selectAll("text").attr("font-size", "14px");
-            this.xAxis.select("#xaxis-label").attr("font-size", "18px");
-
-            this.yAxis
-                .transition()
-                .duration(500)
-                .attr("transform", this.getYAxisTranslation())
-                .call(
-                    d3
-                        .axisLeft(this.yScale)
-                        .tickSize(0)
-                        .tickFormat("" as any),
-                );
+            drawXAxis(this.xAxis.transition().duration(500));
+            drawYAxis(this.yAxis.transition().duration(500));
+        } else {
+            drawXAxis(this.xAxis);
+            drawYAxis(this.yAxis);
         }
 
+        this.xAxis.selectAll("text").attr("font-size", "14px");
+        this.xAxis
+            .select("#xaxis-label")
+            .attr("font-size", "18px")
+            .attr(
+                "x",
+                this.dimensions.leftMargin + this.dimensions.plotWidth / 2,
+            );
+
         // draw bars
-        let barSelection = d3
-            .select("svg")
+        let barSelection = this.getSvg()
             .selectAll("rect")
             .data(this.data)
             .join("rect");
 
         const drawBars = (selection: any) => {
             selection
-                .attr("x", (d) =>
+                .attr("x", (d: ViewRecord) =>
                     d.lfc > 0 ? this.xScale(0) : this.xScale(d.lfc),
                 )
-                .attr("y", (d, i) => this.yScale(String(i)))
-                .attr("width", (d) =>
+                .attr("y", (_d: ViewRecord, i: number) =>
+                    this.yScale(String(i)),
+                )
+                .attr("width", (d: ViewRecord) =>
                     Math.abs(this.xScale(d.lfc) - this.xScale(0)),
                 )
                 .attr("height", this.dimensions.barHeight)
-                .attr("fill", (d) => (d.lfc > 0 ? "green" : "red"));
+                .attr("fill", (d: ViewRecord) => (d.lfc > 0 ? "green" : "red"));
         };
 
         if (transition) {
@@ -402,8 +626,7 @@ export class DivergingBarplot {
         }
 
         // draw error bars
-        let errorBarSelection = d3
-            .select("svg")
+        let errorBarSelection = this.getSvg()
             .selectAll(".error-bar")
             .data(this.data)
             .join("path")
@@ -411,7 +634,7 @@ export class DivergingBarplot {
 
         const drawErrorBars = (selection: any) => {
             selection
-                .attr("d", (d, i) =>
+                .attr("d", (d: ViewRecord, i: number) =>
                     this.drawErrorBar(d3.path(), d, i).toString(),
                 )
                 .attr("stroke", "black")
@@ -428,8 +651,7 @@ export class DivergingBarplot {
         }
 
         // draw labels
-        let labelSelection = d3
-            .select("svg")
+        let labelSelection = this.getSvg()
             .selectAll(".label")
             .data(this.data)
             .join("text")
@@ -437,46 +659,42 @@ export class DivergingBarplot {
 
         const drawLabels = (selection: any) => {
             selection
-                .text((d) => {
-                    let classification = d.shortClassification
-                        ? d.shortClassification
-                        : d.featureId;
-
-                    if (classification.length > 30) {
-                        classification = classification.slice(0, 25) + "(...)";
-                    }
-
-                    return classification;
-                })
-                .attr("x", (d) => {
-                    if (d.lfc > 0) {
-                        return Math.min(
-                            this.xScale(d.lfc - d.se),
-                            this.xScale(0),
-                        );
-                    }
-                    return Math.max(this.xScale(d.lfc + d.se), this.xScale(0));
-                })
+                .attr("x", (d: ViewRecord) => this.getLabelX(d))
                 .attr(
                     "y",
-                    (d, i) =>
-                        this.yScale(String(i)) + this.yScale.bandwidth() / 2,
+                    (_d: ViewRecord, i: number) =>
+                        (this.yScale(String(i)) ?? 0) +
+                        this.yScale.bandwidth() / 2,
                 )
-                .attr("text-anchor", (d) => (d.lfc > 0 ? "end" : "start"))
-                .attr("dx", (d) => (d.lfc > 0 ? -8 : 8))
+                .attr("text-anchor", (d: ViewRecord) =>
+                    d.lfc > 0 ? "end" : "start",
+                )
+                .attr("dx", (d: ViewRecord) => this.getLabelDx(d))
                 .attr("dy", "1px")
-                .attr("font-size", "12px")
-                .attr("fill", "#474747");
+                .attr("font-size", `${LABEL_FONT_SIZE}px`)
+                .attr("fill", "#474747")
+                .each((d: ViewRecord, i: number, nodes: SVGTextElement[]) => {
+                    const label = d3.select(nodes[i] as SVGTextElement);
+                    const labelText = this.getLabelText(d);
+                    const fullLabelText = this.getLabelText(d, true);
+                    const displayLabel = this.showFullLabels
+                        ? labelText
+                        : this.ellipsizeLabel(
+                              label,
+                              labelText,
+                              this.getAvailableLabelWidth(d),
+                          );
+
+                    label.text(displayLabel);
+                    label
+                        .selectAll("title")
+                        .data([fullLabelText])
+                        .join("title")
+                        .text(fullLabelText);
+                });
         };
 
-        if (transition) {
-            labelSelection
-                .transition()
-                .duration(400)
-                .call(drawLabels.bind(this));
-        } else {
-            labelSelection.call(drawLabels.bind(this));
-        }
+        labelSelection.call(drawLabels.bind(this));
 
         // attach hover event listeners
         this.addHoverHandlers();
@@ -486,7 +704,7 @@ export class DivergingBarplot {
      */
     hidePlot() {
         // gray-out the plot
-        d3.select("svg")
+        this.getSvg()
             .append("rect")
             .attr("class", "hider")
             .attr("width", this.dimensions.svgWidth)
@@ -495,7 +713,7 @@ export class DivergingBarplot {
             .attr("opacity", 0.9);
 
         // add error message
-        d3.select("svg")
+        this.getSvg()
             .append("rect")
             .attr("class", "hider-text-box")
             .attr("x", 0.3 * this.dimensions.svgWidth)
@@ -504,7 +722,7 @@ export class DivergingBarplot {
             .attr("height", 0.2 * this.dimensions.svgHeight)
             .attr("fill", "white");
 
-        d3.select("svg")
+        this.getSvg()
             .append("text")
             .attr("class", "hider-text")
             .text("Oops! All features were filtered.")
@@ -518,7 +736,9 @@ export class DivergingBarplot {
     /**
      */
     showPlot() {
-        d3.selectAll(".hider, .hider-text, .hider-text-box").remove();
+        this.getSvg()
+            .selectAll(".hider, .hider-text, .hider-text-box")
+            .remove();
     }
 }
 

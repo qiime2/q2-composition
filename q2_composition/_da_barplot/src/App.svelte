@@ -41,7 +41,7 @@
     class:lg:grid-cols-1={hideTaxonomy}
     class:max-w-4xl={hideTaxonomy}
     class:lg:mx-auto={hideTaxonomy}
-    class:lg:grid-cols-[.45fr_.55fr]={!hideTaxonomy}
+    class:lg:grid-cols-[1fr_1fr]={!hideTaxonomy}
 >
     {#await featuresPromise}
         <p>Parsing slices...</p>
