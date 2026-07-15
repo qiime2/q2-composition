@@ -76,3 +76,6 @@ output.summary.txt
 
 # Version file from versioningit
 _version.py
+
+# node modules
+node_modules/
