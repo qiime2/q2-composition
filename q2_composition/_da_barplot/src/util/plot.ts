@@ -302,7 +302,8 @@ export class DivergingBarplot {
         let rect: string | null = null;
 
         const handleClick = (e: any, d: any) => {
-            if (rect === d.featureId) {
+            e.stopPropagation();
+            if (d === undefined || rect === d.featureId) {
                 d3.select(".tooltip")
                     .transition()
                     .duration(200)
@@ -359,6 +360,7 @@ export class DivergingBarplot {
 
         // register event handlers
         this.getSvg()
+            .on("click", handleClick)
             .selectAll("rect, .error-bar")
             .style("cursor", "pointer")
             .on("click", handleClick);
