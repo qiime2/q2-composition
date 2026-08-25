@@ -147,7 +147,7 @@ def _6(format: ANCOMBC2OutputDirFmt) -> Metadata:
     for slice, df in slices.items():
         df = df.set_index(df['taxon'])
         df = df.drop(columns='taxon')
-        df.index.name = 'feature-id'
+        df.index.name = 'Feature ID'
         df.columns = str(slice) + '_' + df.columns
         if merged is None:
             merged = df
